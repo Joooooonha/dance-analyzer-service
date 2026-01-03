@@ -1,0 +1,116 @@
+.logs-page .page-header {
+    margin-bottom: 32px;
+}
+
+.logs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.log-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    transition: var(--transition-normal);
+}
+
+.log-card:hover {
+    border-color: var(--accent-pink);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-glow);
+}
+
+.log-score {
+    flex-shrink: 0;
+}
+
+.score-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid;
+    background: var(--bg-secondary);
+}
+
+.score-circle.excellent {
+    border-color: #10b981;
+}
+
+.score-circle.good {
+    border-color: var(--accent-cyan);
+}
+
+.score-circle.average {
+    border-color: #f59e0b;
+}
+
+.score-circle.poor {
+    border-color: #ef4444;
+}
+
+.score-circle.pending {
+    border-color: var(--border-color);
+}
+
+.score-circle .score-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.score-circle .score-icon {
+    font-size: 1.5rem;
+}
+
+.log-info {
+    flex: 1;
+}
+
+.log-title {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+}
+
+.log-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.log-arrow {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    transition: var(--transition-fast);
+}
+
+.log-card:hover .log-arrow {
+    color: var(--accent-pink);
+    transform: translateX(4px);
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.page-info {
+    color: var(--text-secondary);
+}

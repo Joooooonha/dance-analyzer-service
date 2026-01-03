@@ -1,0 +1,74 @@
+.video-uploader {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    background: var(--bg-card);
+}
+
+.video-uploader:hover {
+    border-color: var(--accent-cyan);
+    background: rgba(0, 217, 255, 0.05);
+}
+
+.video-uploader.dragging {
+    border-color: var(--accent-pink);
+    background: rgba(255, 45, 117, 0.1);
+    transform: scale(1.02);
+}
+
+.video-uploader.has-file {
+    border-style: solid;
+    border-color: var(--accent-cyan);
+}
+
+.upload-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.upload-icon {
+    font-size: 3rem;
+}
+
+.upload-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.upload-text strong {
+    color: var(--accent-cyan);
+    font-size: 1.1rem;
+}
+
+.file-preview {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.file-icon {
+    font-size: 2.5rem;
+}
+
+.file-info {
+    flex: 1;
+    text-align: left;
+}
+
+.file-name {
+    display: block;
+    font-weight: 500;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+
+.file-size {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
