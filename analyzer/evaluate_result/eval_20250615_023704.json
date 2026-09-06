@@ -1,0 +1,11 @@
+{
+  "model": "yolo_pose",
+  "timestamp": "20250615_023704",
+  "metrics": {
+    "frame_count": 378,
+    "orig_fps": 30.0,
+    "measured_fps": 12.16,
+    "latency_avg_ms": 82.25,
+    "peak_mem_mb": 80.71
+  }
+}

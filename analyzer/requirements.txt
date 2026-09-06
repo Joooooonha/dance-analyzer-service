@@ -1,0 +1,9 @@
+ultralytics
+mediapipe
+numpy
+scipy
+opencv-python
+fastdtw
+psutil
+matplotlib
+pycocotools
