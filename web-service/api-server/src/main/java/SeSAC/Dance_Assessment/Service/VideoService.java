@@ -1,179 +1,193 @@
 package SeSAC.Dance_Assessment.Service;
 
 import SeSAC.Dance_Assessment.Domain.*;
-import SeSAC.Dance_Assessment.Dto.Video.VideoUploadRequestDto;
+import SeSAC.Dance_Assessment.Dto.Video.*;
 import SeSAC.Dance_Assessment.Infrastructure.AssignmentRepository;
 import SeSAC.Dance_Assessment.Infrastructure.PracticeLogRepository;
 import SeSAC.Dance_Assessment.Infrastructure.UserRepository;
 import SeSAC.Dance_Assessment.Infrastructure.VideoRepository;
+import SeSAC.Dance_Assessment.Storage.StorageKeys;
+import SeSAC.Dance_Assessment.Storage.StorageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
+import java.util.Set;
 
+/**
+ * 영상 등록·조회.
+ *
+ * <p><b>업로드는 두 단계다.</b> 파일 바이트가 이 서버를 지나가지 않기 때문이다.
+ *
+ * <ol>
+ *   <li>{@link #createUploadUrl} — 영상 행을 만들고 서명된 PUT URL을 발급</li>
+ *   <li>브라우저가 저장소에 직접 업로드</li>
+ *   <li>{@link #completeUpload} — 완료 통보. 이때 연습 기록이 생긴다</li>
+ * </ol>
+ *
+ * <p>예전에는 {@code MultipartFile}을 받아 서버 로컬 디스크에 저장했다. 그 방식은
+ * (1) 100MB 파일이 EC2 대역폭과 디스크를 쓰고, (2) 경로가 특정 머신에 묶여
+ * 분석 서버가 맥미니로 분리되는 순간 파일을 찾을 수 없으며, (3) Cloudflare
+ * 프록시의 요청 본문 100MB 제한에 걸린다.
+ */
+@Slf4j
 @Service
-@RequiredArgsConstructor // Autowired 대신 의존성 주임
-@Transactional(readOnly = true) // 조회만 허용
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class VideoService {
 
-    // @RequiredArgsConstructor 어노테이션으로 lombok이 생성자 만들어서 final 필드에 의존성 자동 주입받도록 함
+    /** 허용 Content-Type. 임의의 파일이 올라오는 것을 막는다. */
+    private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
+            "video/mp4", "video/quicktime", "video/x-m4v", "video/webm");
+
     private final VideoRepository videoRepository;
     private final UserRepository userRepository;
     private final PracticeLogRepository practiceLogRepository;
     private final AssignmentRepository assignmentRepository;
-    private final AsyncAnalysisService asyncAnalysisService; // [NEW] 비동기 분석 서비스
+    private final AnalysisResultWriter analysisResultWriter;
+    private final StorageService storage;
 
-    private final String UPLOAD_DIRECTORY = "/Users/parkjooha/SeSAC/Project/자유 주제 개인 프로젝트Dance_Assessment/VideoUpload/";
-
+    /**
+     * 영상 행을 만들고 저장소에 올릴 서명된 URL을 발급한다.
+     *
+     * <p>이 시점의 영상은 아직 <b>업로드 미완료</b> 상태다. 분석 대상이 되지 않는다.
+     */
     @Transactional
-    public Long uploadVideo(VideoUploadRequestDto dto) throws IOException {
-
-        // 유저 조회
-        User user = userRepository.findById(dto.getUserId())
+    public VideoUploadUrlResponse createUploadUrl(Long userId, VideoUploadUrlRequest request) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        // 유효성 검사
-        MultipartFile multipartFile = dto.getFile();
-        if (multipartFile.isEmpty()) {
-            throw new IllegalArgumentException("파일이 전송되지 않았습니다.");
+        String contentType = request.contentType();
+        if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
+            throw new IllegalArgumentException(
+                    "지원하지 않는 형식입니다: " + contentType + " (mp4/mov/webm만 가능)");
         }
 
-        // 파일 저장
-        String originalFilename = multipartFile.getOriginalFilename();
-        String storeFileName = UUID.randomUUID() + "_" + originalFilename;
-        String fullPath = UPLOAD_DIRECTORY + storeFileName;
+        VideoType type = request.type() != null ? request.type() : VideoType.PRACTICE;
+        String key = StorageKeys.video(userId, request.filename());
 
-        File dest = new File(fullPath);
-        if (!dest.getParentFile().exists()) {
-            dest.getParentFile().mkdirs(); // 폴더가 없으면 생성
-        }
-        multipartFile.transferTo(dest);
-
-        VideoType videoType = dto.getType() != null ? dto.getType() : VideoType.PRACTICE;
-        // Video 엔티티 생성 및 저장
-        // VideoType은 DTO에 없다면 PRACTICE로 고정하거나 DTO에 필드 추가)
-        Video video = Video.builder()
+        Video video = videoRepository.save(Video.builder()
                 .uploader(user)
-                .videoPath(fullPath)
-                .type(videoType) // 일단 연습 영상으로 고정 (필요시 dto.getType()))
-                .build();
+                .objectKey(key)
+                .contentType(contentType)
+                .type(type)
+                .build());
 
-        videoRepository.save(video);
+        return new VideoUploadUrlResponse(
+                video.getId(), storage.createUploadUrl(key, contentType));
+    }
 
-        // ======숙제 제출인 경우======
-        // 숙제 정보 조회
+    /**
+     * 업로드 완료를 기록하고, <b>연습 영상인 경우에만</b> 연습 기록을 만든다.
+     *
+     * <p>기준 영상은 "따라 할 대상"이지 누군가의 연습이 아니다. 예전에는 종류를
+     * 가리지 않고 기록을 만들어서, 기준 영상을 올릴 때마다 비교 대상이 없어
+     * 분석이 불가능한 기록이 하나씩 쌓였다.
+     */
+    @Transactional
+    public VideoUploadResponse completeUpload(Long userId, Long videoId, VideoCompleteRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 영상입니다."));
+
+        if (!video.getUploader().getId().equals(userId)) {
+            throw new IllegalStateException("본인이 올린 영상만 등록할 수 있습니다.");
+        }
+        video.markUploadCompleted();
+
+        if (video.getType() != VideoType.PRACTICE) {
+            return new VideoUploadResponse(video.getId(), null, false);
+        }
+
         Assignment assignment = null;
-        if (dto.getAssignmentId() != null) {
-            assignment = assignmentRepository.findById(dto.getAssignmentId())
+        if (request != null && request.assignmentId() != null) {
+            assignment = assignmentRepository.findById(request.assignmentId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 숙제입니다."));
         }
 
-        // ======기준 영상 결정======
         Video referenceVideo = null;
         if (assignment != null) {
-            // 숙제 제출: 숙제의 targetVideo가 기준 영상
             referenceVideo = assignment.getTargetVideo();
-        } else if (dto.getReferenceVideoId() != null) {
-            // 자율 연습: 직접 업로드한 기준 영상 사용
-            referenceVideo = videoRepository.findById(dto.getReferenceVideoId())
+        } else if (request != null && request.referenceVideoId() != null) {
+            referenceVideo = videoRepository.findById(request.referenceVideoId())
                     .orElseThrow(() -> new IllegalArgumentException("기준 영상을 찾을 수 없습니다."));
         }
 
-        // 6. PracticeLog 생성 및 저장
-        PracticeLog practiceLog = PracticeLog.builder()
+        PracticeLog practiceLog = practiceLogRepository.save(PracticeLog.builder()
                 .user(user)
                 .practiceVideo(video)
                 .referenceVideo(referenceVideo)
                 .assignment(assignment)
-                .build();
+                .build());
 
-        practiceLogRepository.save(practiceLog);
-
-        // [NEW] 기준 영상이 있으면 자동으로 비동기 분석 시작
+        // 업로드 직후 분석을 시작하지 않는다. 사용자가 안무 시작 시각을 지정하기
+        // 전이라, 구간 없이 돌리면 버릴 결과를 2~3분 걸려 만드는 꼴이 된다.
+        // 흐름은 [업로드 → 구간 지정 → 분석 요청]이다.
         if (referenceVideo != null) {
-            asyncAnalysisService.analyzeAsync(practiceLog.getId());
+            analysisResultWriter.findOrCreateResult(practiceLog);
         }
 
-        return video.getId();
+        return new VideoUploadResponse(
+                video.getId(), practiceLog.getId(), referenceVideo != null);
     }
 
-    public Resource playVideo(Long videoId, Long viewerId) {
-
+    /**
+     * 재생용 서명 URL을 만든다. <b>권한 검사는 여기서 한다.</b>
+     *
+     * <p>저장소 버킷은 비공개다. 공개해두면 URL을 아는 누구나 접근할 수 있어
+     * 아래 권한 규칙이 통째로 무력해진다.
+     */
+    public String createPlaybackUrl(Long videoId, Long viewerId) {
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 영상입니다."));
-
-        // 조회자 정보
         User viewer = userRepository.findById(viewerId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        // ===== 권한 검사 =====
-        // 1. 본인이 업로드한 영상 → OK
-        boolean isUploader = video.getUploader().getId().equals(viewerId);
-
-        // 2. 같은 팀원이 업로드한 기준 영상(REFERENCE) → OK
-        boolean isSameTeamReferenceVideo = false;
-        if (video.getType() == VideoType.REFERENCE) {
-            Team uploaderTeam = video.getUploader().getTeam();
-            Team viewerTeam = viewer.getTeam();
-            if (uploaderTeam != null && viewerTeam != null) {
-                isSameTeamReferenceVideo = uploaderTeam.getId().equals(viewerTeam.getId());
-            }
-        }
-
-        // 권한이 없으면 거부
-        if (!isUploader && !isSameTeamReferenceVideo) {
+        if (!canView(video, viewer)) {
             throw new IllegalStateException("해당 영상을 볼 권한이 없습니다.");
         }
-
-        String path = video.getVideoPath();
-        FileSystemResource resource = new FileSystemResource(path);
-
-        // DB에는 있는데 실제 파일이 지워졌을 경우 대비
-        if (!resource.exists()) {
-            throw new IllegalArgumentException("파일이 서버에서 삭제되었습니다. 경로: " + path);
+        if (video.getObjectKey() == null) {
+            throw new IllegalArgumentException("업로드되지 않은 영상입니다.");
         }
-
-        return resource;
+        return storage.createDownloadUrl(video.getObjectKey());
     }
 
-    // 영상 삭제
-    @Transactional // DB 작업이 있으므로 트랜잭션 필수
+    /**
+     * 1. 본인이 올린 영상이면 OK.
+     * 2. 같은 팀원이 올린 <b>기준 영상</b>이면 OK — 함께 따라 출 대상이므로.
+     *    연습 영상은 팀원이라도 볼 수 없다.
+     */
+    private boolean canView(Video video, User viewer) {
+        if (video.getUploader().getId().equals(viewer.getId())) {
+            return true;
+        }
+        if (video.getType() != VideoType.REFERENCE) {
+            return false;
+        }
+        Team uploaderTeam = video.getUploader().getTeam();
+        Team viewerTeam = viewer.getTeam();
+        return uploaderTeam != null && viewerTeam != null
+                && uploaderTeam.getId().equals(viewerTeam.getId());
+    }
+
+    @Transactional
     public void deleteVideo(Long videoId, Long requesterId) {
-        // 삭제할 영상 확인
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 영상입니다."));
 
-        // 권한 인증
         if (!video.getUploader().getId().equals(requesterId)) {
             throw new IllegalStateException("삭제 권한이 없습니다.");
         }
 
-        // DB를 먼저 지워야해서 경로 미리 저장해둠
-        String filePath = video.getVideoPath();
-
-        // 물리 파일보다 DB에서 먼저 삭제
+        String key = video.getObjectKey();
         videoRepository.delete(video);
 
-        // DB 먼저 삭제 후 물리 파일 삭제, 아까 저장한 경로 활용
-        deleteFile(filePath);
-    }
-
-    // 물리 파일 삭제 메서드
-    private void deleteFile(String filePath) {
-        File file = new File(filePath);
-        if (file.exists()) {
-            boolean deleted = file.delete();
-            if (!deleted) {
-                // 로그 남기라는데 왜 이유는 모르겠다.
-                System.out.println("경고: DB는 삭제되었으나 파일 삭제 실패. 경로: " + filePath);
-            }
+        // DB를 먼저 지운다. 반대로 하면 파일만 사라지고 DB에 남아
+        // "재생하면 깨지는 기록"이 생긴다.
+        if (key != null) {
+            storage.delete(key);
         }
     }
-
 }
