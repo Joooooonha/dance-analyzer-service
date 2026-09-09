@@ -294,6 +294,28 @@ EC2는 이미 tailnet에 있다(`odo-ec2` / `100.114.82.112`). 러너를 **임�
 
    태그를 미리 선언하지 않으면 그 태그로 노드를 붙일 수 없다.
 
+   **그리고 `tag:ci`가 서버의 22번 포트에 닿도록 허용해야 한다.** ACL이
+   기본 allow-all이 아니라면 이 규칙이 없어서 SSH가 막힌다:
+
+   ```json
+   "hosts": {
+     "odo-ec2": "100.114.82.112"
+   },
+   "acls": [
+     // ... 기존 규칙 ...
+     {
+       "action": "accept",
+       "src":    ["tag:ci"],
+       "dst":    ["odo-ec2:22"]
+     }
+   ]
+   ```
+
+   ⚠️ **`tailscale ping`이 통과해도 SSH는 막힐 수 있다.** ping은 tailnet 계층에서
+   응답하는 것이라 ACL의 포트 규칙을 검사하지 않는다. 실제로 워크플로의
+   ping 검사는 `✅ reachable via DERP!`로 통과했는데 rsync만
+   `Connection timed out`으로 죽었다. 그래서 SSH 도달을 따로 확인하는 단계를 뒀다.
+
 2. **Settings → Trust credentials** → **Credential** 버튼 → **OAuth**
    (`https://login.tailscale.com/admin/settings/trust-credentials`)
    - Scopes: `auth_keys` **write**

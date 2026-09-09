@@ -131,6 +131,43 @@ jobs:
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
+      # `tailscale ping`이 통과해도 SSH가 막힐 수 있다. ping은 tailnet 계층에서
+      # 응답하는 것이라 **ACL의 포트 규칙을 검사하지 않기 때문이다.**
+      # 실제로 ping은 통과하고 rsync만 `Connection timed out`(exit 255)으로 죽어서,
+      # 원인이 네트워크인지 인증인지 알 수 없었다. TCP로 한 번 확인하고
+      # 실패하면 무엇을 고쳐야 하는지 알려준다.
+      - name: SSH 도달 확인
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          if ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes \
+                 -o ConnectTimeout=15 -o BatchMode=yes \
+                 "ubuntu@$HOST" true 2>/tmp/ssh_err; then
+            echo "✅ SSH 도달 확인"
+            exit 0
+          fi
+          echo "::error::SSH로 접속하지 못했습니다."
+          cat /tmp/ssh_err
+          cat <<'HINT'
+
+          ── 확인할 것 ─────────────────────────────────────
+          timed out 이라면 포트가 막힌 것입니다(인증 문제가 아님).
+
+          Tailscale 경로를 쓰는 경우:
+            ACL(Access controls)에 tag:ci → 서버:22 규칙이 있어야 합니다.
+            `tailscale ping`은 ACL 포트 규칙을 검사하지 않으므로
+            앞 단계가 통과했어도 여기서 막힐 수 있습니다.
+
+              "hosts": { "odo-ec2": "100.114.82.112" },
+              "acls": [
+                { "action": "accept", "src": ["tag:ci"], "dst": ["odo-ec2:22"] }
+              ]
+
+          공개 IP를 쓰는 경우:
+            AWS 보안 그룹 인바운드에 22번이 열려 있어야 합니다.
+          HINT
+          exit 1
+
       - name: 업로드
         env:
           HOST: ${{ secrets.DEPLOY_HOST }}
