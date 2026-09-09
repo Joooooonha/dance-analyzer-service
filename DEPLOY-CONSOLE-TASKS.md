@@ -243,6 +243,50 @@ curl -sI https://odostudio.site/sw.js | grep -i cache-control
 
 ---
 
+## 8. GitHub Actions — 배포 자동화
+
+`main`에 web-service 변경이 올라가면 자동으로 빌드·테스트·배포한다.
+**맥미니(분석 서버)는 포함되지 않는다** — Tailscale 내부망에 있어 GitHub 러너가
+닿을 수 없다. 분석 서버는 로컬에서 `./deploy/deploy-ai-server.sh`로 올린다.
+
+### 시크릿 3개 등록
+
+GitHub 저장소 → **Settings** → **Secrets and variables** → **Actions** →
+**New repository secret**.
+
+| 이름 | 값을 얻는 법 |
+|---|---|
+| `DEPLOY_SSH_KEY` | `pbcopy < ~/.ssh/odo-deploy-key` (개인키 전체) |
+| `DEPLOY_HOST` | EC2의 탄력적 IP. `13.125.143.96` |
+| `DEPLOY_KNOWN_HOSTS` | `ssh-keyscan -t ed25519,rsa 13.125.143.96 \| pbcopy` |
+
+`DEPLOY_SSH_KEY`는 **배포 전용으로 새로 만든 키**다(`~/.ssh/odo-deploy-key`).
+평소 접속에 쓰는 `odo-server-key.pem`을 넣지 않는다 — 그 키가 새면 서버 접근
+수단 전체가 한 번에 열린다. 전용 키는 문제가 생기면 EC2의
+`~/.ssh/authorized_keys`에서 그 한 줄만 지우면 끝난다.
+
+`DEPLOY_HOST`를 시크릿으로 두는 이유: 이 IP가 알려지면 Cloudflare를 건너뛰고
+원본 서버에 직접 붙을 수 있다. 도메인은 Cloudflare IP로만 해석되므로 굳이
+드러낼 이유가 없다.
+
+### 확인
+
+등록한 뒤 **Actions** 탭 → **배포 (EC2)** → **Run workflow**로 한 번 돌려본다.
+시크릿이 빠져 있으면 첫 단계에서 무엇이 없는지 알려주고 멈춘다.
+
+### 배포가 실패하면
+
+워크플로가 **직전 jar로 자동 롤백**한다. 기동을 40회(약 2분) 확인하고,
+끝내 응답이 없으면 `app.jar.bak`을 되돌리고 재시작한 뒤 로그를 남긴다.
+
+### DB 스키마
+
+Flyway가 앱 기동 시점에 알아서 적용한다. 사람이 SQL을 미리 돌릴 필요가 없다.
+스키마를 바꿀 때는
+`web-service/api-server/src/main/resources/db/migration/V2__....sql`을 추가한다.
+
+---
+
 ## 값 전달 — 이건 파일에 적지 말 것
 
 아래 값들은 **비밀키**라 git에 올라가면 안 된다.
