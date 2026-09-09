@@ -93,7 +93,7 @@ public class PracticeLogService {
     /**
      * 분석을 시작시킨다. <b>결과를 기다리지 않고 즉시 반환한다.</b>
      *
-     * <p>분석에 실측 1분 50초~2분 40초가 걸려 HTTP 요청을 붙잡고 있을 수 없다.
+     * <p>분석에 실측 약 2분이 걸려 HTTP 요청을 붙잡고 있을 수 없다.
      * 호출자는 {@code GET /practice-logs/{logId}}를 폴링해야 한다.
      *
      * @return 접수 결과 (현재 상태와 폴링 대상 안내)

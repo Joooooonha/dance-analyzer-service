@@ -81,9 +81,22 @@
 }
 
 .feature-icon {
-    font-size: 2.5rem;
     display: block;
+    width: fit-content;
     margin-bottom: 16px;
+    color: var(--text-secondary);
+}
+
+.feature-pink .feature-icon {
+    color: var(--accent-pink);
+}
+
+.feature-cyan .feature-icon {
+    color: var(--accent-cyan);
+}
+
+.feature-purple .feature-icon {
+    color: var(--accent-purple);
 }
 
 .feature-title {

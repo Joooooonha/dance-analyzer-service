@@ -7,7 +7,7 @@ import SeSAC.Dance_Assessment.Domain.AnalysisStatus;
  *
  * <p>분석은 비동기다. 이 응답은 "시작했다"는 뜻이지 결과가 아니다.
  * 클라이언트는 {@code pollUrl}을 폴링해 {@code status}가 COMPLETED가 되기를
- * 기다린다. 실측 소요는 1분 50초~2분 40초다.
+ * 기다린다. 실측 소요는 약 2분이다(맥미니 CPU, 30초 구간, stride=2 기준).
  */
 public record AnalysisAcceptedResponse(
         Long logId,

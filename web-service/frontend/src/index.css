@@ -469,6 +469,40 @@ p {
 .gap-2 { gap: 16px; }
 .gap-3 { gap: 24px; }
 
+/* ========== Icons ==========
+   이모지를 대체하는 lucide-react 아이콘의 배치 규칙.
+   아이콘은 한 가지 굵기(stroke-width: 2)로 통일하고, 색은 여기서 강제하지
+   않는다 — 의미에 따라 각 컴포넌트에서 currentColor나 신호색을 지정한다. */
+.heading-icon {
+  /* inline-flex라야 text-align:center로 감싼 페이지 헤더 안에서도
+     아이콘+텍스트 묶음이 함께 가운데 정렬된다. */
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.heading-icon svg {
+  flex-shrink: 0;
+}
+
+.icon-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.icon-row svg {
+  flex-shrink: 0;
+  margin-top: 0.15em;
+}
+
+.icon-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  vertical-align: -3px;
+}
+
 /* ========== Loading ========== */
 .loading {
   display: flex;
@@ -499,7 +533,8 @@ p {
 }
 
 .empty-state-icon {
-  font-size: 4rem;
+  display: flex;
+  justify-content: center;
   margin-bottom: 16px;
   opacity: 0.5;
 }

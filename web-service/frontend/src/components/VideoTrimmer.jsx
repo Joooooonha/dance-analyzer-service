@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Pause, Play } from 'lucide-react';
 import './VideoTrimmer.css';
 
 // 30fps 가정. 백엔드 엔진도 fps 정보가 없는 영상에는 이 값으로 대체한다
@@ -127,8 +128,8 @@ export default function VideoTrimmer({
       </div>
 
       <div className="trimmer-controls">
-        <button type="button" className="btn btn-sm btn-secondary" onClick={togglePlay}>
-          {isPlaying ? '⏸' : '▶'}
+        <button type="button" className="btn btn-sm btn-secondary" onClick={togglePlay} aria-label={isPlaying ? '일시정지' : '재생'}>
+          {isPlaying ? <Pause size={16} /> : <Play size={16} />}
         </button>
         <button type="button" className="btn btn-sm btn-secondary" onClick={() => seekBy(-1)}>-1초</button>
         <button type="button" className="btn btn-sm btn-secondary" onClick={() => seekBy(-FRAME_STEP)}>-1프레임</button>

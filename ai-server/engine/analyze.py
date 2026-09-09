@@ -15,6 +15,8 @@
 | 회전 | 미처리 | 자동 보정 |
 | 결과 | 0~100 점수 | 틀린 동작 개수 + 구간 피드백 |
 """
+import os
+
 from engine.adapter import extract_sequence_isolated
 from engine.dtw_compare import compare_sequences
 from engine.feedback import summarize
@@ -26,6 +28,30 @@ DEFAULT_BAND_SEC = 0.5
 
 # 구간 미지정 시 끝점 완화 길이(초). 안무 구간을 모르므로 필요하다 (D19).
 DEFAULT_PSI_SEC = 3.0
+
+# 포즈를 몇 프레임마다 추정할지. 1이면 모든 프레임.
+#
+# **맥미니 실측으로 2를 골랐다** (pro_dancer + user_dancer, 30초 구간, 각 1회):
+#
+# | stride | 소요 | 단축 | 평균오차 | p90 | 지적 시간대 일치 | 상위10 재현 |
+# |---|---|---|---|---|---|---|
+# | 1 | 174.7초 | — | 24.92도 | 43.76 | 100% | 100% |
+# | **2** | **97.0초** | **44%** | **25.71도** | 45.92 | **91%** | **100%** |
+# | 3 | 75.6초 | 57% | 28.26도 | 53.43 | 81% | 100% |
+#
+# "상위10 재현" = 기준(stride=1)이 상위로 꼽은 구간 각각에 대해, 같은 신체 그룹을
+# 같은 시간대에 짚었는지. **셋 다 100%다 — 놓치는 문제는 없다.**
+#
+# 3은 평균 오차가 13%, p90이 22% 나빠지고 시간대 일치도 81%로 떨어져 쓰지 않는다.
+# 2는 오차 증가가 0.8도(3%)로 작다.
+#
+# ⚠️ **단, 상위 구간의 순서는 바뀐다.** 심각도를 그 영상 자체의 부위별 중앙값으로
+# 정규화하는데, 프레임 수가 줄면 그 중앙값이 조금 움직이기 때문이다. 짚는 대목은
+# 같고 우선순위만 달라진다. (stride=1을 두 번 돌린 결과는 완전히 동일했으므로
+# 이 변화는 실행 간 잡음이 아니라 stride 때문이 맞다.)
+#
+# 되돌리려면 분석 서버에서 `DANCE_ANALYSIS_STRIDE=1`로 두고 재시작하면 된다.
+DEFAULT_STRIDE = max(1, int(os.environ.get('DANCE_ANALYSIS_STRIDE', '2')))
 
 # 동작 대응표를 몇 초 간격으로 샘플링할지.
 #
@@ -62,8 +88,10 @@ def build_sync_map(path_pairs, ref_seq, prac_seq, interval_sec=SYNC_MAP_INTERVAL
     if not path_pairs:
         return []
 
-    u_off = prac_seq.meta.get('source_start_frame', 0)
-    s_off = ref_seq.meta.get('source_start_frame', 0)
+    # stride를 쓰면 프레임 인덱스가 원본과 1:1이 아니다. 초로 환산해야 맞는다
+    # (시퀀스 fps가 이미 `원본 fps / stride`라 frame/fps는 항상 맞는 초다).
+    u_off_sec = prac_seq.meta.get('source_start_sec', 0.0)
+    s_off_sec = ref_seq.meta.get('source_start_sec', 0.0)
     prac_fps = max(prac_seq.fps, 1e-6)
     ref_fps = max(ref_seq.fps, 1e-6)
 
@@ -74,11 +102,11 @@ def build_sync_map(path_pairs, ref_seq, prac_seq, interval_sec=SYNC_MAP_INTERVAL
     us = sorted(acc)
     out, last_t = [], None
     for i, u in enumerate(us):
-        pt = (u + u_off) / prac_fps
+        pt = u / prac_fps + u_off_sec
         # 첫 점과 마지막 점은 무조건 남긴다 — 양 끝이 잘리면 보간 범위가 좁아진다.
         if last_t is not None and i != len(us) - 1 and pt - last_t < interval_sec:
             continue
-        rt = (sum(acc[u]) / len(acc[u]) + s_off) / ref_fps
+        rt = (sum(acc[u]) / len(acc[u])) / ref_fps + s_off_sec
         out.append([round(pt, 3), round(rt, 3)])
         last_t = pt
     return out
@@ -88,7 +116,7 @@ def analyze(reference_video, practice_video, model_path=None,
             ref_start_sec=None, ref_end_sec=None,
             prac_start_sec=None, prac_end_sec=None,
             conf_thresh=0.5, top_issues=10, with_context=False,
-            progress_cb=None):
+            progress_cb=None, stride=None):
     """
     returns: dict — 구간 피드백과 통계
 
@@ -111,15 +139,17 @@ def analyze(reference_video, practice_video, model_path=None,
         psi가 그 위에서 양 끝을 또 건너뛰게 해 경로를 흐트러뜨린다. 실측에서
         psi를 켜면 최대 오차가 0.73초 → 3.23초로 악화됐다.
     """
+    stride = DEFAULT_STRIDE if stride is None else max(1, int(stride))
+
     # 영상마다 별도 프로세스에서 추출한다. 한 프로세스에서 해상도가 다른 영상을
     # 이어서 처리하면 뒤 영상의 결과가 매 실행마다 달라지기 때문이다
     # (근거는 engine/adapter.py의 "프로세스 격리 추출" 주석).
     _step(progress_cb, 'extract_reference')
     ref_seq = extract_sequence_isolated(reference_video, model_path, conf_thresh,
-                                        ref_start_sec, ref_end_sec)
+                                        ref_start_sec, ref_end_sec, stride)
     _step(progress_cb, 'extract_practice')
     prac_seq = extract_sequence_isolated(practice_video, model_path, conf_thresh,
-                                         prac_start_sec, prac_end_sec)
+                                         prac_start_sec, prac_end_sec, stride)
 
     _step(progress_cb, 'align')
     ref_feat = build_features(ref_seq, 'angle')
@@ -138,14 +168,22 @@ def analyze(reference_video, practice_video, model_path=None,
         window=window, psi=psi,
         max_time_diff=0.6, min_separation=0.3, min_valid_ratio=0.3)
 
-    # 잘라낸 구간 기준 인덱스는 사용자에게 의미가 없으므로 원본 기준도 남긴다
+    # 잘라낸 구간 기준 인덱스는 사용자에게 의미가 없으므로 원본 기준도 남긴다.
+    #
+    # **프레임 수를 더하지 않고 초로 계산한다.** stride를 쓰면 시퀀스의 프레임
+    # 하나가 원본 여러 프레임에 해당해서 `frame + offset`이 어긋난다.
+    # 시퀀스 fps가 이미 `원본 fps / stride`라 `frame / fps`는 항상 맞는 초가 된다.
+    u_off_sec = prac_seq.meta.get('source_start_sec', 0.0)
+    s_off_sec = ref_seq.meta.get('source_start_sec', 0.0)
+    u_stride = prac_seq.meta.get('stride', 1)
+    s_stride = ref_seq.meta.get('stride', 1)
     u_off = prac_seq.meta.get('source_start_frame', 0)
     s_off = ref_seq.meta.get('source_start_frame', 0)
     for e in result.get('details', []):
-        e['user_frame_src'] = e['user_frame'] + u_off
-        e['standard_frame_src'] = e['standard_frame'] + s_off
-        e['user_t_src'] = round(e['user_frame_src'] / prac_seq.fps, 4)
-        e['standard_t_src'] = round(e['standard_frame_src'] / ref_seq.fps, 4)
+        e['user_frame_src'] = e['user_frame'] * u_stride + u_off
+        e['standard_frame_src'] = e['standard_frame'] * s_stride + s_off
+        e['user_t_src'] = round(e['user_frame'] / prac_seq.fps + u_off_sec, 4)
+        e['standard_t_src'] = round(e['standard_frame'] / ref_seq.fps + s_off_sec, 4)
 
     feedback = summarize(result.get('details', []), top_n=top_issues)
 
@@ -162,6 +200,7 @@ def analyze(reference_video, practice_video, model_path=None,
             'reference_fps': ref_seq.fps,
             'practice_fps': prac_seq.fps,
             'trimmed': trimmed,
+            'stride': stride,
             'band_sec': DEFAULT_BAND_SEC if trimmed else None,
             'window_frames': window,
             'psi_frames': psi,

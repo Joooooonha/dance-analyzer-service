@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Crown, Sparkles, Users } from 'lucide-react';
 import { signup, setCurrentUser, getTeams } from '../api/client';
 import './Auth.css';
 
@@ -73,9 +74,9 @@ export default function Signup() {
         <div className="auth-page">
             <div className="auth-container">
                 <div className="auth-header">
-                    <span className="auth-icon">✨</span>
+                    <span className="auth-icon"><Sparkles size={40} /></span>
                     <h1>회원가입</h1>
-                    <p>DanceFlow에 가입하고 춤 연습을 시작하세요</p>
+                    <p>ODO에 가입하고 춤 연습을 시작하세요</p>
                 </div>
 
                 <form className="auth-form" onSubmit={handleSubmit}>
@@ -170,7 +171,9 @@ export default function Signup() {
                                         >
                                             <span className="team-item-name">{team.name}</span>
                                             <span className="team-item-info">
-                                                👑 {team.leaderName || '팀장'} · 👥 {team.memberCount}명
+                                                <span className="icon-inline"><Crown size={13} /> {team.leaderName || '팀장'}</span>
+                                                {' · '}
+                                                <span className="icon-inline"><Users size={13} /> {team.memberCount}명</span>
                                             </span>
                                         </div>
                                     ))

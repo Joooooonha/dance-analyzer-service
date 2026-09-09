@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Clock, FileX, History } from 'lucide-react';
 import { getPracticeLogs } from '../api/client';
 import './Logs.css';
 
@@ -59,7 +60,7 @@ export default function Logs() {
         <div className="logs-page page">
             <div className="container">
                 <div className="page-header">
-                    <h1>📊 내 연습 기록</h1>
+                    <h1 className="heading-icon"><History size={26} /> 내 연습 기록</h1>
                     <p>지금까지의 연습 기록과 분석 결과입니다</p>
                 </div>
 
@@ -67,7 +68,7 @@ export default function Logs() {
 
                 {logs.length === 0 ? (
                     <div className="empty-state">
-                        <span className="empty-state-icon">📝</span>
+                        <span className="empty-state-icon"><FileX size={48} /></span>
                         <h3 className="empty-state-title">아직 연습 기록이 없습니다</h3>
                         <p className="empty-state-text">
                             자유 연습이나 숙제 제출을 통해 첫 기록을 남겨보세요
@@ -93,7 +94,7 @@ export default function Logs() {
                                             </div>
                                         ) : (
                                             <div className="issue-badge pending">
-                                                <span className="score-icon">⏳</span>
+                                                <span className="score-icon"><Clock size={22} /></span>
                                             </div>
                                         )}
                                     </div>

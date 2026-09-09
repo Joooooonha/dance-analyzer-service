@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Crown, History, Inbox, Target, Users, Video } from 'lucide-react';
 import { getAssignment, uploadVideo, getCurrentUser, getSubmissions, getMySubmissions, getVideoUrl } from '../api/client';
 import VideoUploader from '../components/VideoUploader';
 import './AssignmentDetail.css';
@@ -116,7 +117,7 @@ export default function AssignmentDetail() {
                     <div className="assignment-meta-detail">
                         <div className="meta-item">
                             <span className="meta-label">출제자</span>
-                            <span className="meta-value">👑 {assignment?.writerName}</span>
+                            <span className="meta-value icon-inline"><Crown size={14} /> {assignment?.writerName}</span>
                         </div>
                         <div className="meta-item">
                             <span className="meta-label">시작일</span>
@@ -132,7 +133,7 @@ export default function AssignmentDetail() {
                 <div className="detail-grid">
                     {/* [MODIFIED] placeholder를 실제 video 태그로 교체 */}
                     <section className="reference-section card">
-                        <h2>📹 기준 영상</h2>
+                        <h2 className="heading-icon"><Video size={22} /> 기준 영상</h2>
                         <p className="hint-text">이 영상을 보고 따라 연습하세요</p>
                         {assignment?.targetVideoId ? (
                             <video
@@ -149,7 +150,7 @@ export default function AssignmentDetail() {
 
                     {!user?.isLeader ? (
                         <section className="submit-section card">
-                            <h2>🎯 숙제 제출</h2>
+                            <h2 className="heading-icon"><Target size={22} /> 숙제 제출</h2>
                             <p className="hint-text">기준 영상을 보고 연습한 영상을 제출하세요</p>
 
                             {error && <div className="auth-error mb-2">{error}</div>}
@@ -172,7 +173,7 @@ export default function AssignmentDetail() {
                             {/* [NEW] 내 제출 이력 */}
                             {mySubmissions.length > 0 && (
                                 <div className="my-submissions mt-4">
-                                    <h3>📝 내 제출 이력</h3>
+                                    <h3 className="heading-icon"><History size={18} /> 내 제출 이력</h3>
                                     <div className="submission-list">
                                         {mySubmissions.map(sub => (
                                             <Link
@@ -200,12 +201,12 @@ export default function AssignmentDetail() {
                         </section>
                     ) : (
                         <section className="submissions-section card">
-                            <h2>👥 제출 현황</h2>
+                            <h2 className="heading-icon"><Users size={22} /> 제출 현황</h2>
                             <p className="hint-text">팀원들의 제출 상태를 확인하세요</p>
 
                             {submissions.length === 0 ? (
                                 <div className="empty-state">
-                                    <span className="empty-state-icon">📭</span>
+                                    <span className="empty-state-icon"><Inbox size={48} /></span>
                                     <p className="empty-state-text">아직 제출한 팀원이 없습니다</p>
                                 </div>
                             ) : (

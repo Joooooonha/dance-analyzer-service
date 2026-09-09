@@ -333,7 +333,7 @@ export const updateTrim = async (logId, range) => {
  * 분석은 비동기다. 이 호출은 시작만 시키고 즉시 반환한다
  * (AnalysisAcceptedResponse: status, trimApplied, pollUrl, message).
  * 실제 완료 여부는 getPracticeLog(logId)를 폴링해서 status가
- * COMPLETED/FAILED가 될 때까지 확인해야 한다. 실측 소요는 약 1~2분이다.
+ * COMPLETED/FAILED가 될 때까지 확인해야 한다. 실측 소요는 약 2분이다.
  */
 export const analyzeLog = async (logId) => {
   return fetchAPI(`/api/practice-logs/${logId}/analyze`, {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 import { uploadVideo, createAssignment } from '../api/client';
 import VideoUploader from '../components/VideoUploader';
 import './AssignmentCreate.css';
@@ -66,7 +67,7 @@ export default function AssignmentCreate() {
                 <Link to="/assignments" className="back-link">← 숙제 목록</Link>
 
                 <div className="create-header">
-                    <h1>➕ 숙제 생성</h1>
+                    <h1 className="heading-icon"><Plus size={26} /> 숙제 생성</h1>
                     <p>팀원들에게 새로운 연습 숙제를 부여하세요</p>
                 </div>
 

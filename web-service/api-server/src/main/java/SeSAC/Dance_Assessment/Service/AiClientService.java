@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  *   <li>맥미니에 저장소 자격증명을 두지 않아도 된다 — 짧은 URL만 받는다</li>
  * </ul>
  *
- * <p>분석은 오래 걸린다(실측 약 70초, 비교 영상까지 만들면 더). WebClient 기본
+ * <p>분석은 오래 걸린다(실측 약 2분). WebClient 기본
  * 설정으로는 응답 타임아웃에 걸릴 수 있어 명시적으로 길게 잡는다. 호출부는 반드시
  * 비동기({@code AsyncAnalysisService})에서 부를 것.
  */

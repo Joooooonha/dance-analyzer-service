@@ -43,8 +43,7 @@ export default function Login() {
         <div className="auth-page">
             <div className="auth-container">
                 <div className="auth-header">
-                    <span className="auth-icon">💃</span>
-                    <h1>DanceFlow</h1>
+                    <h1>ODO</h1>
                     <p>춤 동작 분석 서비스에 오신 것을 환영합니다</p>
                 </div>
 

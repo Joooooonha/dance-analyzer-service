@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
+    AlertTriangle, Bell, BellOff, Clock, FileX, Gauge, HelpCircle, Info,
+    Lightbulb, MessageSquare, Timer, Video, Film,
+} from 'lucide-react';
+import {
     getPracticeLog, updateTrim, analyzeLog, getVideoUrl, getAnalysisProgress,
 } from '../api/client';
 import VideoTrimmer from '../components/VideoTrimmer';
@@ -185,7 +189,8 @@ export default function LogDetail() {
             ? `다듬을 구간 ${log?.issueCount ?? 0}개를 찾았습니다.`
             : '결과 화면에서 다시 시도할 수 있습니다.';
 
-        document.title = `${done ? '✅' : '⚠️'} ${title}`;
+        // 탭 제목에는 아이콘을 못 쓴다 — 텍스트로만 상태를 알린다.
+        document.title = `${done ? '[완료]' : '[실패]'} ${title}`;
         try {
             if ('Notification' in window && Notification.permission === 'granted') {
                 new Notification(title, { body, tag: `log-${id}` });
@@ -300,7 +305,7 @@ export default function LogDetail() {
 
                 {log?.status === 'PROCESSING' && (
                     <div className="pending-section card">
-                        <span className="pending-icon">⏳</span>
+                        <span className="pending-icon"><Clock size={56} /></span>
                         <h2>{progress?.label ?? '분석 준비 중'}</h2>
 
                         <div className="progress-bar">
@@ -318,7 +323,7 @@ export default function LogDetail() {
 
                         <p className="pending-text">
                             {progress?.stage
-                                ? '두 영상에서 관절을 하나씩 찾아 맞추는 중입니다. 보통 3분쯤 걸려요.'
+                                ? '두 영상에서 관절을 하나씩 찾아 맞추는 중입니다. 보통 2분쯤 걸려요.'
                                 : '분석 서버에 작업을 맡기는 중입니다.'}
                             <br />
                             <b>이 창을 닫아도 분석은 계속됩니다.</b>
@@ -326,7 +331,7 @@ export default function LogDetail() {
 
                         <div className="push-toggle">
                             <button className="btn btn-sm btn-outline" onClick={togglePush}>
-                                {pushOn ? '🔔 알림 켜짐 (끄기)' : '🔕 끝나면 알림 받기'}
+                                {pushOn ? <><Bell size={16} /> 알림 켜짐 (끄기)</> : <><BellOff size={16} /> 끝나면 알림 받기</>}
                             </button>
                             {isIOS() && !isStandalone() && (
                                 <span className="hint-text">
@@ -340,7 +345,7 @@ export default function LogDetail() {
 
                 {log?.status === 'FAILED' && (
                     <div className="pending-section card">
-                        <span className="pending-icon">⚠️</span>
+                        <span className="pending-icon warn"><AlertTriangle size={56} /></span>
                         <h2>분석에 실패했습니다</h2>
                         {log.feedback && <p className="pending-text">{log.feedback}</p>}
                         <button
@@ -359,7 +364,7 @@ export default function LogDetail() {
                     실패하기 때문이다. */}
                 {log?.status === 'WAITING' && !log?.referenceVideoId && (
                     <div className="pending-section card">
-                        <span className="pending-icon">📄</span>
+                        <span className="pending-icon"><FileX size={56} /></span>
                         <h2>분석할 수 없는 기록입니다</h2>
                         <p className="pending-text">
                             비교할 기준 영상이 연결되어 있지 않습니다.
@@ -374,21 +379,22 @@ export default function LogDetail() {
                 {/* ===== WAITING: 구간 지정 + 분석 시작 ===== */}
                 {log?.status === 'WAITING' && log?.referenceVideoId && (
                     <div className="trim-intro card mb-3">
-                        <h3>⏱ 분석을 시작하기 전에 안무 시작 지점을 맞춰주세요</h3>
+                        <h3 className="heading-icon"><Timer size={20} /> 분석을 시작하기 전에 안무 시작 지점을 맞춰주세요</h3>
                         <p className="hint-text">
                             두 영상에서 안무가 실제로 시작하는 순간을 표시하면 정렬 정확도가
                             올라갑니다. 끝 지점은 앞뒤 여백이 많을 때만 지정하면 됩니다.
                         </p>
                         {!bothStartsSet && (
-                            <p className="trim-warning">
-                                ⚠️ 시작 지점을 지정하지 않으면 정확도가 떨어질 수 있습니다.
+                            <p className="trim-warning icon-row">
+                                <AlertTriangle size={16} />
+                                시작 지점을 지정하지 않으면 정확도가 떨어질 수 있습니다.
                             </p>
                         )}
 
                         <div className="upload-grid mt-3">
                             {log.referenceVideoId && (
                                 <VideoTrimmer
-                                    label="📹 기준 영상"
+                                    label="기준 영상"
                                     videoSrc={getVideoUrl(log.referenceVideoId)}
                                     startSec={refStart}
                                     endSec={refEnd}
@@ -398,7 +404,7 @@ export default function LogDetail() {
                             )}
                             {log.practiceVideoId && (
                                 <VideoTrimmer
-                                    label="🎬 연습 영상"
+                                    label="연습 영상"
                                     videoSrc={getVideoUrl(log.practiceVideoId)}
                                     startSec={pracStart}
                                     endSec={pracEnd}
@@ -414,7 +420,7 @@ export default function LogDetail() {
                                 onClick={handleStartAnalysis}
                                 disabled={starting}
                             >
-                                {starting ? '시작하는 중...' : (bothStartsSet ? '분석 시작하기 🚀' : '구간 없이 분석 시작하기')}
+                                {starting ? '시작하는 중...' : (bothStartsSet ? '분석 시작하기' : '구간 없이 분석 시작하기')}
                             </button>
                         </div>
                     </div>
@@ -422,17 +428,21 @@ export default function LogDetail() {
 
                 {/* ===== 품질 경고 ===== */}
                 {log?.status === 'COMPLETED' && log.qualityWarning && (
-                    <div className="quality-warning card mb-3">
-                        ⚠️ {log.qualityWarning}
+                    <div className="quality-warning card mb-3 icon-row">
+                        <AlertTriangle size={16} />
+                        {log.qualityWarning}
                     </div>
                 )}
 
                 {/* ===== 구간 지정 여부 안내 (완료 상태) ===== */}
                 {log?.status === 'COMPLETED' && !(log.referenceStartSec != null && log.practiceStartSec != null) && (
-                    <div className="trim-note card mb-3">
-                        💡 안무 시작 지점을 지정하지 않고 분석했습니다.
-                        정확도를 높이고 싶다면 위쪽 영상에서 시작 지점을 지정한 뒤
-                        다시 분석해보세요.
+                    <div className="trim-note card mb-3 icon-row">
+                        <Lightbulb size={16} />
+                        <span>
+                            안무 시작 지점을 지정하지 않고 분석했습니다.
+                            정확도를 높이고 싶다면 위쪽 영상에서 시작 지점을 지정한 뒤
+                            다시 분석해보세요.
+                        </span>
                     </div>
                 )}
 
@@ -452,7 +462,7 @@ export default function LogDetail() {
                 {log?.status === 'COMPLETED' && topIssues.length > 0 && (
                     <div className="issues-section card">
                         <div className="issues-head">
-                            <h3>💬 다듬으면 좋은 동작 {topIssues.length}개</h3>
+                            <h3 className="heading-icon"><MessageSquare size={20} /> 다듬으면 좋은 동작 {topIssues.length}개</h3>
                             <div className="order-toggle">
                                 <button
                                     className={`btn btn-sm ${order === 'time' ? 'btn-secondary' : 'btn-outline'}`}
@@ -541,7 +551,7 @@ export default function LogDetail() {
                 {/* ===== 확인 어려움 구간 ===== */}
                 {log?.status === 'COMPLETED' && unreliableSpans.length > 0 && (
                     <div className="unreliable-section card">
-                        <h3>🤔 확인이 어려웠던 구간</h3>
+                        <h3 className="heading-icon"><HelpCircle size={20} /> 확인이 어려웠던 구간</h3>
                         <p className="hint-text">{log.unreliableNote}</p>
                         <div className="unreliable-list">
                             {unreliableSpans.map((span, idx) => (
@@ -556,7 +566,7 @@ export default function LogDetail() {
                 {/* ===== 품질 지표 ===== */}
                 {log?.status === 'COMPLETED' && quality && (
                     <div className="quality-section card">
-                        <h3>📊 분석 품질</h3>
+                        <h3 className="heading-icon"><Gauge size={20} /> 분석 품질</h3>
                         <div className="quality-grid">
                             <div className="quality-item">
                                 <span className="quality-label">채점된 구간 비율</span>
@@ -585,7 +595,7 @@ export default function LogDetail() {
                     <summary>원본 영상 따로 보기</summary>
                     <div className="videos-section">
                         <div className="video-card">
-                            <h3>📹 기준 영상</h3>
+                            <h3 className="heading-icon"><Video size={18} /> 기준 영상</h3>
                             {log?.referenceVideoId ? (
                                 <video controls preload="none" className="video-player"
                                     src={getVideoUrl(log.referenceVideoId)}>
@@ -594,7 +604,7 @@ export default function LogDetail() {
                             ) : <p className="no-video">기준 영상 정보 없음</p>}
                         </div>
                         <div className="video-card">
-                            <h3>🎬 연습 영상</h3>
+                            <h3 className="heading-icon"><Film size={18} /> 연습 영상</h3>
                             {log?.practiceVideoId ? (
                                 <video controls preload="none" className="video-player"
                                     src={getVideoUrl(log.practiceVideoId)}>
@@ -606,7 +616,7 @@ export default function LogDetail() {
                 </details>
 
                 <div className="detail-info card">
-                    <h3>📋 상세 정보</h3>
+                    <h3 className="heading-icon"><Info size={20} /> 상세 정보</h3>
                     <div className="info-grid">
                         <div className="info-item">
                             <span className="info-label">기록 ID</span>

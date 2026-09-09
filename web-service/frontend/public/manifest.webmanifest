@@ -1,6 +1,6 @@
 {
-  "name": "Dance Analyzer",
-  "short_name": "Dance",
+  "name": "ODO",
+  "short_name": "ODO",
   "description": "기준 영상과 내 연습 영상을 나란히 비교하는 연습 도구",
   "start_url": "/logs",
   "scope": "/",

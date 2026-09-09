@@ -78,8 +78,8 @@ public class PracticeLogController {
     /**
      * 분석 시작.
      *
-     * <p><b>결과를 기다리지 않고 202로 즉시 반환한다.</b> 분석에 실측 1분 50초~
-     * 2분 40초가 걸려 HTTP 요청을 붙잡고 있을 수 없다. 클라이언트는 응답의
+     * <p><b>결과를 기다리지 않고 202로 즉시 반환한다.</b> 분석에 실측 약 2분이
+     * 걸려 HTTP 요청을 붙잡고 있을 수 없다. 클라이언트는 응답의
      * {@code pollUrl}을 폴링해 완료를 확인한다.
      */
     @PostMapping("/practice-logs/{logId}/analyze")

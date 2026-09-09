@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AlertTriangle, Cpu, Film, Target, Timer, UploadCloud, Video } from 'lucide-react';
 import VideoUploader from '../components/VideoUploader';
 import VideoTrimmer from '../components/VideoTrimmer';
 import { uploadVideo, updateTrim, analyzeLog, getVideoUrl } from '../api/client';
@@ -100,7 +101,7 @@ export default function Practice() {
         <div className="practice-page page">
             <div className="container">
                 <div className="page-header">
-                    <h1>🎯 자유 연습</h1>
+                    <h1 className="heading-icon"><Target size={26} /> 자유 연습</h1>
                     <p>
                         기준 영상과 연습 영상을 업로드하고, 안무가 시작하는 지점을
                         <br />
@@ -114,7 +115,7 @@ export default function Practice() {
                     <>
                         <div className="upload-grid">
                             <div className="upload-section">
-                                <h3>📹 기준 영상 (Reference)</h3>
+                                <h3 className="heading-icon"><Video size={20} /> 기준 영상 (Reference)</h3>
                                 <p className="upload-hint">따라 할 원본 안무 영상</p>
                                 <VideoUploader
                                     label="기준 영상 선택"
@@ -124,7 +125,7 @@ export default function Practice() {
                             </div>
 
                             <div className="upload-section">
-                                <h3>🎬 연습 영상 (Practice)</h3>
+                                <h3 className="heading-icon"><Film size={20} /> 연습 영상 (Practice)</h3>
                                 <p className="upload-hint">기준 영상을 보고 따라 춘 영상</p>
                                 <VideoUploader
                                     label="연습 영상 선택"
@@ -149,7 +150,7 @@ export default function Practice() {
                 {step === STEP.UPLOADING && (
                     <div className="analyzing-state">
                         <div className="analyzing-animation">
-                            <span className="analyzing-icon pulse">📤</span>
+                            <span className="analyzing-icon pulse"><UploadCloud size={64} /></span>
                             <h2>영상 업로드 중...</h2>
                             <p>{Math.round(progress * 100)}%</p>
                             <div className="upload-progress">
@@ -165,15 +166,16 @@ export default function Practice() {
                 {step === STEP.TRIM && (
                     <>
                         <div className="trim-intro card mb-3">
-                            <h3>⏱ 안무 시작 지점을 맞춰주세요</h3>
+                            <h3 className="heading-icon"><Timer size={20} /> 안무 시작 지점을 맞춰주세요</h3>
                             <p className="hint-text">
                                 두 영상에서 안무가 실제로 시작하는 순간을 같이 표시하면 정렬
                                 정확도가 크게 올라갑니다. 끝 지점은 앞뒤 여백이 많을 때만
                                 지정하면 됩니다 — 없어도 분석됩니다.
                             </p>
                             {!bothStartsSet && (
-                                <p className="trim-warning">
-                                    ⚠️ 시작 지점을 지정하지 않고 분석하면 두 영상의 녹화 시작
+                                <p className="trim-warning icon-row">
+                                    <AlertTriangle size={16} />
+                                    시작 지점을 지정하지 않고 분석하면 두 영상의 녹화 시작
                                     시점 차이가 그대로 남아 정확도가 떨어집니다.
                                 </p>
                             )}
@@ -181,7 +183,7 @@ export default function Practice() {
 
                         <div className="upload-grid">
                             <VideoTrimmer
-                                label="📹 기준 영상"
+                                label="기준 영상"
                                 videoSrc={getVideoUrl(referenceVideoId)}
                                 startSec={refStart}
                                 endSec={refEnd}
@@ -189,7 +191,7 @@ export default function Practice() {
                                 onChangeEnd={setRefEnd}
                             />
                             <VideoTrimmer
-                                label="🎬 연습 영상"
+                                label="연습 영상"
                                 videoSrc={getVideoUrl(practiceVideoId)}
                                 startSec={pracStart}
                                 endSec={pracEnd}
@@ -203,7 +205,7 @@ export default function Practice() {
                                 className="btn btn-primary btn-lg"
                                 onClick={handleStartAnalysis}
                             >
-                                {bothStartsSet ? '분석 시작하기 🚀' : '구간 없이 분석 시작하기'}
+                                {bothStartsSet ? '분석 시작하기' : '구간 없이 분석 시작하기'}
                             </button>
                         </div>
                     </>
@@ -212,7 +214,7 @@ export default function Practice() {
                 {step === STEP.STARTING && (
                     <div className="analyzing-state">
                         <div className="analyzing-animation">
-                            <span className="analyzing-icon pulse">🤖</span>
+                            <span className="analyzing-icon pulse"><Cpu size={64} /></span>
                             <h2>분석을 시작하는 중...</h2>
                             <p>곧 결과 페이지로 이동합니다</p>
                             <div className="spinner mt-3"></div>

@@ -21,12 +21,7 @@
 .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
     text-decoration: none;
-}
-
-.logo-icon {
-    font-size: 1.8rem;
 }
 
 .logo-text {
@@ -90,8 +85,65 @@
     gap: 8px;
 }
 
+.nav-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.nav-toggle:hover {
+    background: var(--bg-card);
+    border-color: var(--accent-cyan);
+}
+
 @media (max-width: 768px) {
+    .nav-toggle {
+        display: inline-flex;
+    }
+
+    /* 평시엔 숨어 있다가, 열리면 헤더 바로 아래에 유리 카드 패널로 펼쳐진다 */
     .nav {
         display: none;
+        position: absolute;
+        top: var(--header-height);
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        gap: 2px;
+        padding: 8px;
+        background: rgba(10, 10, 15, 0.97);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav.open {
+        display: flex;
+    }
+
+    .nav-link {
+        padding: 14px 16px;
+    }
+
+    .user-team {
+        display: none;
+    }
+
+    .user-name {
+        max-width: 96px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .header-actions {
+        gap: 8px;
     }
 }

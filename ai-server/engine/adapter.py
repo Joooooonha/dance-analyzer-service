@@ -30,14 +30,24 @@ from engine.video_utils import apply_rotation, open_video
 
 
 def extract_sequence(video_path, model_path=None, conf_thresh=0.5,
-                     start_sec=None, end_sec=None):
+                     start_sec=None, end_sec=None, stride=1):
     """
     영상에서 포즈 시퀀스를 뽑는다.
 
     start_sec / end_sec: 안무 구간 (TASKS.md D23).
         반환 시퀀스의 프레임 인덱스는 **잘라낸 구간 기준(0부터)**이며,
-        원본 기준 인덱스는 `meta['source_start_frame']`을 더해 얻는다.
+        원본 기준 시각은 `meta['source_start_sec']`을 더해 얻는다.
+
+    stride: 몇 프레임마다 포즈를 추정할지. 1이면 모든 프레임(기본).
+        분석 시간의 89%가 포즈 추정이라 여기가 유일하게 의미 있는 손잡이다.
+        디코딩은 건너뛸 수 없다(코덱상 순차로 읽어야 한다) — 비싼 추정만 건너뛴다.
+
+        **반환 시퀀스의 fps는 `원본 fps / stride`가 된다.** 그래야 DTW 밴드 폭
+        (초 단위)과 시간 계산이 그대로 맞는다. 프레임 인덱스는 stride 단위이므로
+        원본 시각은 `frame / seq.fps + meta['source_start_sec']`로 구한다
+        — 프레임 수를 더하는 식으로 계산하면 stride에서 어긋난다.
     """
+    stride = max(1, int(stride))
     cap, fps, rotation = open_video(video_path)
     H = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     W = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -65,16 +75,21 @@ def extract_sequence(video_path, model_path=None, conf_thresh=0.5,
                 continue
             if end_frame is not None and idx >= end_frame:
                 break
+            # 추정을 건너뛸 프레임. 디코딩은 이미 끝났지만 그건 싸다.
+            if (idx - start_frame) % stride:
+                continue
 
             frame = apply_rotation(frame, rotation)
             raw.append(extractor.extract(frame))
     finally:
         cap.release()
 
-    seq = build_sequence(raw, NUM_KEYPOINTS, fps, (H, W),
+    seq = build_sequence(raw, NUM_KEYPOINTS, fps / stride, (H, W),
                          conf_thresh=conf_thresh, source=video_path)
     seq.meta['source_start_frame'] = start_frame
     seq.meta['source_start_sec'] = start_frame / fps if fps else 0.0
+    seq.meta['stride'] = stride
+    seq.meta['source_fps'] = fps
     seq.meta['rotation'] = rotation
     seq.meta['backend'] = 'yolo'
     return seq
@@ -113,7 +128,7 @@ def extract_sequence(video_path, model_path=None, conf_thresh=0.5,
 # 비용이 거의 없으므로 안전한 쪽을 택한다.
 
 
-def _extract_entry(video_path, model_path, conf_thresh, start_sec, end_sec, cwd):
+def _extract_entry(video_path, model_path, conf_thresh, start_sec, end_sec, cwd, stride):
     """자식 프로세스 진입점. `PoseSequence`를 만들 재료만 돌려준다.
 
     spawn 방식이라 자식은 모듈을 새로 import한다. 그래서 부모의 작업 디렉터리와
@@ -123,13 +138,13 @@ def _extract_entry(video_path, model_path, conf_thresh, start_sec, end_sec, cwd)
     if cwd not in sys.path:
         sys.path.insert(0, cwd)
 
-    seq = extract_sequence(video_path, model_path, conf_thresh, start_sec, end_sec)
+    seq = extract_sequence(video_path, model_path, conf_thresh, start_sec, end_sec, stride)
     # PoseSequence를 통째로 피클하지 않고 배열만 넘긴다(의존성 최소화).
     return seq.coords, seq.conf, seq.valid, seq.fps, seq.num_keypoints, seq.meta
 
 
 def extract_sequence_isolated(video_path, model_path=None, conf_thresh=0.5,
-                              start_sec=None, end_sec=None):
+                              start_sec=None, end_sec=None, stride=1):
     """
     `extract_sequence`를 **별도 프로세스에서** 실행한다. 결과는 동일하되
     재현 가능하다(위 주석 참조).
@@ -138,7 +153,7 @@ def extract_sequence_isolated(video_path, model_path=None, conf_thresh=0.5,
     재현성은 잃지만 분석 자체는 되는 편이 낫다.
     """
     cwd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    args = (video_path, model_path, conf_thresh, start_sec, end_sec, cwd)
+    args = (video_path, model_path, conf_thresh, start_sec, end_sec, cwd, stride)
 
     try:
         # fork가 아니라 spawn을 쓴다. 이미 초기화된 torch 상태를 물려받으면
@@ -150,7 +165,7 @@ def extract_sequence_isolated(video_path, model_path=None, conf_thresh=0.5,
     except Exception as e:
         print(f"[경고] 프로세스 격리 추출 실패 → 같은 프로세스에서 처리합니다 "
               f"(재현성이 보장되지 않습니다): {e}")
-        return extract_sequence(video_path, model_path, conf_thresh, start_sec, end_sec)
+        return extract_sequence(video_path, model_path, conf_thresh, start_sec, end_sec, stride)
 
     return PoseSequence(coords=coords, conf=conf, valid=valid, fps=fps,
                         num_keypoints=k, source=video_path, meta=meta)

@@ -1,5 +1,6 @@
 import './VideoUploader.css';
 import { useState, useRef } from 'react';
+import { FileVideo, Upload } from 'lucide-react';
 
 export default function VideoUploader({
     label,
@@ -57,7 +58,7 @@ export default function VideoUploader({
 
             {selectedFile ? (
                 <div className="file-preview">
-                    <span className="file-icon">🎬</span>
+                    <span className="file-icon"><FileVideo size={40} /></span>
                     <div className="file-info">
                         <span className="file-name">{selectedFile.name}</span>
                         <span className="file-size">
@@ -76,7 +77,7 @@ export default function VideoUploader({
                 </div>
             ) : (
                 <div className="upload-prompt">
-                    <span className="upload-icon">📹</span>
+                    <span className="upload-icon"><Upload size={48} color="var(--accent-cyan)" /></span>
                     <p className="upload-text">
                         <strong>{label}</strong>
                         <br />

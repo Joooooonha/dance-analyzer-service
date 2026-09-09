@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Calendar, ClipboardList, Crown, Inbox, Plus, Users } from 'lucide-react';
 import { getAssignments, getCurrentUser } from '../api/client';
 import './Assignments.css';
 
@@ -58,12 +59,12 @@ export default function Assignments() {
             <div className="container">
                 <div className="page-header flex-between">
                     <div>
-                        <h1>📋 숙제</h1>
+                        <h1 className="heading-icon"><ClipboardList size={26} /> 숙제</h1>
                         <p>팀에서 부여한 연습 숙제 목록입니다</p>
                     </div>
                     {user?.isLeader && (
                         <Link to="/assignments/new" className="btn btn-primary">
-                            + 숙제 생성
+                            <Plus size={16} /> 숙제 생성
                         </Link>
                     )}
                 </div>
@@ -72,7 +73,7 @@ export default function Assignments() {
 
                 {!user?.teamName ? (
                     <div className="empty-state">
-                        <span className="empty-state-icon">👥</span>
+                        <span className="empty-state-icon"><Users size={48} /></span>
                         <h3 className="empty-state-title">팀에 소속되어 있지 않습니다</h3>
                         <p className="empty-state-text">
                             팀에 가입하면 팀 숙제를 확인할 수 있습니다
@@ -80,7 +81,7 @@ export default function Assignments() {
                     </div>
                 ) : assignments.length === 0 ? (
                     <div className="empty-state">
-                        <span className="empty-state-icon">📭</span>
+                        <span className="empty-state-icon"><Inbox size={48} /></span>
                         <h3 className="empty-state-title">아직 숙제가 없습니다</h3>
                         <p className="empty-state-text">
                             {user?.isLeader
@@ -105,8 +106,8 @@ export default function Assignments() {
                                         </span>
                                     </div>
                                     <div className="assignment-meta">
-                                        <span>👑 {assignment.writerName}</span>
-                                        <span>📅 {formatDate(assignment.dueDate)} 마감</span>
+                                        <span className="icon-inline"><Crown size={14} /> {assignment.writerName}</span>
+                                        <span className="icon-inline"><Calendar size={14} /> {formatDate(assignment.dueDate)} 마감</span>
                                     </div>
                                     <div className="assignment-arrow">→</div>
                                 </Link>

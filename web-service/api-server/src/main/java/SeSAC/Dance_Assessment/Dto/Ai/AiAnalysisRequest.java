@@ -75,7 +75,8 @@ public class AiAnalysisRequest {
 
     /**
      * 정렬된 나란히 비교 영상 생성.
-     * <p>기본 false — 실측상 이것 때문에 소요가 1분 50초 → 2분 40초로 늘어난다.
+     * <p><b>항상 false다.</b> 렌더링에 60~90초가 더 드는데, 응답의 sync_map으로
+     * 화면이 원본 두 개를 맞춰 돌릴 수 있어 결과물이 오히려 낫다.
      */
     @JsonProperty("generate_video")
     @Builder.Default

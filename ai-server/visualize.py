@@ -234,11 +234,14 @@ def render_comparison_video(reference_video, practice_video, ref_seq, prac_seq,
     """
     u_off = prac_seq.meta.get('source_start_frame', 0)
     s_off = ref_seq.meta.get('source_start_frame', 0)
+    # 프레임을 솎아 추출했으면 시퀀스 인덱스 1개가 원본 stride개에 해당한다.
+    u_stride = prac_seq.meta.get('stride', 1)
+    s_stride = ref_seq.meta.get('stride', 1)
 
     # 연습 프레임 → 기준 프레임 (여러 개면 첫 대응). 둘 다 원본 기준 인덱스.
     u2s = {}
     for u, s in path_pairs:
-        u2s.setdefault(u + u_off, s + s_off)
+        u2s.setdefault(u * u_stride + u_off, s * s_stride + s_off)
     if not u2s:
         return None
 
@@ -287,9 +290,9 @@ def render_comparison_video(reference_video, practice_video, ref_seq, prac_seq,
             rimg = apply_rotation(ref_frame, ref_rot).copy()
             pimg = apply_rotation(pf, prac_rot).copy()
 
-            _draw_skeleton(rimg, _pixels(ref_seq, want_ref - s_off),
+            _draw_skeleton(rimg, _pixels(ref_seq, (want_ref - s_off) // s_stride),
                            base_color=COLOR_REF)
-            _draw_skeleton(pimg, _pixels(prac_seq, u_idx - u_off),
+            _draw_skeleton(pimg, _pixels(prac_seq, (u_idx - u_off) // u_stride),
                            bad_by_frame.get(u_idx, []))
             _label(rimg, f'REF {(want_ref / max(ref_seq.fps, 1)):.2f}s')
             _label(pimg, f'YOU {(u_idx / max(prac_fps, 1)):.2f}s')

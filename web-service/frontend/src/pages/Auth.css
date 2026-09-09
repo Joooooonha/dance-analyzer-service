@@ -22,8 +22,9 @@
 }
 
 .auth-icon {
-    font-size: 3rem;
-    display: block;
+    display: flex;
+    justify-content: center;
+    color: var(--accent-pink);
     margin-bottom: 16px;
 }
 

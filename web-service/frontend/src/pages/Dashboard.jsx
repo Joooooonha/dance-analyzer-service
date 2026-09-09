@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ClipboardList, History, Plus, Target } from 'lucide-react';
 import { getCurrentUser } from '../api/client';
 import './Dashboard.css';
 
@@ -7,14 +8,14 @@ export default function Dashboard() {
 
     const features = [
         {
-            icon: '🎯',
+            icon: Target,
             title: '자유 연습',
             description: '기준 영상과 연습 영상을 업로드하여 AI 분석을 받아보세요',
             link: '/practice',
             color: 'pink'
         },
         {
-            icon: '📋',
+            icon: ClipboardList,
             title: '숙제',
             description: user?.teamName
                 ? '팀에서 부여한 숙제를 확인하고 제출하세요'
@@ -23,7 +24,7 @@ export default function Dashboard() {
             color: 'cyan'
         },
         {
-            icon: '📊',
+            icon: History,
             title: '내 기록',
             description: '지금까지의 연습 기록과 분석 결과를 확인하세요',
             link: '/logs',
@@ -33,7 +34,7 @@ export default function Dashboard() {
 
     const leaderFeatures = [
         {
-            icon: '➕',
+            icon: Plus,
             title: '숙제 생성',
             description: '팀원들에게 새로운 연습 숙제를 부여하세요',
             link: '/assignments/new',
@@ -45,7 +46,7 @@ export default function Dashboard() {
         <div className="dashboard page">
             <div className="container">
                 <div className="dashboard-welcome">
-                    <h1>안녕하세요, {user?.nickname || '댄서'}님! 👋</h1>
+                    <h1>안녕하세요, {user?.nickname || '댄서'}님!</h1>
                     <p>오늘도 열심히 춤 연습해볼까요?</p>
                 </div>
 
@@ -58,7 +59,7 @@ export default function Dashboard() {
                                 to={feature.link}
                                 className={`feature-card feature-${feature.color}`}
                             >
-                                <span className="feature-icon">{feature.icon}</span>
+                                <span className="feature-icon"><feature.icon size={32} /></span>
                                 <h3 className="feature-title">{feature.title}</h3>
                                 <p className="feature-desc">{feature.description}</p>
                                 <span className="feature-arrow">→</span>
@@ -77,7 +78,7 @@ export default function Dashboard() {
                                     to={feature.link}
                                     className={`feature-card feature-${feature.color}`}
                                 >
-                                    <span className="feature-icon">{feature.icon}</span>
+                                    <span className="feature-icon"><feature.icon size={32} /></span>
                                     <h3 className="feature-title">{feature.title}</h3>
                                     <p className="feature-desc">{feature.description}</p>
                                     <span className="feature-arrow">→</span>
