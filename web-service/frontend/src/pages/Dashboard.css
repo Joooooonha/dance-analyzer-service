@@ -1,170 +1,283 @@
-.dashboard {
+/*
+ * 안무 카운트보드 — Dashboard 전용 세계관.
+ * 앱 전체는 아직 어두운 네온이지만, 이 화면은 새 방향의 첫 표현이다
+ * (surface brief: web-service-frontend-src-pages-dashboard-jsx).
+ * 다른 화면으로의 확장은 별도 작업.
+ */
+
+.dashboard-countboard {
+    --cb-paper: #f5f1e8;
+    --cb-paper-card: #fbf9f3;
+    --cb-ink: #2c2a26;
+    --cb-ink-secondary: rgba(44, 42, 38, 0.68);
+    --cb-ink-muted: rgba(44, 42, 38, 0.44);
+    --cb-rule: rgba(44, 42, 38, 0.16);
+    --cb-highlight: #f5e211;
+    --cb-highlight-soft: rgba(245, 226, 17, 0.4);
+    /* hover 배경처럼 다른 배경 위에 겹치지 않고 그 자체로 불투명해야 하는
+       자리용 — 반투명 값을 배경색으로 그대로 쓰면 뒤에 깔린 격자선과
+       탁하게 섞인다. 대비 재계산: 4.64:1(ink-secondary 기준), AA 통과. */
+    --cb-highlight-wash: #f8f0a8;
+    /* 시안=기준 기능색은 유지하되, 크림 배경에서 4.5:1을 내도록 살짝 눌렀다 —
+       네온 배경 전용으로 튜닝된 원래 값은 여기선 흐리다. 핑크=나의 시도는
+       이 화면에 기준/연습 영상 배지가 없어 아직 쓸 자리가 없다 — 비교
+       화면으로 세계관이 확장될 때 같은 방식으로 다시 다룬다. */
+    --cb-cyan: #026a7d;
+
+    /* Noto Sans KR이 한글을 그린다 — Inter는 라틴·숫자에서만 실제로 쓰인다
+       (한글 글리프가 없어 원래도 조용히 폴백되던 자리). */
+    font-family: 'Noto Sans KR', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--cb-paper);
+    /* 그리드 노트풍 헤어라인 — 27px 간격의 가는 가로줄. 텍스트 아래 깔리는
+       평균 밝기 변화가 미미해 본문 대비율에는 영향이 없다(줄마다 1px, 16% 불투명도). */
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 27px,
+        var(--cb-rule) 27px,
+        var(--cb-rule) 28px
+    );
+    color: var(--cb-ink);
     padding-top: 40px;
+    padding-bottom: 60px;
 }
 
-.dashboard-welcome {
-    text-align: center;
-    margin-bottom: 48px;
+.dashboard-countboard * {
+    box-sizing: border-box;
 }
 
-.dashboard-welcome h1 {
-    font-size: 2rem;
-    margin-bottom: 8px;
+.dashboard-countboard ::selection {
+    background: var(--cb-highlight);
+    color: var(--cb-ink);
 }
 
-.dashboard-welcome p {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    margin: 0;
+/* ========== 헤더 ========== */
+.cb-header {
+    margin-bottom: 28px;
 }
 
-.dashboard-section {
-    margin-bottom: 48px;
+.cb-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--cb-ink);
+    background: none;
+    -webkit-text-fill-color: var(--cb-ink);
 }
 
-.dashboard-section h2 {
-    font-size: 1.3rem;
-    margin-bottom: 20px;
-    color: var(--text-primary);
+/* ========== 카운트 요약 스트립 ========== */
+.cb-strip {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    background: var(--cb-paper-card);
+    border: 1px solid var(--cb-rule);
+    border-radius: 4px;
+    min-height: 76px;
 }
 
-.feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.feature-card {
+.cb-strip-number {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--cb-ink);
     position: relative;
-    display: block;
-    padding: 28px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-lg);
-    text-decoration: none;
-    transition: var(--transition-normal);
-    overflow: hidden;
 }
 
-.feature-card::before {
+/* 형광펜 스와이프 — 값이 자리 잡을 때 밑에서 한 번 칠해지는 신호 동작 */
+.cb-strip-has-count .cb-strip-number::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--accent-gradient);
-    opacity: 0;
-    transition: var(--transition-normal);
+    left: -2px;
+    right: -2px;
+    bottom: 0.08em;
+    height: 0.34em;
+    background: var(--cb-highlight-soft);
+    z-index: -1;
+    animation: cb-highlight-sweep 0.6s ease-out both;
 }
 
-.feature-card:hover {
-    transform: translateY(-4px);
-    border-color: transparent;
-    box-shadow: var(--shadow-glow);
+@keyframes cb-highlight-sweep {
+    from { transform: scaleX(0); transform-origin: left; }
+    to { transform: scaleX(1); transform-origin: left; }
 }
 
-.feature-card:hover::before {
-    opacity: 1;
-}
-
-.feature-pink:hover {
-    box-shadow: 0 0 30px rgba(255, 45, 117, 0.3);
-}
-
-.feature-cyan:hover {
-    box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
-}
-
-.feature-purple:hover {
-    box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
-}
-
-.feature-icon {
-    display: block;
-    width: fit-content;
-    margin-bottom: 16px;
-    color: var(--text-secondary);
-}
-
-.feature-pink .feature-icon {
-    color: var(--accent-pink);
-}
-
-.feature-cyan .feature-icon {
-    color: var(--accent-cyan);
-}
-
-.feature-purple .feature-icon {
-    color: var(--accent-purple);
-}
-
-.feature-title {
-    font-size: 1.2rem;
-    color: var(--text-primary);
-    margin-bottom: 8px;
-}
-
-.feature-desc {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin: 0;
-    line-height: 1.5;
-}
-
-.feature-arrow {
-    position: absolute;
-    bottom: 24px;
-    right: 24px;
-    font-size: 1.5rem;
-    color: var(--text-muted);
-    transition: var(--transition-fast);
-}
-
-.feature-card:hover .feature-arrow {
-    color: var(--accent-pink);
-    transform: translateX(4px);
-}
-
-/* Quick Start */
-.quick-start {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.quick-start-step {
+.cb-strip-label {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 24px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-lg);
+    flex-direction: column;
+    gap: 4px;
+    color: var(--cb-ink-secondary);
+    font-size: 0.95rem;
 }
 
-.step-number {
+.cb-strip-status {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: var(--accent-gradient);
-    border-radius: 50%;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: white;
-    flex-shrink: 0;
-}
-
-.step-content h4 {
-    color: var(--text-primary);
-    margin: 0 0 4px 0;
+    gap: 12px;
+    color: var(--cb-ink-secondary);
     font-size: 1rem;
 }
 
-.step-content p {
-    color: var(--text-secondary);
-    margin: 0;
+.cb-strip-link {
+    color: var(--cb-ink);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--cb-highlight);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+}
+
+.cb-strip-link:hover {
+    color: var(--cb-cyan);
+}
+
+/* ========== 카운트보드 칸 — 카드 그리드가 아니라 하나의 판 ==========
+   개별 카드에 각자 테두리·라운드·그림자를 주는 대신, 판 하나를 두르고
+   칸 사이는 1px 헤어라인으로만 나눈다 — grid gap을 잉크색으로 채우고
+   칸 배경을 종이색으로 덮는 트릭이라, 열 개수가 반응형으로 바뀌어도
+   실제로 인접한 자리에만 선이 생긴다. */
+.cb-cells {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--cb-rule);
+    border: 1px solid var(--cb-rule);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.cb-cells-leader {
+    grid-template-columns: 1fr;
+    max-width: 340px;
+}
+
+.cb-cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 22px 24px 24px;
+    background: var(--cb-paper-card);
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.15s ease;
+}
+
+.cb-cell:hover,
+.cb-cell:focus-visible {
+    /* 그림자나 들어올림이 아니라, 판 위에 형광펜을 한 번 덮어씌운 듯한
+       배경 변화로 반응한다 — 세계관의 Response-Only 신호를 그림자 없이 낸다 */
+    background: var(--cb-highlight-wash);
+}
+
+.cb-cell:focus-visible {
+    outline: 2px solid var(--cb-cyan);
+    outline-offset: -2px;
+}
+
+.cb-cell-number {
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    /* ink-muted(44%)는 이 크기 텍스트에서 ~2.5:1로 AA(4.5:1)를 못 채운다 —
+       테두리 같은 비-텍스트 용도로만 남겨두고, 텍스트는 secondary(~4.8:1)를 쓴다. */
+    color: var(--cb-ink-secondary);
+}
+
+.cb-cell-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--cb-ink);
+    position: relative;
+    width: fit-content;
+}
+
+.cb-cell:hover .cb-cell-title::after,
+.cb-cell:focus-visible .cb-cell-title::after {
+    content: '';
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    bottom: 2px;
+    height: 0.4em;
+    background: var(--cb-highlight-soft);
+    z-index: -1;
+    animation: cb-highlight-sweep 0.25s ease-out both;
+}
+
+.cb-cell-desc {
+    color: var(--cb-ink-secondary);
     font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* ========== 첫 방문자 가이드 (기록이 하나도 없을 때만) ========== */
+.cb-guide {
+    margin-top: 28px;
+    padding: 24px;
+    background: var(--cb-paper-card);
+    border: 1px dashed var(--cb-rule);
+    border-radius: 4px;
+}
+
+.cb-guide h2 {
+    /* 손글씨풍 라벨 — 이 세계관에서 유일하게, 절제해서 쓰는 자리.
+       나머지 전부와 다른 실제 서체(나눔손글씨 펜)를 쓴다 — 같은 서체에
+       기울임만 준 가짜 손글씨가 아니다. */
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--cb-ink);
+    margin-bottom: 10px;
+    transform: rotate(-1deg);
+    display: inline-block;
+}
+
+.cb-guide-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 20px;
+    margin-bottom: 18px;
+    color: var(--cb-ink-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.cb-guide-list b {
+    color: var(--cb-ink);
+}
+
+.cb-guide-cta {
+    display: inline-block;
+    padding: 10px 20px;
+    background: var(--cb-ink);
+    color: var(--cb-paper);
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+}
+
+.cb-guide-cta:hover {
+    opacity: 0.82;
+}
+
+@media (max-width: 480px) {
+    .cb-strip {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .cb-strip-number {
+        font-size: 2.25rem;
+    }
 }

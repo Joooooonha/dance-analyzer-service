@@ -417,3 +417,6 @@ ai-server/testdata/
 # Claude Code 로컬 설정·설치된 스킬. 프로젝트 소스가 아니고
 # skills/ 안에는 12MB짜리 실행 바이너리도 들어 있다.
 .claude/
+
+# 디자인 스킬의 작업 상태. 산출물인 DESIGN.md만 커밋한다.
+.impeccable/
