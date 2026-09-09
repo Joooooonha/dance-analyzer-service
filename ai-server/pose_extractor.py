@@ -1,3 +1,27 @@
+"""[사용 안 함 — YOLO-pose로 교체됨]
+
+`engine/pose_yolo.py` + `engine/adapter.py`가 대체한다. 이 파일은 참고용으로만
+남겨두며 `main.py`는 더 이상 import하지 않는다.
+
+교체 이유:
+
+1. **linux aarch64 휠이 없다.** 분석 서버가 Fedora Asahi Remix(aarch64)라
+   MediaPipe 0.10.x는 설치 자체가 되지 않는다. 1.0.1에는 aarch64 휠이 있지만
+   0.10 → 1.0 메이저 업그레이드라 Tasks API 호환성이 불확실하다.
+2. **품질이 더 낮았다.** 뼈 안정성 실측에서 MediaPipe Full이 5개 중 꼴찌
+   (0.0189 vs yolov8n 0.0143, yolo11x 0.0127).
+3. **검증 수치가 서비스에 적용되지 않았다.** 정렬 정확도(±5프레임 내 71.8%→81.6%)를
+   측정할 때 쓴 백엔드가 YOLO인데 서비스는 MediaPipe로 돌고 있어서, 문서의 수치가
+   서비스의 수치라고 말할 수 없는 상태였다. 같은 백엔드를 쓰면서 해소됐다.
+
+실측 비교 (natural1, 동일 구간):
+
+| | MediaPipe Full | YOLO(yolov8n) |
+|---|---|---|
+| 평균 오차 | 28.0도 | **24.9도** |
+| 채점률 | 81.7% | **83.6%** |
+| 소요 | 약 50초 | **38초** |
+"""
 """
 포즈 추출 모듈 (Pose Extractor)
 MediaPipe Tasks API (PoseLandmarker)를 사용하여 영상에서 33개 관절 랜드마크 추출

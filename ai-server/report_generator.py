@@ -1,3 +1,11 @@
+"""[사용 안 함 — v3.0에서 visualize.py로 대체됨]
+
+대체된 이유: **DTW 정렬 결과를 쓰지 않았다.**
+`ref_frame = self._get_frame(ref_cap, frame_idx)` / `prac_frame =
+self._get_frame(prac_cap, frame_idx)` 로 **같은 인덱스**의 프레임을 짝지어
+보여준다. 두 영상의 시작 시점이 3초만 어긋나도 화면의 두 사람은 전혀 다른
+동작을 하고 있게 된다. 정렬을 하는 이유 자체가 사라지는 결함이다.
+"""
 """
 결과 보고서 생성 모듈 (Report Generator)
 상위 N개 오류 프레임에 대해 Reference vs Practice 비교 이미지 생성
