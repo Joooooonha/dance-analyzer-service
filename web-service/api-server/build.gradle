@@ -21,8 +21,17 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// 개발·테스트용 인메모리 DB
 	runtimeOnly 'com.h2database:h2'
-	testImplementation 'org.springframework.boot:spring-boot-starter-web-test'
+	// 운영용. 없으면 prod 프로파일에서 "Cannot load driver class:
+	// org.postgresql.Driver"로 기동 자체가 실패한다.
+	runtimeOnly 'org.postgresql:postgresql'
+	// 'spring-boot-starter-web-test'로 적혀 있었는데 그런 아티팩트는 없어서
+	// 테스트가 아예 컴파일되지 않는 상태였다 (Could not find ...:spring-boot-starter-web-test:).
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// Gradle 9는 런처를 테스트 런타임 클래스패스에서 직접 찾는다. 없으면
+	// "Failed to load JUnit Platform"으로 테스트가 시작조차 못 한다.
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
@@ -30,6 +39,33 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// 인증. 지금까지는 X-User-Id 헤더 하나로 사용자를 판별해서,
+	// 헤더 값만 바꾸면 남의 계정이 되는 상태였다.
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// JWT. jjwt는 api/impl/jackson 세 개를 나눠 넣어야 한다
+	// (impl과 jackson은 런타임에만 필요).
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// R2는 S3 호환 API라 AWS SDK를 그대로 쓴다.
+	// presigner(S3Presigner)는 s3 아티팩트 안에 들어 있다 —
+	// 's3-presigner'라는 별도 아티팩트는 존재하지 않는다.
+	// Web Push (VAPID). 브라우저를 닫아도 알림이 뜨게 하려면 이것뿐이다 —
+	// Notification API는 페이지가 열려 있을 때만 동작한다.
+	// iOS는 홈 화면에 추가한 PWA에서만 웹 푸시를 허용한다(그래서 manifest도 있다).
+	implementation 'nl.martijndwars:web-push:5.1.1'
+	// web-push가 서명에 쓴다. 명시하지 않으면 버전이 어긋나 런타임에 깨진다.
+	implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
+	implementation 'org.bouncycastle:bcpkix-jdk18on:1.78.1'
+
+	implementation platform('software.amazon.awssdk:bom:2.29.29')
+	implementation 'software.amazon.awssdk:s3'
 }
 
 

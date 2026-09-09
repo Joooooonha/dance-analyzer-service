@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# 비밀키 (git 제외)
+src/main/resources/application-secret.properties
+storage-data/
