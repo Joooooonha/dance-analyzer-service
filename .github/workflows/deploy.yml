@@ -25,6 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
+    # **`if:`에서는 `secrets` 컨텍스트를 쓸 수 없다.** 그렇게 썼더니 워크플로 파싱
+    # 자체가 실패했다("Unrecognized named-value: 'secrets'"). `env`는 `if`에서
+    # 쓸 수 있으므로 여기로 한 번 옮겨서 판단한다.
+    env:
+      TS_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -100,7 +106,7 @@ jobs:
       # 시크릿을 넣지 않으면 이 단계를 건너뛰고 공개 IP로 직접 붙는다 —
       # 보안 그룹을 열어 쓰는 쪽을 택했다면 그대로 동작한다.
       - name: Tailscale 연결
-        if: ${{ secrets.TS_OAUTH_CLIENT_ID != '' }}
+        if: env.TS_CLIENT_ID != ''
         uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}

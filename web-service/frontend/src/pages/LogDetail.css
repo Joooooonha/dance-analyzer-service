@@ -101,9 +101,13 @@
     font-size: 0.9rem;
 }
 
+/* JSX에서 이미 className="quality-warning card"로 카드 배경/테두리를 받는다.
+   여기서 배경·보더를 다시 주면 .countboard .card(특이도가 더 높음)에 밀려
+   무시된다 — 대신 경고 의미는 텍스트·아이콘 색만으로 전달한다(icon-row의
+   AlertTriangle이 currentColor로 이 색을 그대로 받는다). 사이드 보더 액센트는
+   craft-floor가 금지하는 패턴이라 쓰지 않는다. */
 .quality-warning {
     color: var(--cb-warning);
-    border-left: 3px solid var(--cb-warning);
     font-size: 0.9rem;
 }
 
