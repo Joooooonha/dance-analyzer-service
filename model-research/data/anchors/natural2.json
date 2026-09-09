@@ -1,0 +1,139 @@
+{
+  "pair_name": "natural2",
+  "pro_video": "data/videos/natural2/pro_dancer.MP4",
+  "user_video": "data/videos/natural2/user_dancer.MOV",
+  "pro_fps": 24.0,
+  "user_fps": 29.984544049459043,
+  "pro_frame_count": 440,
+  "user_frame_count": 388,
+  "anchors": [
+    {
+      "id": 1,
+      "pro_frame": 195,
+      "user_frame": 111,
+      "pro_t": 8.125,
+      "user_t": 3.7019,
+      "label": ""
+    },
+    {
+      "id": 2,
+      "pro_frame": 211,
+      "user_frame": 122,
+      "pro_t": 8.7917,
+      "user_t": 4.0688,
+      "label": ""
+    },
+    {
+      "id": 3,
+      "pro_frame": 217,
+      "user_frame": 130,
+      "pro_t": 9.0417,
+      "user_t": 4.3356,
+      "label": ""
+    },
+    {
+      "id": 4,
+      "pro_frame": 224,
+      "user_frame": 137,
+      "pro_t": 9.3333,
+      "user_t": 4.569,
+      "label": ""
+    },
+    {
+      "id": 5,
+      "pro_frame": 231,
+      "user_frame": 146,
+      "pro_t": 9.625,
+      "user_t": 4.8692,
+      "label": ""
+    },
+    {
+      "id": 6,
+      "pro_frame": 243,
+      "user_frame": 160,
+      "pro_t": 10.125,
+      "user_t": 5.3361,
+      "label": ""
+    },
+    {
+      "id": 7,
+      "pro_frame": 253,
+      "user_frame": 176,
+      "pro_t": 10.5417,
+      "user_t": 5.8697,
+      "label": ""
+    },
+    {
+      "id": 8,
+      "pro_frame": 264,
+      "user_frame": 184,
+      "pro_t": 11.0,
+      "user_t": 6.1365,
+      "label": ""
+    },
+    {
+      "id": 9,
+      "pro_frame": 272,
+      "user_frame": 192,
+      "pro_t": 11.3333,
+      "user_t": 6.4033,
+      "label": ""
+    },
+    {
+      "id": 10,
+      "pro_frame": 277,
+      "user_frame": 203,
+      "pro_t": 11.5417,
+      "user_t": 6.7702,
+      "label": ""
+    },
+    {
+      "id": 11,
+      "pro_frame": 295,
+      "user_frame": 226,
+      "pro_t": 12.2917,
+      "user_t": 7.5372,
+      "label": ""
+    },
+    {
+      "id": 12,
+      "pro_frame": 316,
+      "user_frame": 250,
+      "pro_t": 13.1667,
+      "user_t": 8.3376,
+      "label": ""
+    },
+    {
+      "id": 13,
+      "pro_frame": 339,
+      "user_frame": 289,
+      "pro_t": 14.125,
+      "user_t": 9.6383,
+      "label": ""
+    },
+    {
+      "id": 14,
+      "pro_frame": 364,
+      "user_frame": 311,
+      "pro_t": 15.1667,
+      "user_t": 10.372,
+      "label": ""
+    },
+    {
+      "id": 15,
+      "pro_frame": 378,
+      "user_frame": 331,
+      "pro_t": 15.75,
+      "user_t": 11.039,
+      "label": ""
+    }
+  ],
+  "occlusion_ranges": [
+    {
+      "video": "pro",
+      "start_frame": 238,
+      "end_frame": 289,
+      "note": ""
+    }
+  ]
+}

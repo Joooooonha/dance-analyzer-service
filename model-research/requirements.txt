@@ -1,0 +1,31 @@
+# Python 3.10 기준
+# (원본 개발 환경의 설치 버전을 그대로 고정)
+
+mediapipe==0.10.21
+ultralytics==8.3.155
+
+dtaidistance==2.3.13
+fastdtw==0.3.4          # [DEPRECATED] src/dtw_compare_fastdtw.py 참조용으로만 남김
+
+numpy==1.26.4
+scipy==1.15.3
+opencv-python==4.11.0.86
+opencv-contrib-python==4.11.0.86
+pandas==2.3.0
+
+pycocotools==2.0.10
+
+matplotlib==3.10.3
+tqdm==4.67.1
+
+# ── 추가 포즈 모델 백엔드 (Phase 3) ──────────────────────────────
+# 설치 전 `pip install --dry-run --report -` 로 위 고정 버전이 바뀌지 않는 것을
+# 확인했고, 설치 후 numpy/mediapipe/ultralytics/dtaidistance import도 재확인함.
+# 전부 신규 설치였고 기존 패키지 업그레이드는 없었다.
+
+transformers==5.16.1    # ViTPose (src/pose_vitpose.py)
+onnxruntime==1.23.2     # RTMPose ONNX 실행
+rtmlib==0.0.16          # RTMPose 래퍼 — mmcv 없이 동작 (Apple Silicon 빌드 회피)
+
+# torch/torchvision은 ultralytics 의존성으로 이미 설치되어 있다 (2.14.0 / 0.29.0).
+# transformers도 같은 torch를 쓴다.

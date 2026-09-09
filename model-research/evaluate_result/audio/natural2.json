@@ -1,0 +1,13 @@
+{
+  "a": "data/videos/natural2/pro_dancer.MP4",
+  "b": "data/videos/natural2/user_dancer.MOV",
+  "usable": true,
+  "offset_sec": 0.8823582766439909,
+  "confidence": 5.023546213629832,
+  "peak": 0.3903870723182992,
+  "max_offset_sec": 3.8730884353741493,
+  "envelope_fps": 86.1328125,
+  "min_confidence": 3.0,
+  "min_peak": 0.3,
+  "reason": null
+}

@@ -1,0 +1,67 @@
+{
+  "gt": "data/variants/user_dancer__local0.50.gt.json",
+  "backend": "yolo",
+  "feature": "angle",
+  "rows": [
+    {
+      "k": 1,
+      "eff_fps": 30.0,
+      "n": 491,
+      "median_sec": 0.0,
+      "mean_sec": 0.0025797691785471822,
+      "p90_sec": 0.0,
+      "within_2f_pct": 100.0,
+      "within_5f_pct": 100.0,
+      "resolution_floor_sec": 0.016666666666666666,
+      "cost_ratio": 1.0
+    },
+    {
+      "k": 2,
+      "eff_fps": 15.0,
+      "n": 246,
+      "median_sec": 0.0,
+      "mean_sec": 0.006639566395663957,
+      "p90_sec": 0.03333333333333333,
+      "within_2f_pct": 100.0,
+      "within_5f_pct": 100.0,
+      "resolution_floor_sec": 0.03333333333333333,
+      "cost_ratio": 0.5
+    },
+    {
+      "k": 3,
+      "eff_fps": 10.0,
+      "n": 164,
+      "median_sec": 0.03333333333333333,
+      "mean_sec": 0.02967479674796748,
+      "p90_sec": 0.06666666666666667,
+      "within_2f_pct": 100.0,
+      "within_5f_pct": 100.0,
+      "resolution_floor_sec": 0.05,
+      "cost_ratio": 0.3333333333333333
+    },
+    {
+      "k": 4,
+      "eff_fps": 7.5,
+      "n": 123,
+      "median_sec": 0.0,
+      "mean_sec": 0.03252032520325203,
+      "p90_sec": 0.06666666666666667,
+      "within_2f_pct": 100.0,
+      "within_5f_pct": 100.0,
+      "resolution_floor_sec": 0.06666666666666667,
+      "cost_ratio": 0.25
+    },
+    {
+      "k": 6,
+      "eff_fps": 5.0,
+      "n": 82,
+      "median_sec": 0.06666666666666667,
+      "mean_sec": 0.04878048780487805,
+      "p90_sec": 0.12666666666666704,
+      "within_2f_pct": 89.02439024390245,
+      "within_5f_pct": 100.0,
+      "resolution_floor_sec": 0.1,
+      "cost_ratio": 0.16666666666666666
+    }
+  ]
+}

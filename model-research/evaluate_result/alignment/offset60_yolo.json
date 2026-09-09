@@ -1,0 +1,91 @@
+{
+  "mode": "variant",
+  "backend": "yolo",
+  "gt": "data/variants/user_dancer__offset60.gt.json",
+  "meta": {
+    "kind": "offset",
+    "fps": 30.0,
+    "source_video": "data/videos/real/user_dancer.mp4",
+    "variant_video": "data/variants/user_dancer__offset60.mp4"
+  },
+  "rows": [
+    {
+      "label": "window=15",
+      "n": 333,
+      "mean_sec": 0.01871871871871872,
+      "median_sec": 0.0,
+      "p90_sec": 0.0,
+      "max_sec": 1.5833333333333333,
+      "mean_frames": 0.5615615615615616,
+      "median_frames": 0.0,
+      "within_2f_pct": 97.5975975975976,
+      "within_5f_pct": 97.5975975975976,
+      "path_len": 393
+    },
+    {
+      "label": "window=30",
+      "n": 333,
+      "mean_sec": 0.01871871871871872,
+      "median_sec": 0.0,
+      "p90_sec": 0.0,
+      "max_sec": 1.5833333333333333,
+      "mean_frames": 0.5615615615615616,
+      "median_frames": 0.0,
+      "within_2f_pct": 97.5975975975976,
+      "within_5f_pct": 97.5975975975976,
+      "path_len": 393
+    },
+    {
+      "label": "window=60",
+      "n": 333,
+      "mean_sec": 0.01871871871871872,
+      "median_sec": 0.0,
+      "p90_sec": 0.0,
+      "max_sec": 1.5833333333333333,
+      "mean_frames": 0.5615615615615616,
+      "median_frames": 0.0,
+      "within_2f_pct": 97.5975975975976,
+      "within_5f_pct": 97.5975975975976,
+      "path_len": 393
+    },
+    {
+      "label": "window=90",
+      "n": 333,
+      "mean_sec": 0.01871871871871872,
+      "median_sec": 0.0,
+      "p90_sec": 0.0,
+      "max_sec": 1.5833333333333333,
+      "mean_frames": 0.5615615615615616,
+      "median_frames": 0.0,
+      "within_2f_pct": 97.5975975975976,
+      "within_5f_pct": 97.5975975975976,
+      "path_len": 393
+    },
+    {
+      "label": "window=150",
+      "n": 333,
+      "mean_sec": 0.01871871871871872,
+      "median_sec": 0.0,
+      "p90_sec": 0.0,
+      "max_sec": 1.5833333333333333,
+      "mean_frames": 0.5615615615615616,
+      "median_frames": 0.0,
+      "within_2f_pct": 97.5975975975976,
+      "within_5f_pct": 97.5975975975976,
+      "path_len": 393
+    },
+    {
+      "label": "window=None",
+      "n": 333,
+      "mean_sec": 0.01871871871871872,
+      "median_sec": 0.0,
+      "p90_sec": 0.0,
+      "max_sec": 1.5833333333333333,
+      "mean_frames": 0.5615615615615616,
+      "median_frames": 0.0,
+      "within_2f_pct": 97.5975975975976,
+      "within_5f_pct": 97.5975975975976,
+      "path_len": 393
+    }
+  ]
+}

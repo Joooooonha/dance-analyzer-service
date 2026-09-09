@@ -1,0 +1,65 @@
+{
+  "mode": "variant",
+  "backend": "yolo",
+  "gt": "data/variants/user_dancer__speed1.10.gt.json",
+  "meta": {
+    "kind": "speed",
+    "fps": 30.0,
+    "source_video": "data/videos/real/user_dancer.mp4",
+    "variant_video": "data/variants/user_dancer__speed1.10.mp4"
+  },
+  "rows": [
+    {
+      "label": "window=15",
+      "n": 357,
+      "mean_sec": 0.003127917833800187,
+      "median_sec": 0.0,
+      "p90_sec": 0.016666666666666666,
+      "max_sec": 0.03333333333333333,
+      "mean_frames": 0.0938375350140056,
+      "median_frames": 0.0,
+      "within_2f_pct": 100.0,
+      "within_5f_pct": 100.0,
+      "path_len": 394
+    },
+    {
+      "label": "window=60",
+      "n": 357,
+      "mean_sec": 0.003127917833800187,
+      "median_sec": 0.0,
+      "p90_sec": 0.016666666666666666,
+      "max_sec": 0.03333333333333333,
+      "mean_frames": 0.0938375350140056,
+      "median_frames": 0.0,
+      "within_2f_pct": 100.0,
+      "within_5f_pct": 100.0,
+      "path_len": 394
+    },
+    {
+      "label": "window=150",
+      "n": 357,
+      "mean_sec": 0.003127917833800187,
+      "median_sec": 0.0,
+      "p90_sec": 0.016666666666666666,
+      "max_sec": 0.03333333333333333,
+      "mean_frames": 0.0938375350140056,
+      "median_frames": 0.0,
+      "within_2f_pct": 100.0,
+      "within_5f_pct": 100.0,
+      "path_len": 394
+    },
+    {
+      "label": "window=None",
+      "n": 357,
+      "mean_sec": 0.003127917833800187,
+      "median_sec": 0.0,
+      "p90_sec": 0.016666666666666666,
+      "max_sec": 0.03333333333333333,
+      "mean_frames": 0.0938375350140056,
+      "median_frames": 0.0,
+      "within_2f_pct": 100.0,
+      "within_5f_pct": 100.0,
+      "path_len": 394
+    }
+  ]
+}

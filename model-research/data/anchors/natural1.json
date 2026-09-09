@@ -1,0 +1,331 @@
+{
+  "pair_name": "natural1",
+  "pro_video": "data/videos/natural1/pro_dancer.MP4",
+  "user_video": "data/videos/natural1/user_dancer.MOV",
+  "pro_fps": 30.0,
+  "user_fps": 29.986382206082613,
+  "pro_frame_count": 882,
+  "user_frame_count": 1101,
+  "anchors": [
+    {
+      "id": 1,
+      "pro_frame": 122,
+      "user_frame": 233,
+      "pro_t": 4.0667,
+      "user_t": 7.7702,
+      "label": ""
+    },
+    {
+      "id": 2,
+      "pro_frame": 169,
+      "user_frame": 279,
+      "pro_t": 5.6333,
+      "user_t": 9.3042,
+      "label": ""
+    },
+    {
+      "id": 3,
+      "pro_frame": 186,
+      "user_frame": 299,
+      "pro_t": 6.2,
+      "user_t": 9.9712,
+      "label": ""
+    },
+    {
+      "id": 4,
+      "pro_frame": 213,
+      "user_frame": 331,
+      "pro_t": 7.1,
+      "user_t": 11.0383,
+      "label": ""
+    },
+    {
+      "id": 5,
+      "pro_frame": 228,
+      "user_frame": 342,
+      "pro_t": 7.6,
+      "user_t": 11.4052,
+      "label": ""
+    },
+    {
+      "id": 6,
+      "pro_frame": 244,
+      "user_frame": 354,
+      "pro_t": 8.1333,
+      "user_t": 11.8054,
+      "label": ""
+    },
+    {
+      "id": 7,
+      "pro_frame": 272,
+      "user_frame": 379,
+      "pro_t": 9.0667,
+      "user_t": 12.6391,
+      "label": ""
+    },
+    {
+      "id": 8,
+      "pro_frame": 301,
+      "user_frame": 409,
+      "pro_t": 10.0333,
+      "user_t": 13.6395,
+      "label": ""
+    },
+    {
+      "id": 9,
+      "pro_frame": 331,
+      "user_frame": 443,
+      "pro_t": 11.0333,
+      "user_t": 14.7734,
+      "label": ""
+    },
+    {
+      "id": 10,
+      "pro_frame": 345,
+      "user_frame": 454,
+      "pro_t": 11.5,
+      "user_t": 15.1402,
+      "label": ""
+    },
+    {
+      "id": 11,
+      "pro_frame": 357,
+      "user_frame": 465,
+      "pro_t": 11.9,
+      "user_t": 15.507,
+      "label": ""
+    },
+    {
+      "id": 12,
+      "pro_frame": 363,
+      "user_frame": 474,
+      "pro_t": 12.1,
+      "user_t": 15.8072,
+      "label": ""
+    },
+    {
+      "id": 13,
+      "pro_frame": 370,
+      "user_frame": 484,
+      "pro_t": 12.3333,
+      "user_t": 16.1407,
+      "label": ""
+    },
+    {
+      "id": 14,
+      "pro_frame": 391,
+      "user_frame": 499,
+      "pro_t": 13.0333,
+      "user_t": 16.6409,
+      "label": ""
+    },
+    {
+      "id": 15,
+      "pro_frame": 412,
+      "user_frame": 515,
+      "pro_t": 13.7333,
+      "user_t": 17.1745,
+      "label": ""
+    },
+    {
+      "id": 16,
+      "pro_frame": 425,
+      "user_frame": 529,
+      "pro_t": 14.1667,
+      "user_t": 17.6413,
+      "label": ""
+    },
+    {
+      "id": 17,
+      "pro_frame": 446,
+      "user_frame": 553,
+      "pro_t": 14.8667,
+      "user_t": 18.4417,
+      "label": ""
+    },
+    {
+      "id": 18,
+      "pro_frame": 474,
+      "user_frame": 553,
+      "pro_t": 15.8,
+      "user_t": 18.4417,
+      "label": ""
+    },
+    {
+      "id": 19,
+      "pro_frame": 474,
+      "user_frame": 580,
+      "pro_t": 15.8,
+      "user_t": 19.3421,
+      "label": ""
+    },
+    {
+      "id": 20,
+      "pro_frame": 493,
+      "user_frame": 599,
+      "pro_t": 16.4333,
+      "user_t": 19.9757,
+      "label": ""
+    },
+    {
+      "id": 21,
+      "pro_frame": 534,
+      "user_frame": 636,
+      "pro_t": 17.8,
+      "user_t": 21.2096,
+      "label": ""
+    },
+    {
+      "id": 22,
+      "pro_frame": 548,
+      "user_frame": 656,
+      "pro_t": 18.2667,
+      "user_t": 21.8766,
+      "label": ""
+    },
+    {
+      "id": 23,
+      "pro_frame": 601,
+      "user_frame": 711,
+      "pro_t": 20.0333,
+      "user_t": 23.7108,
+      "label": ""
+    },
+    {
+      "id": 24,
+      "pro_frame": 610,
+      "user_frame": 726,
+      "pro_t": 20.3333,
+      "user_t": 24.211,
+      "label": ""
+    },
+    {
+      "id": 25,
+      "pro_frame": 623,
+      "user_frame": 735,
+      "pro_t": 20.7667,
+      "user_t": 24.5111,
+      "label": ""
+    },
+    {
+      "id": 26,
+      "pro_frame": 630,
+      "user_frame": 744,
+      "pro_t": 21.0,
+      "user_t": 24.8113,
+      "label": ""
+    },
+    {
+      "id": 27,
+      "pro_frame": 637,
+      "user_frame": 753,
+      "pro_t": 21.2333,
+      "user_t": 25.1114,
+      "label": ""
+    },
+    {
+      "id": 28,
+      "pro_frame": 650,
+      "user_frame": 764,
+      "pro_t": 21.6667,
+      "user_t": 25.4782,
+      "label": ""
+    },
+    {
+      "id": 29,
+      "pro_frame": 659,
+      "user_frame": 770,
+      "pro_t": 21.9667,
+      "user_t": 25.6783,
+      "label": ""
+    },
+    {
+      "id": 30,
+      "pro_frame": 678,
+      "user_frame": 787,
+      "pro_t": 22.6,
+      "user_t": 26.2452,
+      "label": ""
+    },
+    {
+      "id": 31,
+      "pro_frame": 695,
+      "user_frame": 803,
+      "pro_t": 23.1667,
+      "user_t": 26.7788,
+      "label": ""
+    },
+    {
+      "id": 32,
+      "pro_frame": 709,
+      "user_frame": 818,
+      "pro_t": 23.6333,
+      "user_t": 27.279,
+      "label": ""
+    },
+    {
+      "id": 33,
+      "pro_frame": 722,
+      "user_frame": 832,
+      "pro_t": 24.0667,
+      "user_t": 27.7459,
+      "label": ""
+    },
+    {
+      "id": 34,
+      "pro_frame": 739,
+      "user_frame": 847,
+      "pro_t": 24.6333,
+      "user_t": 28.2462,
+      "label": ""
+    },
+    {
+      "id": 35,
+      "pro_frame": 752,
+      "user_frame": 860,
+      "pro_t": 25.0667,
+      "user_t": 28.6797,
+      "label": ""
+    },
+    {
+      "id": 36,
+      "pro_frame": 765,
+      "user_frame": 875,
+      "pro_t": 25.5,
+      "user_t": 29.1799,
+      "label": ""
+    },
+    {
+      "id": 37,
+      "pro_frame": 785,
+      "user_frame": 894,
+      "pro_t": 26.1667,
+      "user_t": 29.8135,
+      "label": ""
+    },
+    {
+      "id": 38,
+      "pro_frame": 795,
+      "user_frame": 904,
+      "pro_t": 26.5,
+      "user_t": 30.147,
+      "label": ""
+    },
+    {
+      "id": 39,
+      "pro_frame": 809,
+      "user_frame": 923,
+      "pro_t": 26.9667,
+      "user_t": 30.7806,
+      "label": ""
+    }
+  ],
+  "occlusion_ranges": [
+    {
+      "video": "pro",
+      "start_frame": 707,
+      "end_frame": 859,
+      "note": ""
+    }
+  ]
+}

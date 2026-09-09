@@ -1,0 +1,134 @@
+{
+  "mode": "anchors",
+  "backend": "yolo",
+  "feature": "angle",
+  "gt": "data/anchors/natural2.json",
+  "meta": {
+    "kind": "anchors",
+    "fps": 29.984544049459043,
+    "feature": "angle",
+    "per_anchor": [
+      {
+        "id": 1,
+        "pro_frame": 195,
+        "user_frame_gt": 111,
+        "user_frame_pred": 45.0,
+        "error_frames": 66.0,
+        "error_sec": 2.201134020618557
+      },
+      {
+        "id": 2,
+        "pro_frame": 211,
+        "user_frame_gt": 122,
+        "user_frame_pred": 130.0,
+        "error_frames": 8.0,
+        "error_sec": 0.2668041237113402
+      },
+      {
+        "id": 3,
+        "pro_frame": 217,
+        "user_frame_gt": 130,
+        "user_frame_pred": 132.0,
+        "error_frames": 2.0,
+        "error_sec": 0.06670103092783505
+      },
+      {
+        "id": 4,
+        "pro_frame": 224,
+        "user_frame_gt": 137,
+        "user_frame_pred": 137.0,
+        "error_frames": 0.0,
+        "error_sec": 0.0
+      },
+      {
+        "id": 5,
+        "pro_frame": 231,
+        "user_frame_gt": 146,
+        "user_frame_pred": 145.0,
+        "error_frames": 1.0,
+        "error_sec": 0.03335051546391753
+      },
+      {
+        "id": 6,
+        "pro_frame": 243,
+        "user_frame_gt": 160,
+        "user_frame_pred": 161.0,
+        "error_frames": 1.0,
+        "error_sec": 0.03335051546391753
+      },
+      {
+        "id": 7,
+        "pro_frame": 253,
+        "user_frame_gt": 176,
+        "user_frame_pred": 174.5,
+        "error_frames": 1.5,
+        "error_sec": 0.05002577319587629
+      },
+      {
+        "id": 8,
+        "pro_frame": 264,
+        "user_frame_gt": 184,
+        "user_frame_pred": 192.0,
+        "error_frames": 8.0,
+        "error_sec": 0.2668041237113402
+      },
+      {
+        "id": 9,
+        "pro_frame": 272,
+        "user_frame_gt": 192,
+        "user_frame_pred": 200.0,
+        "error_frames": 8.0,
+        "error_sec": 0.2668041237113402
+      },
+      {
+        "id": 10,
+        "pro_frame": 277,
+        "user_frame_gt": 203,
+        "user_frame_pred": 205.0,
+        "error_frames": 2.0,
+        "error_sec": 0.06670103092783505
+      },
+      {
+        "id": 11,
+        "pro_frame": 295,
+        "user_frame_gt": 226,
+        "user_frame_pred": 223.0,
+        "error_frames": 3.0,
+        "error_sec": 0.10005154639175258
+      },
+      {
+        "id": 12,
+        "pro_frame": 316,
+        "user_frame_gt": 250,
+        "user_frame_pred": 250.0,
+        "error_frames": 0.0,
+        "error_sec": 0.0
+      },
+      {
+        "id": 13,
+        "pro_frame": 339,
+        "user_frame_gt": 289,
+        "user_frame_pred": 326.0,
+        "error_frames": 37.0,
+        "error_sec": 1.2339690721649483
+      }
+    ],
+    "pro_video": "data/videos/natural2/pro_dancer.MP4",
+    "user_video": "data/videos/natural2/user_dancer.MOV"
+  },
+  "rows": [
+    {
+      "label": "w=None psi=150",
+      "n": 13,
+      "mean_sec": 0.3527458366375893,
+      "median_sec": 0.06670103092783505,
+      "p90_sec": 1.0405360824742274,
+      "max_sec": 2.201134020618557,
+      "mean_frames": 10.576923076923077,
+      "median_frames": 2.0,
+      "within_2f_pct": 53.84615384615385,
+      "within_5f_pct": 61.53846153846154,
+      "path_len": 395
+    }
+  ]
+}

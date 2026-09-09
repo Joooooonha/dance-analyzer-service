@@ -1,0 +1,39 @@
+CLAUDE.md
+
+# 생성물 — 스크립트로 언제든 재생성 가능하므로 커밋하지 않는다
+data/variants/*.mp4
+
+# 원본 영상. 개인 촬영본이고 한 편에 38MB까지 나간다.
+# 재현하려면 같은 구조로 직접 촬영해 넣는다 (docs/ 참조).
+data/**/*.mp4
+data/**/*.MP4
+data/**/*.mov
+data/**/*.MOV
+samples/**/*.mp4
+samples/**/*.MP4
+data/.seq_cache/
+*.npz
+
+# 모델 가중치 — ultralytics가 최초 실행 시 자동 다운로드한다
+models/*.pt
+
+# 변형본의 정답 매핑(gt.json)은 작고 재현 근거가 되므로 커밋한다.
+!data/variants/*.gt.json
+
+# ── 재생성 가능한 대용량 산출물 ─────────────────────────────
+#
+# 문서(TASKS.md, docs/)는 이 디렉터리들을 통틀어 언급할 뿐, 개별 파일을
+# 참조하지 않는다. 결론과 수치는 문서에 적혀 있고, 아래 파일들은 그 결론을
+# 만들어낸 **중간 산출물**이라 스크립트로 다시 만들 수 있다.
+# 합쳐서 58MB라 저장소에 두면 clone이 무거워진다.
+
+# 프레임별 원시 예측 덤프. 정렬 평가의 결론은
+# evaluate_result/alignment/*.json 에 요약돼 있고 그건 커밋한다.
+**/*_pred_*.json
+evaluate_result/pred_*.json
+
+# 갱신된 실험에 밀려난 예전 실행분
+**/previous/
+
+# 렌더링한 골격 이미지 (한 장에 700KB)
+visuals/*.png

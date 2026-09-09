@@ -1,0 +1,63 @@
+{
+  "pro": "data/videos/real/pro_dancer.mp4",
+  "user": "data/videos/real/user_dancer.mp4",
+  "backend": "yolo",
+  "feature": "angle",
+  "rows": [
+    {
+      "k": 1,
+      "eff_fps": 30.0,
+      "score": 46.42185710259555,
+      "mean_error": 24.110164303832,
+      "median_error": 21.506546020507812,
+      "p90_error": 42.182968139648445,
+      "max_error": 104.62205505371094,
+      "scored_pairs": 455,
+      "n_details": 41
+    },
+    {
+      "k": 2,
+      "eff_fps": 15.0,
+      "score": 48.4341721364787,
+      "mean_error": 23.204622538584584,
+      "median_error": 20.682214736938477,
+      "p90_error": 37.83089942932129,
+      "max_error": 86.60115051269531,
+      "scored_pairs": 212,
+      "n_details": 43
+    },
+    {
+      "k": 3,
+      "eff_fps": 10.0,
+      "score": 46.628560134229765,
+      "mean_error": 24.017147939596605,
+      "median_error": 21.841243743896484,
+      "p90_error": 37.87093658447266,
+      "max_error": 90.00601196289062,
+      "scored_pairs": 134,
+      "n_details": 38
+    },
+    {
+      "k": 4,
+      "eff_fps": 7.5,
+      "score": 49.575654502607826,
+      "mean_error": 22.69095547382648,
+      "median_error": 20.291543006896973,
+      "p90_error": 35.99234123229981,
+      "max_error": 62.8352165222168,
+      "scored_pairs": 104,
+      "n_details": 43
+    },
+    {
+      "k": 6,
+      "eff_fps": 5.0,
+      "score": 53.96003371434854,
+      "mean_error": 20.717984828543155,
+      "median_error": 18.11750030517578,
+      "p90_error": 32.69047622680664,
+      "max_error": 47.2685546875,
+      "scored_pairs": 47,
+      "n_details": 41
+    }
+  ]
+}

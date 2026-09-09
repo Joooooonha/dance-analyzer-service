@@ -1,0 +1,163 @@
+{
+  "mode": "anchors",
+  "backend": "yolo",
+  "feature": "coord",
+  "gt": "data/anchors/natural2.json",
+  "meta": {
+    "kind": "anchors",
+    "fps": 29.984544049459043,
+    "feature": "coord",
+    "per_anchor": [
+      {
+        "id": 1,
+        "pro_frame": 195,
+        "user_frame_gt": 111,
+        "user_frame_pred": 195.0,
+        "error_frames": 84.0,
+        "error_sec": 2.801443298969072
+      },
+      {
+        "id": 2,
+        "pro_frame": 211,
+        "user_frame_gt": 122,
+        "user_frame_pred": 211.0,
+        "error_frames": 89.0,
+        "error_sec": 2.9681958762886596
+      },
+      {
+        "id": 3,
+        "pro_frame": 217,
+        "user_frame_gt": 130,
+        "user_frame_pred": 217.0,
+        "error_frames": 87.0,
+        "error_sec": 2.9014948453608245
+      },
+      {
+        "id": 4,
+        "pro_frame": 224,
+        "user_frame_gt": 137,
+        "user_frame_pred": 224.0,
+        "error_frames": 87.0,
+        "error_sec": 2.9014948453608245
+      },
+      {
+        "id": 5,
+        "pro_frame": 231,
+        "user_frame_gt": 146,
+        "user_frame_pred": 231.0,
+        "error_frames": 85.0,
+        "error_sec": 2.8347938144329894
+      },
+      {
+        "id": 6,
+        "pro_frame": 243,
+        "user_frame_gt": 160,
+        "user_frame_pred": 243.0,
+        "error_frames": 83.0,
+        "error_sec": 2.7680927835051548
+      },
+      {
+        "id": 7,
+        "pro_frame": 253,
+        "user_frame_gt": 176,
+        "user_frame_pred": 253.0,
+        "error_frames": 77.0,
+        "error_sec": 2.5679896907216495
+      },
+      {
+        "id": 8,
+        "pro_frame": 264,
+        "user_frame_gt": 184,
+        "user_frame_pred": 264.0,
+        "error_frames": 80.0,
+        "error_sec": 2.668041237113402
+      },
+      {
+        "id": 9,
+        "pro_frame": 272,
+        "user_frame_gt": 192,
+        "user_frame_pred": 272.0,
+        "error_frames": 80.0,
+        "error_sec": 2.668041237113402
+      },
+      {
+        "id": 10,
+        "pro_frame": 277,
+        "user_frame_gt": 203,
+        "user_frame_pred": 277.0,
+        "error_frames": 74.0,
+        "error_sec": 2.4679381443298967
+      },
+      {
+        "id": 11,
+        "pro_frame": 295,
+        "user_frame_gt": 226,
+        "user_frame_pred": 295.0,
+        "error_frames": 69.0,
+        "error_sec": 2.301185567010309
+      },
+      {
+        "id": 12,
+        "pro_frame": 316,
+        "user_frame_gt": 250,
+        "user_frame_pred": 316.0,
+        "error_frames": 66.0,
+        "error_sec": 2.201134020618557
+      },
+      {
+        "id": 13,
+        "pro_frame": 339,
+        "user_frame_gt": 289,
+        "user_frame_pred": 339.0,
+        "error_frames": 50.0,
+        "error_sec": 1.6675257731958761
+      },
+      {
+        "id": 14,
+        "pro_frame": 364,
+        "user_frame_gt": 311,
+        "user_frame_pred": 352.0,
+        "error_frames": 41.0,
+        "error_sec": 1.3673711340206185
+      },
+      {
+        "id": 15,
+        "pro_frame": 378,
+        "user_frame_gt": 331,
+        "user_frame_pred": 352.0,
+        "error_frames": 21.0,
+        "error_sec": 0.700360824742268
+      }
+    ],
+    "pro_video": "data/videos/natural2/pro_dancer.MP4",
+    "user_video": "data/videos/natural2/user_dancer.MOV"
+  },
+  "rows": [
+    {
+      "label": "w=15 psi=None",
+      "n": 15,
+      "mean_sec": 2.3856735395188995,
+      "median_sec": 2.668041237113402,
+      "p90_sec": 2.9014948453608245,
+      "max_sec": 2.9681958762886596,
+      "mean_frames": 71.53333333333333,
+      "median_frames": 80.0,
+      "within_2f_pct": 0.0,
+      "within_5f_pct": 0.0,
+      "path_len": 440
+    },
+    {
+      "label": "w=None psi=None",
+      "n": 15,
+      "mean_sec": 2.3856735395188995,
+      "median_sec": 2.668041237113402,
+      "p90_sec": 2.9014948453608245,
+      "max_sec": 2.9681958762886596,
+      "mean_frames": 71.53333333333333,
+      "median_frames": 80.0,
+      "within_2f_pct": 0.0,
+      "within_5f_pct": 0.0,
+      "path_len": 440
+    }
+  ]
+}
