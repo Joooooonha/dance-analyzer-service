@@ -78,6 +78,10 @@
 }
 
 .cb-strip-number {
+    /* Noto Sans KR의 korean-* 서브셋에는 unicode-range가 없어 숫자까지
+       그 서체로 끌고 간다 — 이 화면에서 가장 중요한 숫자만큼은 의도한
+       Inter 고정폭 숫자로 명시해 고정한다. */
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 3rem;
     font-weight: 700;
     line-height: 1;
@@ -196,19 +200,6 @@
     color: var(--cb-ink);
     position: relative;
     width: fit-content;
-}
-
-.cb-cell:hover .cb-cell-title::after,
-.cb-cell:focus-visible .cb-cell-title::after {
-    content: '';
-    position: absolute;
-    left: -2px;
-    right: -2px;
-    bottom: 2px;
-    height: 0.4em;
-    background: var(--cb-highlight-soft);
-    z-index: -1;
-    animation: cb-highlight-sweep 0.25s ease-out both;
 }
 
 .cb-cell-desc {

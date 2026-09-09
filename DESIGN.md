@@ -1,323 +1,204 @@
 ---
 name: ODO
-description: 실사용 댄서를 위한 어두운 네온 연습실 — AI가 프로 영상과 내 영상을 비교해 어긋난 동작을 짚어준다
+description: 안무 카운트보드 — 댄서가 손으로 세던 카운트를 앱이 대신 짚어준다 (연습장 크림지 + 형광펜 강조)
 colors:
-  bg-primary: "#0a0a0f"
-  bg-secondary: "#12121a"
-  bg-card: "rgba(255, 255, 255, 0.05)"
-  bg-card-hover: "rgba(255, 255, 255, 0.08)"
-  signal-pink: "#ff2d75"
-  signal-cyan: "#00d9ff"
-  signal-purple: "#a855f7"
-  text-primary: "#ffffff"
-  text-secondary: "rgba(255, 255, 255, 0.7)"
-  text-muted: "rgba(255, 255, 255, 0.4)"
-  border-color: "rgba(255, 255, 255, 0.1)"
-  border-accent: "rgba(255, 45, 117, 0.3)"
-  success: "#10b981"
-  warning: "#f59e0b"
-  error: "#ef4444"
+  cb-paper: "#f5f1e8"
+  cb-paper-card: "#fbf9f3"
+  cb-ink: "#2c2a26"
+  cb-ink-secondary: "rgba(44, 42, 38, 0.68)"
+  cb-ink-muted: "rgba(44, 42, 38, 0.44)"
+  cb-rule: "rgba(44, 42, 38, 0.16)"
+  cb-highlight: "#f5e211"
+  cb-highlight-soft: "rgba(245, 226, 17, 0.4)"
+  cb-highlight-wash: "#f8f0a8"
+  cb-cyan: "#026a7d"
 typography:
   display:
-    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-    fontSize: "2.5rem"
-    fontWeight: 600
+    fontFamily: "'Noto Sans KR', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    fontSize: "1.6rem"
+    fontWeight: 700
     lineHeight: 1.3
     letterSpacing: "normal"
-  headline:
+  numeral:
     fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-    fontSize: "1.8rem"
-    fontWeight: 600
-    lineHeight: 1.3
+    fontSize: "3rem"
+    fontWeight: 700
+    lineHeight: 1
+    fontFeature: "tabular-nums"
   title:
-    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-    fontSize: "1.4rem"
-    fontWeight: 600
+    fontFamily: "'Noto Sans KR', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    fontSize: "1.15rem"
+    fontWeight: 700
     lineHeight: 1.3
   body:
-    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-    fontSize: "1rem"
-    fontWeight: 400
-    lineHeight: 1.6
-  label:
-    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    fontFamily: "'Noto Sans KR', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
     fontSize: "0.9rem"
-    fontWeight: 500
-    letterSpacing: "normal"
+    fontWeight: 400
+    lineHeight: 1.5
+  label:
+    fontFamily: "'Noto Sans KR', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    fontSize: "0.85rem"
+    fontWeight: 700
+    letterSpacing: "0.04em"
+  script-accent:
+    fontFamily: "'Nanum Pen Script', cursive"
+    fontSize: "1.5rem"
+    fontWeight: 400
+    lineHeight: 1.3
 rounded:
-  sm: "12px"
-  lg: "20px"
-  pill: "999px"
-  full: "50%"
+  sm: "4px"
 spacing:
   xs: "8px"
   sm: "16px"
   md: "20px"
   lg: "24px"
-  xl: "32px"
-  xxl: "40px"
+  xl: "28px"
+  xxl: "32px"
 components:
-  button-primary:
-    backgroundColor: "{colors.signal-pink}"
-    textColor: "{colors.text-primary}"
+  cell:
+    backgroundColor: "{colors.cb-paper-card}"
+    textColor: "{colors.cb-ink}"
     rounded: "{rounded.sm}"
-    padding: "12px 24px"
-  button-primary-hover:
-    backgroundColor: "{colors.signal-pink}"
-    textColor: "{colors.text-primary}"
+    padding: "22px 24px 24px"
+  cell-hover:
+    backgroundColor: "{colors.cb-highlight-wash}"
+    textColor: "{colors.cb-ink}"
     rounded: "{rounded.sm}"
-    padding: "12px 24px"
-  button-secondary:
-    backgroundColor: "{colors.bg-card}"
-    textColor: "{colors.text-primary}"
+    padding: "22px 24px 24px"
+  strip:
+    backgroundColor: "{colors.cb-paper-card}"
+    textColor: "{colors.cb-ink}"
     rounded: "{rounded.sm}"
-    padding: "12px 24px"
-  button-outline:
-    backgroundColor: "transparent"
-    textColor: "{colors.signal-pink}"
+    padding: "20px 24px"
+  guide-cta:
+    backgroundColor: "{colors.cb-ink}"
+    textColor: "{colors.cb-paper}"
     rounded: "{rounded.sm}"
-    padding: "12px 24px"
-  card:
-    backgroundColor: "{colors.bg-card}"
-    textColor: "{colors.text-primary}"
-    rounded: "{rounded.lg}"
-    padding: "24px"
-  badge:
-    backgroundColor: "{colors.bg-card}"
-    textColor: "{colors.signal-cyan}"
-    rounded: "{rounded.pill}"
-    padding: "4px 12px"
+    padding: "10px 20px"
 ---
 
 # Design System: ODO
 
 ## Overview
 
-**Creative North Star: "The Studio After Hours"**
+**Creative North Star: "안무 카운트보드" (Choreography Count Board)**
 
-연습실 불이 꺼진 뒤, 혼자 영상을 되돌려 보며 자기 동작을 맞춰보는 시간. ODO의
-화면은 어두운 배경과 네온 포인트로 그 장면을 그대로 옮긴다 — `index.css`가
-스스로 적어놓은 컨셉 그대로 "Dark Neon Dance"다. 배경은 거의 검정(`#0a0a0f`)에
-가깝고, 그 위에 반투명 유리 카드(backdrop-blur)가 떠 있으며, 신호색(Signal
-Pink·Cyan·Purple)이 그라디언트와 네온 글로우로 화면을 밝힌다.
+`ODO`의 대시보드는 아이콘+제목+설명 카드 그리드라는 이 카테고리의 기본값을 거부한다. 댄서가 이미 손으로 세던 카운트를 앱이 대신 짚어주는 판이다: 연습장 크림지(`#f5f1e8`) 배경 위에 흑연 잉크(`#2c2a26`) 텍스트, 형광펜 옐로(`#f5e211`) 단 하나의 강조색. 유리 카드도, 네온 글로우도, 아이콘도 없다 — 종이 판 하나를 두르고 칸 사이를 헤어라인으로만 가른다.
 
-이 정체성 안에는 실제로 관찰되는 색 역할 분담이 하나 있다: **시안(Cyan)은
-기준/레퍼런스, 핑크(Pink)는 나의 시도.** 나란히 비교 화면의 태그(`.synced-tag.ref`
-= 시안, `.synced-tag.me` = 핑크)와 트리머의 시작/끝 마커(시안/핑크)가 이 규칙을
-일관되게 따른다. 이건 장식이 아니라 정보다 — 사용자가 색만 보고 "이건 기준
-영상, 이건 내 영상"을 구분한다.
+이 세계관은 finish review를 거치며 초기 방향에서 두 가지가 정정됐다: (1) 칸마다 개별 그림자를 주는 대신 판 전체를 감싸고 `grid gap`을 잉크색으로 채워 헤어라인만 남기는 **공유 격자**로 바뀌었고, (2) hover 반응은 그림자나 들어올림이 아니라 그 자리를 형광펜으로 한 번 덮어씌운 듯한 배경 전환(`--cb-highlight-wash`, 불투명)으로 표현한다 — 카운트 스트립 숫자 밑에 깔리는 얇은 스윕(`--cb-highlight-soft`, 반투명)과는 다른 토큰이다. 이 둘을 섞으면 격자선과 탁하게 섞여 대비가 무너지기 때문에 의도적으로 분리했다.
 
-**긴장 메모 — 화려함 vs. 엄밀함.** PRODUCT.md의 첫 번째 원칙은 "엄밀함을 눈에
-보이게"다. 그런데 지금 시스템은 헤드라인 숫자(h1, 이슈 개수, 품질 지표)마다
-그라디언트 텍스트를 쓰고, 카드 hover마다 네온 글로우가 터진다 — 클럽에 가깝지,
-측정 리포트에 가깝지 않다. 이 문서는 지금 구현을 있는 그대로 기록하되, 이
-긴장을 숨기지 않는다. 앞으로 `polish`나 `quieter` 작업을 할 때 참고할 절제
-방향을 아래 **Colors → Tension Note**에 남겨둔다. 지금 당장 톤을 다시 쓰지는
-않는다 — 사용자가 명시적으로 "긴장을 기록하고 메모만 추가"를 선택했다.
+시안(기준/레퍼런스)·핑크(나의 시도) 기능색 매핑은 옛 네온 시스템에서 넘어온 정보 색이다. 이 화면에는 아직 비교 배지가 없어 시안만 링크 hover·포커스 링에 쓰이고(크림 배경에서 4.5:1을 내도록 눌러 재조정: `#026a7d`), 핑크는 자리가 없다 — 비교 화면이 이 세계관으로 옮겨올 때 함께 다뤄질 몫이다.
 
 **Key Characteristics:**
-- 어두운 배경 + 신호색 3종(핑크·시안·퍼플) + 그라디언트
-- 평시엔 평평하고 반투명한 유리 카드, hover에만 네온 글로우로 반응 (정적이지 않고 "닿으면 빛난다")
-- 헤드라인 숫자는 그라디언트로 클립된 대형 타이포 — 이 제품의 "증거 숫자" 모티프
-- 컨트롤(버튼·인풋)은 12px, 컨테이너(카드·업로드존)는 20px — 반경 두 단계
-- **아이콘은 현재 전부 이모지다.** 이것은 정체성이 아니라 정리 대상이다 (아래 Don't 참조)
+- 연습장 크림 배경 + 흑연 잉크 텍스트 + 형광펜 옐로 단일 강조, 시안은 기능색으로만 잔류
+- 카드 그리드가 아니라 하나의 공유 판 — 칸 사이는 1px 헤어라인, 개별 그림자 없음
+- Hover/focus는 그림자가 아니라 불투명 형광펜 워시 배경 전환
+- 27px 간격 가는 헤어라인 리페어팅 그래디언트로 만든 노트 격자 텍스처
+- 손글씨풍 서체(Nanum Pen Script)는 화면 전체에서 딱 한 곳(`처음이신가요?` 안내 제목)에만 절제해서 등장
+- 숫자만 Inter 고정폭(tabular-nums)으로 명시 고정 — Noto Sans KR 서브셋에 라틴 숫자 unicode-range가 없어 방치하면 한글 서체로 끌려가기 때문
 
 ## Colors
 
-배경은 신호색이 빛나 보이도록 존재하는 무대다. 신호색은 세 개뿐이고 각각 역할이 있다.
+크림 종이 위에 잉크, 그 위에 단 하나의 형광펜 — 색의 숫자를 줄인 만큼 그 하나가 뜻을 가진다.
 
 ### Primary
-- **Signal Pink** (`#ff2d75`): 주 액션(1차 버튼), 경고/주의, "나의 시도"를 가리키는 색. 가장 많이 등장하는 신호.
+- **형광펜 옐로 Highlight** (`#f5e211`): 유일한 강조색. 카운트 스트립 링크의 밑줄, `::selection`, 숫자가 갱신될 때의 스윕 애니메이션에 쓰인다. 배경으로는 절대 그대로 깔리지 않는다 — 배경으로 쓸 땐 대비 재계산을 거친 `cb-highlight-wash`(`#f8f0a8`, 불투명)로 갈아탄다.
 
 ### Secondary
-- **Signal Cyan** (`#00d9ff`): 포커스 상태, "기준/레퍼런스"를 가리키는 색, 정보성 배지. 핑크와 짝을 이루는 두 번째 신호.
-
-### Tertiary
-- **Signal Purple** (`#a855f7`): 단독으로 쓰이지 않고 `signal-gradient`의 중간 정지점으로만 존재한다. 핑크→퍼플→시안 그라디언트를 통해 "두 신호가 하나로 이어진다"는 인상을 만든다.
+- **눌린 시안 Cyan** (`#026a7d`): 옛 네온 세계관의 "기준/레퍼런스" 기능색을 크림 배경에서 4.5:1이 나오도록 재조정한 값. 링크 hover, 셀 `focus-visible` 아웃라인에 쓰인다.
 
 ### Neutral
-- **Void Black** (`#0a0a0f`, `bg-primary`): 페이지 배경.
-- **Deep Ink** (`#12121a`, `bg-secondary`): 인풋·비디오 컨테이너 등 "안으로 들어간" 표면.
-- **Glass Card** (`rgba(255,255,255,0.05)` / hover `0.08`, `bg-card` / `bg-card-hover`): 떠 있는 카드 표면. backdrop-blur(10px)와 항상 짝을 이룬다.
-- **White / 70% / 40%** (`text-primary` / `text-secondary` / `text-muted`): 본문 위계 3단.
-- **Hairline** (`rgba(255,255,255,0.1)`, `border-color`): 기본 보더.
-
-### Composite: Signal Gradient
-`linear-gradient(135deg, #ff2d75, #a855f7, #00d9ff)` — 프리미티브 색이 아니라
-합성 값이라 frontmatter에는 올리지 않았다(스펙상 `colors`는 단일 색 값만
-허용). 두 곳에 쓰인다: (1) 1차 버튼 배경, (2) 헤드라인 숫자·h1 텍스트를
-`background-clip: text`로 클리핑하는 "증거 숫자" 모티프. 세 정지점 색은 위
-Primary/Secondary/Tertiary와 동일하다.
+- **연습장 크림 Paper** (`#f5f1e8`, `cb-paper`): 페이지 배경.
+- **카드 크림 Paper Card** (`#fbf9f3`, `cb-paper-card`): 스트립·칸·안내 박스의 표면 — 배경보다 살짝 밝다.
+- **흑연 잉크 Ink** (`#2c2a26`, `cb-ink`): 제목·숫자·본문 강조 텍스트.
+- **잉크 68% Ink Secondary** (`rgba(44,42,38,0.68)`): 본문·설명·라벨의 기본 색. 44% 잉크(`cb-ink-muted`)는 본문 텍스트로 쓰기엔 대비가 부족해 테두리류 비-텍스트 용도로만 남는다.
+- **헤어라인 Rule** (`rgba(44,42,38,0.16)`): 격자 텍스처, 칸 사이 구분선, 스트립·안내 박스 보더.
 
 ### Named Rules
-**The Reference/Practice Rule.** 시안은 항상 "기준", 핑크는 항상 "나"를
-가리킨다. 새 비교 UI를 만들 때 이 매핑을 뒤집지 않는다 — 사용자가 색으로
-구분하는 유일한 단서다.
+**The One Yellow Rule.** 형광펜 강조는 이 세계관에서 단 하나뿐이다. 새 강조가 필요할 때 두 번째 액센트 색을 만들지 않는다 — 형광펜 위치를 늘리거나(밑줄, 워시, 스윕), 절제된 잉크 굵기로 해결한다.
 
-**The Flat-Until-Touched Rule.** 카드는 평시에 그림자가 없다(`--shadow-card`
-토큰은 선언돼 있지만 실제로는 거의 참조되지 않는 죽은 토큰이다). 네온 글로우
-(`--shadow-glow`)는 hover·active 같은 반응에서만 나타난다. 정적 화면은 조용하고,
-상호작용에만 빛난다.
-
-### Tension Note — 화려함 vs. 엄밀함 (절제 방향 메모)
-지금 그라디언트 텍스트는 h1, `issue-count-number`(4rem), `score-value`(레거시),
-`issue-badge-value`까지 — 화면에 등장하는 거의 모든 숫자·제목에 걸려 있다.
-PRODUCT.md의 "엄밀함을 눈에 보이게" 원칙과 맞추려면, 다음 `quieter`/`polish`
-패스에서: (1) 데이터를 담은 숫자(이슈 개수, 품질 지표값)는 그라디언트 대신
-`text-primary` 플랫 색 + 굵은 weight로 "측정값"처럼 보이게 하고, (2) 그라디언트는
-페이지 h1과 1차 CTA 버튼처럼 "브랜드가 말을 거는" 자리에만 남기는 것을
-검토한다. 지금 이 문서는 그 결정을 내리지 않는다 — 현재 구현을 있는 그대로
-기록하고, 다음 리파인 작업이 참고할 메모로만 남긴다.
+**The Wash-vs-Soft Rule.** 배경으로 칠하는 형광펜(hover 워시)과 텍스트 밑에 까는 형광펜(숫자 스윕)은 서로 다른 토큰이다 — `cb-highlight-wash`(불투명)는 배경 전용, `cb-highlight-soft`(반투명)는 오버레이 전용. 반투명 값을 배경색으로 그대로 쓰면 밑에 깔린 격자선과 탁하게 섞여 대비가 무너진다.
 
 ## Typography
 
-**Display/Body/Label Font:** `Inter` (fallback: `-apple-system, BlinkMacSystemFont,
-'Segoe UI', sans-serif`)
+**Body/Display Font:** `Noto Sans KR` (한글, korean 서브셋 셀프호스팅)
+**Numeral Font:** `Inter` (라틴/숫자 전용, latin + latin-ext 서브셋)
+**Signature Accent Font:** `Nanum Pen Script` (korean 서브셋) — 안내 제목 한 곳에만
 
-**주의 — 로드되지 않는 폰트.** `index.css`는 `--font-family`에 Inter를 지정하지만,
-`index.html`이나 다른 어디에도 Inter를 실제로 불러오는 `<link>`나 `@import`가
-없다. 지금은 조용히 시스템 sans 폴백(macOS는 San Francisco, Windows는 Segoe UI
-등)으로 렌더링되고 있다. 토큰상의 의도는 Inter이므로 frontmatter는 선언된 값을
-그대로 담았다 — 실제로 Inter를 로드하거나, 폴백이 곧 의도라면 토큰을 정직하게
-고칠지는 다음 작업에서 결정한다.
-
-**Character:** 굵은 weight(600~700)의 짧은 제목과, 옅은 회색조(70%/40% 흰색)
-본문이 대비를 이룬다. 헤드라인 숫자만 예외적으로 매우 크고(2.5~4rem) 그라디언트로
-강조된다.
+**Character:** 한글 워크호스는 Noto Sans KR, 숫자는 Inter로 명시적으로 고정한 이중 서체 체계다. Noto Sans KR의 korean 서브셋에는 라틴 숫자용 unicode-range가 없어, 고정하지 않으면 이 화면에서 가장 중요한 증거 숫자가 조용히 한글 서체로 그려진다 — 그래서 `.cb-strip-number`만 `font-family: Inter, ...`를 다시 선언한다. Nanum Pen Script는 기울인 고딕이 아니라 실제 손글씨 서체이며, 화면 전체에서 단 한 곳(첫 방문자 안내 제목)에만 쓰고 `-1deg` 회전으로 손으로 쓴 인상을 준다.
 
 ### Hierarchy
-- **Display** (600, 2.5rem, 1.3 line-height): `h1`. 그라디언트 텍스트 클리핑이 기본 적용된다.
-- **Headline** (600, 1.8rem, 1.3): `h2`. 섹션 제목.
-- **Title** (600, 1.4rem, 1.3): `h3`. 카드/서브섹션 제목.
-- **Body** (400, 1rem, 1.6): 본문. `text-secondary`가 기본 문단 색.
-- **Label** (500, 0.9rem): 폼 라벨, 메타 텍스트.
+- **Display** (700, 1.6rem, 1.3): `h1` 인사말. 그라디언트 클리핑 없이 순수 잉크색.
+- **Numeral** (700, 3rem→2.25rem@480px, 1, tabular-nums, Inter 고정): 카운트 스트립의 증거 숫자. 이 화면의 유일한 대형 타이포.
+- **Title** (700, 1.15rem, 1.3): 칸 제목(`cb-cell-title`).
+- **Body** (400, 0.9~0.95rem, 1.5): 칸 설명, 스트립 라벨/상태 문구.
+- **Label** (700, 0.85rem, letter-spacing 0.04em): 칸 번호(`01`/`02`/`03`) — 대문자 표기 없이 두 자리 숫자로 위계를 만든다.
+- **Script Accent** (400, 1.5rem, cursive, -1deg 회전): 안내 박스 제목 한 곳 전용.
 
 ### Named Rules
-**The Proof Numeral Rule.** 화면에서 가장 중요한 숫자(이슈 개수, 품질 점수)는
-본문 타이포 위계를 벗어나 독립적으로 크게(2.5~4rem, 700) 그라디언트 처리된다.
-이 숫자들은 장식이 아니라 이 제품이 실제로 증명하는 값이다 — 그래서 시각적으로
-가장 크다. (단, 위 Tension Note 참고: 이 처리를 계속 확장할지는 재검토 대상.)
+**The Tabular Numeral Rule.** 화면에서 가장 중요한 숫자(지적 구간 개수)는 Inter로 명시 고정하고 `font-variant-numeric: tabular-nums`를 건다. 한글 서체 폴백에 맡기지 않는다 — 자릿수가 바뀌어도 숫자 폭이 흔들리지 않아야 "증거"로 읽힌다.
+
+**The One Script Rule.** 손글씨풍 서체는 화면당 한 곳으로 제한한다. 두 곳 이상에 쓰면 손글씨가 장식이 되어 이 세계관의 절제가 무너진다.
 
 ## Layout
 
-**컨테이너:** `max-width: 1200px`, 중앙 정렬, 좌우 패딩 20px.
+칸 그리드는 `repeat(auto-fit, minmax(220px, 1fr))`로 반응형 열 수를 결정하고, 리더 전용 칸(`cb-cells-leader`)은 단일 열·최대폭 340px로 별도 판을 이룬다. 스트립과 칸 판 사이 간격은 32px, 칸 판과 안내 박스 사이는 20px. 페이지 상단 패딩 40px, 하단 60px. 480px 이하에서 스트립이 세로로 쌓이고 증거 숫자가 3rem→2.25rem로 줄어든다.
 
-**헤더:** `position: sticky`, 높이 70px(`--header-height`), 반투명 검정 +
-backdrop-blur(10px). 본문(`main-content`)은 헤더 높이만큼 `padding-top`을 받는다.
-
-**페이지:** 상하 패딩 40px, 좌우 20px. 섹션 간 여백은 32~48px.
-
-**그리드:** 카드형 목록은 대부분 `repeat(auto-fit, minmax(X, 1fr))` — X는
-맥락에 따라 150px(메타 정보 칩)부터 350px(상세 비교 2단)까지. 고정 컬럼 그리드
-(`.grid-2/3/4`)도 유틸리티로 선언돼 있지만 실사용 화면(JSX)에서는 쓰이지 않는
-죽은 클래스다.
-
-**반응형 브레이크포인트:**
-- `768px`: 헤더 내비게이션 숨김, 대부분의 auto-fit 그리드가 사실상 1열로 줄어듦.
-- `720px`: 나란히 비교 화면(`SyncedComparison`)의 좌우 두 영상 패널이 세로로
-  쌓이고, 화면 비율이 3:4(세로 영상 기준)에서 16:10으로 바뀐다 — "좁은 화면에서
-  좌우로 나누면 동작이 안 보인다"는 실측 판단이 주석으로 남아 있다.
-- `600px`: 폼의 2열 행(`form-row`)이 1열로.
+배경의 27px 간격 헤어라인 리피팅 그래디언트가 노트 격자 텍스처를 만든다 — 텍스트 아래 깔려도 줄당 1px·16% 불투명도라 본문 대비율에 영향이 없다고 확인됐다.
 
 ## Elevation & Depth
 
-그림자보다 **반투명 + 블러**가 주 깊이 표현이다. 배경의 네온 라디얼 그라디언트
-위에 `rgba(255,255,255,0.05)` 카드가 `backdrop-filter: blur(10px)`로 떠 있는
-"유리판" 레이어링. 전통적 `box-shadow`는 평시엔 거의 쓰이지 않는다
-(`--shadow-card`는 선언만 되고 참조는 드묾).
-
-### Shadow Vocabulary
-- **Glow** (`box-shadow: 0 0 20px rgba(255, 45, 117, 0.3)`, `--shadow-glow`):
-  hover·active 등 상호작용 응답 전용. 카드 hover, 1차 버튼 hover, 활성 이슈
-  구간에 등장. 색은 맥락의 신호색을 따른다(대부분 핑크, 화면별로 시안·퍼플 변형).
-- **Ambient Card** (`box-shadow: 0 4px 20px rgba(0,0,0,0.3)`, `--shadow-card`):
-  선언은 돼 있으나 관찰된 CSS에서 실제로 참조되는 곳이 없다 — 정리 대상이거나,
-  향후 "평시에도 은은한 깊이"가 필요할 때 쓸 수 있는 예비 토큰.
+그림자를 쓰지 않는다. 깊이는 헤어라인 경계와 배경색 전환만으로 표현한다: 칸 판 전체는 `grid gap`을 잉크색 헤어라인으로 채우고 각 칸 배경을 카드 크림으로 덮는 트릭으로, 열 개수가 반응형으로 바뀌어도 인접한 자리에만 선이 생긴다. 상호작용 반응도 그림자나 들어올림 대신 배경색 전환(형광펜 워시)으로만 낸다.
 
 ### Named Rules
-**The Response-Only Glow Rule.** 네온 글로우는 정적 상태의 장식이 아니라
-사용자 행동에 대한 응답이다. 새 컴포넌트에 글로우를 추가할 때는 "이게 hover나
-active에 반응하는가"를 먼저 확인한다 — 항상 켜져 있는 글로우는 이 시스템의
-문법과 어긋난다.
+**The No-Shadow Rule.** 이 세계관에 `box-shadow`는 존재하지 않는다. 깊이·상태·강조는 전부 헤어라인, 배경색 전환, 밑줄 두께로만 표현한다. 옛 네온 세계관의 글로우(`--shadow-glow`)를 이 화면에 들여오지 않는다.
 
 ## Shapes
 
-**두 단계 반경 시스템.** 컨트롤 요소(버튼·인풋·작은 태그)는 12px
-(`--border-radius`), 컨테이너(카드·업로드 드롭존·auth 박스·비디오 컨테이너)는
-20px(`--border-radius-lg`). 완전한 pill(999px)은 상태 배지·진행률 바·타임라인
-트랙에, 완전한 원(50%)은 숫자 배지·아바타·스텝 넘버·스피너에 쓰인다.
-
-보더는 항상 1px 헤어라인(`border-color`)이 기본이고, 강조 상태에서만 신호색
-보더(`border-accent`, 핑크 30% 불투명도)로 바뀐다. 점선 보더(`2px dashed`)는
-파일 드롭존 전용 문법 — "여기에 놓으세요"라는 뜻으로만 쓰인다.
+반경은 4px 하나뿐이다(`cb-strip`, `cb-cells`, `cb-cell` 없음—칸 자체는 반경 없이 판의 외곽만 4px, 칸 내부 경계는 직각), 스트립·판·안내 박스·CTA 버튼에 일괄 적용된다. 옛 시스템의 12px/20px 두 단계나 pill/circle 반경은 이 세계관에 없다. 안내 박스만 예외적으로 점선 보더(`1px dashed`)를 쓴다 — 옛 세계관에서 파일 드롭존 전용이던 문법을 "아직 채워지지 않은 자리"라는 같은 의미로 재사용한다.
 
 ## Components
 
-### Buttons
-- **Shape:** 12px 반경(`--border-radius`), `.btn-lg`/`.btn-sm`은 패딩만 바뀐다.
-- **Primary:** Signal Gradient 배경, 흰 텍스트, 패딩 12px 24px. Hover는 `scale(1.02)` + 글로우.
-- **Secondary:** 유리 카드 배경(`bg-card`) + 헤어라인 보더. Hover는 `bg-card-hover` + 보더가 시안으로.
-- **Outline:** 투명 배경, 핑크 텍스트/보더. Hover는 옅은 핑크 틴트 배경(10% 불투명도).
-- **Disabled:** 불투명도 0.5, 커서 `not-allowed`.
+### Count Strip (Signature)
+카운트 스트립은 이 화면의 증거 컴포넌트다. 배경 `cb-paper-card`, 1px 헤어라인 보더, 4px 반경, 패딩 20px 24px. 최근 분석이 완료 상태면 큰 Inter 숫자(3rem/700)를 형광펜 스윕 애니메이션(0.6s ease-out, `scaleX(0)→1`)과 함께 보여준다. 진행 중/대기/실패/빈 상태는 각각 다른 한 줄 문구로 대체되며 숫자 자리를 비운다 — 상태를 감추지 않는다는 제품 원칙을 그대로 반영한다.
 
-### Cards
-- **Corner Style:** 20px (`--border-radius-lg`).
-- **Background:** `bg-card` (5% 흰색), hover 시 `bg-card-hover` (8%).
-- **Shadow Strategy:** 평시 없음 → hover에 Glow(위 Elevation 참고).
-- **Border:** 1px 헤어라인 → hover 시 상황에 따라 투명해지거나 신호색 보더로.
-- **Internal Padding:** 24px (feature-card는 28px).
-- **변형:** `.feature-card`(대시보드, 상단에 hover 시 나타나는 3px 그라디언트 바
-  포함), `.assignment-card`/`.log-card`(hover 시 오른쪽으로 4px 밀림 + 화살표 이동).
+### Count Cells (Signature)
+카드가 아니라 판이다. 판 전체(`cb-cells`)가 1px 헤어라인 보더 + 4px 반경 + `overflow: hidden`을 두르고, 개별 칸(`cb-cell`)은 보더나 반경 없이 배경만 카드 크림으로 채운다. 칸 사이 구분은 `grid gap: 1px`을 잉크색으로 채워서 만든다. 아이콘 대신 두 자리 칸 번호(`01`/`02`/`03`)로 구분한다. Hover/focus는 배경이 `cb-highlight-wash`로 전환되고, focus-visible은 추가로 시안 아웃라인(`outline-offset: -2px`)을 얻는다.
 
-### Badges
-- **Style:** pill 반경(20px 또는 999px 혼용), 4px 12px 패딩, 신호색을 20%
-  불투명도 배경 + 해당 신호색 텍스트로.
-- **Variants:** success(초록 `#10b981`) / warning(호박 `#f59e0b`) / error(빨강
-  `#ef4444`) / info(시안).
-
-### Inputs / Fields
-- **Style:** `bg-secondary` 배경, 1px 헤어라인 보더, 12px 반경, 패딩 12px 16px.
-- **Focus:** 보더가 시안으로, `box-shadow: 0 0 0 3px rgba(0,217,255,0.1)` 링.
-- **Placeholder:** `text-muted`.
+### Guide Box
+첫 기록이 없는 사용자에게만 나타나는 안내. 배경 `cb-paper-card`, 1px 점선 헤어라인 보더, 4px 반경, 패딩 24px. 제목만 손글씨 서체(Nanum Pen Script, -1deg 회전). CTA는 잉크색 배경 + 크림 텍스트의 솔리드 버튼(4px 반경, 패딩 10px 20px, hover는 opacity 0.82).
 
 ### Navigation
-- **Header:** sticky, 70px, 반투명 검정 + 블러. 로고 텍스트는 Signal Gradient
-  클리핑. 내비 링크는 hover 시 `bg-card` 배경 + 흰 텍스트로. 768px 이하에서
-  숨김(현재 모바일 내비 대체 UI 없음 — 아래 Don't 참고).
-- **로고:** 실제 로고마크 자산은 없다. 현재는 텍스트("DanceFlow") + 이모지(💃)
-  조합뿐이다.
-
-### Signature: Proof Numeral
-반경 없는 대형 그라디언트 클립 숫자. 세 가지 크기로 재사용됨: 4rem/700
-(`issue-count-number`, 결과 화면의 주인공), 2.5rem/700(`score-value`, 레거시),
-1.3rem/700(`issue-badge-value`, 목록의 축약형). 위 Typography → Proof Numeral
-Rule 참고.
-
-### Signature: Synced Comparison
-이 제품의 핵심 화면. 두 비디오 패널을 나란히(모바일에선 위아래로) 배치하고,
-아래 스크럽 가능한 타임라인에 "지적 구간"을 반투명 핑크 마커로 표시, 재생
-헤드는 시안 세로선(글로우 포함)으로 그린다. 각 비디오 위 태그는 Reference/Practice
-Rule을 따라 시안/핑크로 구분된다.
-
-### Legacy — 확장하지 말 것
-- **`.score-display`** (0~100 원형 점수 링, `App.css`): 어떤 JSX에서도 더 이상
-  쓰이지 않는다. 제품이 "0~100 점수"에서 "지적 구간 개수"로 지표를 바꾼 뒤
-  대체됐다(`LogDetail.css` 주석: "점수 대신 구간 개수 — 환산 상수가 임의값이라
-  0~100 점수는 절대값에 의미가 없었다"). 새 화면에 이 패턴을 재사용하지 않는다.
-- **`.grid-2` / `.grid-3` / `.grid-4`** (`index.css`): 선언만 되고 실사용
-  화면에서는 참조되지 않는 유틸리티.
+칸 자체가 내비게이션 링크다 (`<Link className="cb-cell">`) — 별도 버튼이나 화살표 없이 칸 전체가 클릭 영역이다.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** 시안=기준/레퍼런스, 핑크=나의 시도 매핑을 모든 비교 UI에서 지킨다(The Reference/Practice Rule).
-- **Do** 카드·버튼은 평시 평평하게, 글로우는 hover·active 응답으로만 켠다(The Response-Only/Flat-Until-Touched Rule).
-- **Do** 반경은 12px(컨트롤)/20px(컨테이너) 두 단계만 쓴다. 세 번째 반경 값을 새로 만들지 않는다.
-- **Do** 데이터 숫자(이슈 개수·품질 지표)를 강조할 땐 Proof Numeral 모티프를 재사용하되, Tension Note의 절제 방향을 다음 리파인 패스에서 검토한다.
+- **Do** 강조는 형광펜 옐로 하나로 제한한다 (The One Yellow Rule).
+- **Do** 배경용 형광펜과 오버레이용 형광펜을 구분한다 — `cb-highlight-wash`는 배경, `cb-highlight-soft`는 텍스트 위 오버레이 (The Wash-vs-Soft Rule).
+- **Do** 증거 숫자는 Inter + tabular-nums로 명시 고정한다, 한글 서체 폴백에 맡기지 않는다 (The Tabular Numeral Rule).
+- **Do** 깊이는 헤어라인과 배경 전환으로만 표현한다. `box-shadow`를 새로 추가하지 않는다 (The No-Shadow Rule).
+- **Do** 손글씨 서체는 화면당 한 곳으로 제한한다 (The One Script Rule).
 
 ### Don't:
-- **Don't** 장식용·AI 클리셰 이모지를 새로 추가하지 않는다 (PRODUCT.md의 확정된 브랜드 제약). **지금 구현은 이 규칙을 전면적으로 어기고 있다** — 헤더 로고(💃), 모든 페이지 제목(🎯📋📊 등), 모든 빈 상태 아이콘, 업로드 아이콘, 대시보드 피처 카드 아이콘까지 이모지다. 이건 이 디자인 시스템의 정체성이 아니라 **1순위 정리 대상**이다. 아이콘이 필요하면 인라인 SVG나 절제된 타이포/도형으로 바꾼다. (`←`/`→` 같은 방향 화살표 글리프는 장식이 아니라 내비게이션 기능이므로 이 금지에 해당하지 않는다.)
-- **Don't** `.score-display`(0~100 원형 점수 링)를 새 화면에 재사용하지 않는다 — 이미 대체된 죽은 패턴이다.
-- **Don't** 그라디언트 텍스트 처리를 지금보다 더 확장하지 않는다 — Tension Note 참고, 이미 포화 상태다.
-- **Don't** `--font-family`가 Inter를 선언한다고 해서 실제로 Inter가 로드되고 있다고 가정하지 않는다 — 지금은 시스템 폰트 폴백으로 렌더링된다.
-- **Don't** 768px 이하에서 내비게이션을 완전히 숨긴 채로 두지 않는다 — 현재 모바일 대체 내비(햄버거 메뉴 등)가 없어 화면이 좁아지면 대시보드/숙제/기록으로 갈 방법이 헤더 로고 클릭(홈)뿐이다. 모바일이 1급 사용 환경이라는 PRODUCT.md 원칙과 맞지 않는다.
+- **Don't** 칸마다 개별 카드 그림자·라운드·보더를 주지 않는다 — 판 하나 + 헤어라인 구분이 이 세계관의 카드 그리드 대체 문법이다. finish review에서 개별 카드 그림자 시도가 정정된 이력이 있다.
+- **Don't** 아이콘(이모지든 SVG든)을 칸 구분에 쓰지 않는다 — 두 자리 칸 번호가 그 역할을 한다. 이모지 자체는 PRODUCT.md의 전면 금지 대상이기도 하다.
+- **Don't** 이 화면의 시안 값(`#026a7d`)을 옛 네온 세계관의 시안(`#00d9ff`)과 섞어 쓰지 않는다 — 크림 배경용으로 대비를 다시 계산한 별개 값이다.
+- **Don't** Noto Sans KR 서브셋에 숫자를 맡기지 않는다 — korean 서브셋에는 라틴 숫자 unicode-range가 없어 조용히 잘못된 서체로 렌더링된다.
+
+## Migration Status
+
+**이 시스템은 현재 `Dashboard.jsx` 한 화면에만 적용됐다.** 위 토큰·규칙은 안무 카운트보드가 완성된 형태로 도착한 유일한 표면을 기록한 것이며, 앱의 목표 정체성(사용자가 "앱 전체의 정체성을 다시 설계"로 이번 라운드 범위를 선택함)이지 이미 전면 적용된 상태가 아니다.
+
+**아직 옛 "The Studio After Hours"(다크 네온) 세계관을 그대로 쓰는 화면/컴포넌트:**
+- `Header` (로고·내비게이션)
+- `Login`, `Signup`
+- `Practice`
+- `Assignments`, `AssignmentDetail`, `AssignmentCreate`
+- `Logs`, `LogDetail`
+- `SyncedComparison`
+- `VideoUploader`, `VideoTrimmer`
+- 전역 `index.css` / `App.css`의 `:root` 토큰(`--bg-primary`, `--accent-pink`, `--accent-cyan`, `--accent-gradient`, `--shadow-glow` 등) — grep으로 확인: `--cb-` 프리픽스 토큰은 `Dashboard.css` 밖에서 전혀 참조되지 않는다.
+
+이 화면들에는 이 문서의 `colors`/`typography`/`components` 토큰이 적용되지 않는다 — 여전히 옛 시스템(Signal Pink/Cyan/Purple, 유리 카드, 네온 글로우, Inter 미로드 폴백)을 따른다. 그 옛 시스템의 세부 규칙(색 역할, 반경 2단계, 글로우 문법, 이모지 정리 대상 등)은 이 문서 이전 버전에 전부 기록돼 있었으며, git 이력에서 확인 가능하다 — 해당 화면들이 실제로 이 새 세계관으로 이관되기 전까지는 그 옛 문서의 내용이 이 화면들을 정확히 설명하는 것으로 취급한다. 옛 문서 내용을 지우지 않고 이 섹션으로 대체한 이유는, 다음에 저 화면 중 하나를 여는 에이전트가 이 새 DESIGN.md의 크림/형광펜 토큰을 그 화면에도 이미 적용된 것으로 오인하지 않도록 하기 위함이다.
+</content>
