@@ -294,22 +294,28 @@ EC2는 이미 tailnet에 있다(`odo-ec2` / `100.114.82.112`). 러너를 **임�
 
    태그를 미리 선언하지 않으면 그 태그로 노드를 붙일 수 없다.
 
-   **그리고 `tag:ci`가 서버의 22번 포트에 닿도록 허용해야 한다.** ACL이
-   기본 allow-all이 아니라면 이 규칙이 없어서 SSH가 막힌다:
+   **그리고 `tag:ci`가 서버의 22번 포트에 닿도록 허용해야 한다.** 정책이
+   기본 allow-all이 아니라면 이 규칙이 없어서 SSH가 막힌다.
+
+   이 tailnet의 정책은 **`grants`**(신문법)로 쓰여 있다. 구문법인 `acls`와
+   공존은 되지만 두 스타일이 섞이면 나중에 읽기 어려우니 `grants`에 맞춘다:
 
    ```json
    "hosts": {
-     "odo-ec2": "100.114.82.112"
+     "coco-mac-mini": "100.117.201.13",
+     "odo-ec2":       "100.114.82.112",
    },
-   "acls": [
-     // ... 기존 규칙 ...
+   "grants": [
      {
-       "action": "accept",
-       "src":    ["tag:ci"],
-       "dst":    ["odo-ec2:22"]
-     }
+       "src": ["tag:ci"],
+       "dst": ["host:coco-mac-mini", "host:odo-ec2"],
+       "ip":  ["tcp:22"],
+     },
    ]
    ```
+
+   `dst`에 대상 서버를 **모두** 적어야 한다. EC2가 빠져 있으면 배포가
+   `Connection timed out`으로 죽는다.
 
    ⚠️ **`tailscale ping`이 통과해도 SSH는 막힐 수 있다.** ping은 tailnet 계층에서
    응답하는 것이라 ACL의 포트 규칙을 검사하지 않는다. 실제로 워크플로의

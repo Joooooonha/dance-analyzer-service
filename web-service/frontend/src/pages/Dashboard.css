@@ -1,7 +1,7 @@
 /*
- * 안무 카운트보드 — Dashboard 전용 스타일.
- * 공유 토큰(--cb-*, 폰트, 노트 격자, ::selection)은 styles/countboard.css의
- * .countboard 클래스가 담당한다. 여기는 이 화면만의 컴포넌트만 남는다.
+ * 연습실 거울 · 테이프 마킹 — Dashboard 전용 스타일.
+ * 공유 토큰(--st-*, 폰트, ::selection)은 styles/studio.css의 .studio가
+ * 담당한다. 여기는 이 화면만의 컴포넌트만 남는다.
  */
 
 .dashboard {
@@ -10,29 +10,30 @@
 }
 
 /* ========== 헤더 ========== */
-.cb-header {
+.st-header {
     margin-bottom: 28px;
 }
 
-.cb-header h1 {
+.st-header h1 {
     font-size: 1.6rem;
     font-weight: 700;
 }
 
-/* ========== 카운트 요약 스트립 ========== */
-.cb-strip {
+/* ========== 증거 스트립 — 거울 패널 ========== */
+.st-strip {
     display: flex;
     align-items: baseline;
     gap: 16px;
     padding: 20px 24px;
     margin-bottom: 32px;
-    background: var(--cb-paper-card);
-    border: 1px solid var(--cb-rule);
-    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 45%), var(--st-glass);
+    border: 1px solid var(--st-line);
+    border-radius: 2px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
     min-height: 76px;
 }
 
-.cb-strip-number {
+.st-strip-number {
     /* Noto Sans KR의 korean-* 서브셋에는 unicode-range가 없어 숫자까지
        그 서체로 끌고 간다 — 이 화면에서 가장 중요한 숫자만큼은 의도한
        Inter 고정폭 숫자로 명시해 고정한다. */
@@ -41,188 +42,167 @@
     font-weight: 700;
     line-height: 1;
     font-variant-numeric: tabular-nums;
-    color: var(--cb-ink);
-    position: relative;
+    color: var(--st-ink);
 }
 
-/* 형광펜 스와이프 — 값이 자리 잡을 때 밑에서 한 번 칠해지는 신호 동작 */
-.cb-strip-has-count .cb-strip-number::after {
-    content: '';
-    position: absolute;
-    left: -2px;
-    right: -2px;
-    bottom: 0.08em;
-    height: 0.34em;
-    background: var(--cb-highlight-soft);
-    z-index: -1;
-    animation: cb-highlight-sweep 0.6s ease-out both;
-}
-
-@keyframes cb-highlight-sweep {
-    from { transform: scaleX(0); transform-origin: left; }
-    to { transform: scaleX(1); transform-origin: left; }
-}
-
-.cb-strip-label {
+.st-strip-label {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    color: var(--cb-ink-secondary);
+    color: var(--st-ink-secondary);
     font-size: 0.95rem;
 }
 
-.cb-strip-status {
+.st-strip-status {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: var(--cb-ink-secondary);
+    color: var(--st-ink-secondary);
     font-size: 1rem;
 }
 
-.cb-strip-link {
-    color: var(--cb-ink);
+.st-strip-link {
+    color: var(--st-ink);
     font-size: 0.85rem;
     font-weight: 600;
     text-decoration: underline;
-    text-decoration-color: var(--cb-highlight);
-    text-decoration-thickness: 3px;
+    text-decoration-color: var(--st-cyan);
+    text-decoration-thickness: 2px;
     text-underline-offset: 3px;
     white-space: nowrap;
 }
 
-.cb-strip-link:hover {
-    color: var(--cb-cyan);
+.st-strip-link:hover {
+    color: var(--st-cyan);
 }
 
-/* ========== 카운트보드 칸 — 판이 아니라 포스트잇 ==========
-   판+헤어라인 대신, 각 칸이 살짝 다른 각도로 붙어 있는 낱장 메모다.
-   그림자는 쓰지 않는다(No-Shadow Rule) — 종이 결의 페이지 배경 위에
-   진짜 틈(gap)을 두어 노트 격자가 칸 사이로 비쳐 보이게 한다. 색은
-   전부 형광펜 옐로 한 톤(One Yellow Rule) — 칸마다 색을 바꾸지 않는다. */
-.cb-cells {
+/* ========== 다음 할 일 — 바닥 테이프 마크 ==========
+   실제 연습실에서 자리·구간을 색 테이프로 표시하는 방식 그대로다.
+   대시보드에서는 정보를 담은 색 구분이 아니라(그건 LogDetail의 지적
+   구간 몫) 하나의 형광등-반사 톤만 쓴다 — 카드마다 다른 색을 주지 않는다. */
+.st-marks {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 24px 20px;
+    gap: 22px 18px;
     margin-bottom: 28px;
 }
 
-.cb-cells-leader {
+.st-marks-leader {
     grid-template-columns: 1fr;
     max-width: 340px;
 }
 
-.cb-cell {
+.st-mark {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 6px;
     padding: 20px 22px 22px;
-    background: var(--cb-highlight-wash);
+    background: var(--st-fluoro);
     text-decoration: none;
     color: inherit;
-    /* 뜯긴 모서리 — 오른쪽 위 한 귀퉁이만 사선으로 잘라 페이지가 비치게 한다 */
-    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
-    transform: rotate(var(--note-rotate, 0deg));
-    transition: transform 0.15s ease;
+    /* 양 끝이 살짝 잘린 테이프 조각 — 사선으로 뜯긴 단면 */
+    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
+    transform: rotate(var(--mark-rotate, 0deg));
+    transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
-.cb-cells .cb-cell:nth-child(1) { --note-rotate: -1.5deg; }
-.cb-cells .cb-cell:nth-child(2) { --note-rotate: 1deg; }
-.cb-cells .cb-cell:nth-child(3) { --note-rotate: -0.5deg; }
+.st-marks .st-mark:nth-child(1) { --mark-rotate: -1deg; }
+.st-marks .st-mark:nth-child(2) { --mark-rotate: 0.8deg; }
+.st-marks .st-mark:nth-child(3) { --mark-rotate: -0.4deg; }
 
-.cb-cell:hover,
-.cb-cell:focus-visible {
-    /* 그림자나 들어올림이 아니라, 메모를 집어 든 것처럼 각도가 펴진다 */
-    transform: rotate(0deg) scale(1.015);
+.st-mark:hover,
+.st-mark:focus-visible {
+    /* 그림자 대신 각도가 펴지고 테이프가 살짝 더 선명해진다 */
+    transform: rotate(0deg);
+    background: var(--st-fluoro-wash);
 }
 
-.cb-cell:focus-visible {
-    outline: 2px solid var(--cb-cyan);
+.st-mark:focus-visible {
+    outline: 2px solid var(--st-cyan);
     outline-offset: 2px;
 }
 
-.cb-cell-number {
+.st-mark-number {
     font-size: 0.85rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.04em;
-    /* ink-muted(44%)는 이 크기 텍스트에서 대비가 부족해 secondary(~4.7:1)를 쓴다 */
-    color: var(--cb-ink-secondary);
+    color: var(--st-ink-secondary);
 }
 
-.cb-cell-title {
+.st-mark-title {
     font-size: 1.15rem;
     font-weight: 700;
-    color: var(--cb-ink);
+    color: var(--st-ink);
 }
 
-.cb-cell-desc {
-    color: var(--cb-ink-secondary);
+.st-mark-desc {
+    color: var(--st-ink-secondary);
     font-size: 0.9rem;
     line-height: 1.5;
 }
 
-/* ========== 첫 방문자 가이드 (기록이 하나도 없을 때만) ========== */
-.cb-guide {
+/* ========== 첫 방문자 가이드 — 거울에 붙은 손글씨 메모 ========== */
+.st-guide {
     margin-top: 28px;
     padding: 24px;
-    background: var(--cb-paper-card);
-    border: 1px dashed var(--cb-rule);
-    border-radius: 4px;
+    background: var(--st-glass);
+    border: 1px dashed var(--st-line);
+    border-radius: 2px;
 }
 
-.cb-guide h2 {
-    /* 손글씨풍 라벨 — 이 세계관에서 유일하게, 절제해서 쓰는 자리.
-       나머지 전부와 다른 실제 서체(나눔손글씨 펜)를 쓴다 — 같은 서체에
-       기울임만 준 가짜 손글씨가 아니다. */
+.st-guide h2 {
+    /* 코치가 거울 모서리에 붙여둔 메모 — 이 세계관에서 유일하게 쓰는
+       손글씨풍 서체(나눔손글씨 펜), 딱 한 곳에만 절제해서 쓴다. */
     font-family: 'Nanum Pen Script', cursive;
     font-size: 1.5rem;
     font-weight: 400;
-    color: var(--cb-ink);
+    color: var(--st-ink);
     margin-bottom: 10px;
     transform: rotate(-1deg);
     display: inline-block;
 }
 
-.cb-guide-list {
+.st-guide-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
     padding-left: 20px;
     margin-bottom: 18px;
-    color: var(--cb-ink-secondary);
+    color: var(--st-ink-secondary);
     font-size: 0.95rem;
     line-height: 1.5;
 }
 
-.cb-guide-list b {
-    color: var(--cb-ink);
+.st-guide-list b {
+    color: var(--st-ink);
 }
 
-.cb-guide-cta {
+.st-guide-cta {
     display: inline-block;
     padding: 10px 20px;
-    background: var(--cb-ink);
-    color: var(--cb-paper);
-    border-radius: 4px;
+    background: var(--st-ink);
+    color: var(--st-wall);
+    border-radius: 2px;
     font-weight: 600;
     font-size: 0.9rem;
     text-decoration: none;
     transition: opacity 0.15s ease;
 }
 
-.cb-guide-cta:hover {
+.st-guide-cta:hover {
     opacity: 0.82;
 }
 
 @media (max-width: 480px) {
-    .cb-strip {
+    .st-strip {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
     }
 
-    .cb-strip-number {
+    .st-strip-number {
         font-size: 2.25rem;
     }
 }
