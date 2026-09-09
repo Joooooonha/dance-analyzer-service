@@ -1,70 +1,48 @@
 package SeSAC.Dance_Assessment.Presentation;
 
-import SeSAC.Dance_Assessment.Dto.User.LoginRequest;
-import SeSAC.Dance_Assessment.Dto.User.SignupRequest;
 import SeSAC.Dance_Assessment.Dto.User.UserResponse;
+import SeSAC.Dance_Assessment.Security.CurrentUserId;
+import SeSAC.Dance_Assessment.Security.JwtCookie;
 import SeSAC.Dance_Assessment.Service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * [NEW] 프론트엔드 연동을 위해 추가된 인증 컨트롤러
- * - 회원가입, 로그인, 현재 사용자 정보 조회 API 제공
+ * 모든 환경에서 열리는 인증 API.
+ *
+ * <p>아이디/비밀번호 로그인은 여기 없다 — {@code DevAuthController}에 분리했다.
+ * 운영에서는 소셜 로그인({@code /oauth2/authorization/{kakao|naver}})만 쓴다.
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api") // 프론트엔드와 구분하기 위해 /api prefix 사용
 public class UserController {
 
     private final UserService userService;
+    private final JwtCookie jwtCookie;
 
     /**
-     * [NEW] 회원가입 API
-     * POST /api/auth/signup
-     * 
-     * 요청 본문:
-     * {
-     * "loginId": "user1",
-     * "password": "1234",
-     * "nickname": "댄서1",
-     * "teamId": 1, // 기존 팀 가입 시 (optional)
-     * "createTeamName": "" // 새 팀 생성 시 (optional)
-     * }
+     * 로그아웃 — 쿠키를 지운다.
+     *
+     * <p>JWT는 서버가 상태를 갖지 않아 "무효화"가 불가능하다. 쿠키를 지우면
+     * 브라우저가 더 이상 토큰을 보내지 않는 것으로 충분하다고 보았다.
+     * 탈취된 토큰까지 막으려면 블랙리스트가 필요한데, 지금 규모에는 과하다.
      */
-    @PostMapping("/auth/signup")
-    public ResponseEntity<UserResponse> signup(@RequestBody SignupRequest request) {
-        UserResponse response = userService.signup(request);
-        return ResponseEntity.ok(response);
+    @PostMapping("/auth/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        jwtCookie.clear(response);
+        return ResponseEntity.noContent().build();
     }
 
     /**
-     * [NEW] 로그인 API
-     * POST /api/auth/login
-     * 
-     * 요청 본문:
-     * {
-     * "loginId": "user1",
-     * "password": "1234"
-     * }
-     * 
-     * 응답: 사용자 정보 (프론트에서 localStorage에 저장)
-     */
-    @PostMapping("/auth/login")
-    public ResponseEntity<UserResponse> login(@RequestBody LoginRequest request) {
-        UserResponse response = userService.login(request);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * [NEW] 현재 로그인된 사용자 정보 조회 API
-     * GET /api/users/me
-     * 
-     * 헤더: X-User-Id (로그인된 사용자 ID)
+     * 현재 로그인된 사용자 정보.
+     *
+     * <p>프론트엔드는 이 API로 로그인 상태를 확인한다. 쿠키가 httpOnly라
+     * 자바스크립트가 토큰을 직접 볼 수 없기 때문이다. 인증이 없으면 401.
      */
     @GetMapping("/users/me")
-    public ResponseEntity<UserResponse> getCurrentUser(@RequestHeader("X-User-Id") Long userId) {
-        UserResponse response = userService.getCurrentUser(userId);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<UserResponse> getCurrentUser(@CurrentUserId Long userId) {
+        return ResponseEntity.ok(userService.getCurrentUser(userId));
     }
 }
