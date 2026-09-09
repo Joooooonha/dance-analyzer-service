@@ -284,6 +284,51 @@ export default function LogDetail() {
     const quality = safeParse(log?.qualityJson, null);
     const bothStartsSet = refStart != null && pracStart != null;
 
+    /**
+     * 구간 지정 + 분석 실행 묶음.
+     *
+     * **분석이 끝난 뒤에도 필요하다.** 예전에는 이 UI가 WAITING일 때만 그려졌는데,
+     * 완료 화면은 "시작 지점을 지정한 뒤 다시 분석해보세요"라고 안내하고 있었다.
+     * 안내가 가리키는 화면이 없었던 셈이다. 백엔드는 재분석을 이미 지원한다
+     * (진행 중일 때만 막고, 결과 행은 덮어쓴다).
+     */
+    const trimEditor = (buttonLabel) => (
+        <>
+            <div className="upload-grid mt-3">
+                {log.referenceVideoId && (
+                    <VideoTrimmer
+                        label="기준 영상"
+                        videoSrc={getVideoUrl(log.referenceVideoId)}
+                        startSec={refStart}
+                        endSec={refEnd}
+                        onChangeStart={setRefStart}
+                        onChangeEnd={setRefEnd}
+                    />
+                )}
+                {log.practiceVideoId && (
+                    <VideoTrimmer
+                        label="연습 영상"
+                        videoSrc={getVideoUrl(log.practiceVideoId)}
+                        startSec={pracStart}
+                        endSec={pracEnd}
+                        onChangeStart={setPracStart}
+                        onChangeEnd={setPracEnd}
+                    />
+                )}
+            </div>
+
+            <div className="submit-section mt-3">
+                <button
+                    className="btn btn-primary btn-lg"
+                    onClick={handleStartAnalysis}
+                    disabled={starting}
+                >
+                    {starting ? '시작하는 중...' : buttonLabel}
+                </button>
+            </div>
+        </>
+    );
+
     return (
         <div className="log-detail-page page">
             <div className="container">
@@ -391,38 +436,7 @@ export default function LogDetail() {
                             </p>
                         )}
 
-                        <div className="upload-grid mt-3">
-                            {log.referenceVideoId && (
-                                <VideoTrimmer
-                                    label="기준 영상"
-                                    videoSrc={getVideoUrl(log.referenceVideoId)}
-                                    startSec={refStart}
-                                    endSec={refEnd}
-                                    onChangeStart={setRefStart}
-                                    onChangeEnd={setRefEnd}
-                                />
-                            )}
-                            {log.practiceVideoId && (
-                                <VideoTrimmer
-                                    label="연습 영상"
-                                    videoSrc={getVideoUrl(log.practiceVideoId)}
-                                    startSec={pracStart}
-                                    endSec={pracEnd}
-                                    onChangeStart={setPracStart}
-                                    onChangeEnd={setPracEnd}
-                                />
-                            )}
-                        </div>
-
-                        <div className="submit-section mt-3">
-                            <button
-                                className="btn btn-primary btn-lg"
-                                onClick={handleStartAnalysis}
-                                disabled={starting}
-                            >
-                                {starting ? '시작하는 중...' : (bothStartsSet ? '분석 시작하기' : '구간 없이 분석 시작하기')}
-                            </button>
-                        </div>
+                        {trimEditor(bothStartsSet ? '분석 시작하기' : '구간 없이 분석 시작하기')}
                     </div>
                 )}
 
@@ -440,10 +454,24 @@ export default function LogDetail() {
                         <Lightbulb size={16} />
                         <span>
                             안무 시작 지점을 지정하지 않고 분석했습니다.
-                            정확도를 높이고 싶다면 위쪽 영상에서 시작 지점을 지정한 뒤
-                            다시 분석해보세요.
+                            정확도를 높이고 싶다면 아래 <b>구간 다시 지정하고 재분석</b>에서
+                            시작 지점을 찍어보세요.
                         </span>
                     </div>
+                )}
+
+                {/* ===== 재분석 =====
+                    결과를 본 뒤에야 "구간을 잘못 잡았다"는 걸 알게 되는 경우가 많다.
+                    결과 화면을 밀어내지 않도록 접어둔다. */}
+                {log?.status === 'COMPLETED' && log?.referenceVideoId && log?.practiceVideoId && (
+                    <details className="reanalyze card mb-3">
+                        <summary>구간 다시 지정하고 재분석</summary>
+                        <p className="hint-text mt-2">
+                            두 영상에서 안무가 실제로 시작하는 순간을 맞추면 정렬 정확도가
+                            올라갑니다. 다시 분석하면 <b>이 기록의 결과가 새 결과로 대체됩니다.</b>
+                        </p>
+                        {trimEditor('이 구간으로 다시 분석하기')}
+                    </details>
                 )}
 
                 {/* ===== 나란히 비교 (이 화면의 주인공) ===== */}

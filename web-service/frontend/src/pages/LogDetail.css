@@ -417,3 +417,18 @@
     font-size: 0.82rem;
     color: var(--accent-pink);
 }
+
+/* ── 재분석 (접힘) ───────────────────────────────────────
+   결과를 본 뒤에야 구간을 잘못 잡았다는 걸 알게 되는 경우가 많다.
+   필요할 때만 펴서 쓰도록 접어둔다. */
+
+.reanalyze summary {
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    user-select: none;
+}
+
+.reanalyze summary:hover {
+    color: var(--text-primary);
+}
