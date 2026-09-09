@@ -14,8 +14,9 @@ public record AssignmentDetailResponse(
         LocalDateTime startDate,
         LocalDateTime dueDate,
         String writerName,
-        Long targetVideoId,
-        String targetVideoPath // [NEW] 기준 영상 재생을 위한 경로
+        Long targetVideoId
+        // 영상 경로는 내려주지 않는다. 서버 내부 저장 위치는 클라이언트가 알 필요가
+        // 없고, 알려주면 그 자체가 정보 노출이다. 재생은 GET /videos/{id}로 한다.
 ) {
     public static AssignmentDetailResponse from(Assignment assignment) {
         return new AssignmentDetailResponse(
@@ -24,7 +25,6 @@ public record AssignmentDetailResponse(
                 assignment.getStartDate(),
                 assignment.getDueDate(),
                 assignment.getWriter().getNickname(),
-                assignment.getTargetVideo().getId(),
-                assignment.getTargetVideo().getVideoPath());
+                assignment.getTargetVideo().getId());
     }
 }

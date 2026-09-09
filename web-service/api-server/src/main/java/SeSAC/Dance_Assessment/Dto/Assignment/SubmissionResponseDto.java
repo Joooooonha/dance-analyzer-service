@@ -3,7 +3,8 @@ package SeSAC.Dance_Assessment.Dto.Assignment;
 import SeSAC.Dance_Assessment.Domain.PracticeLog;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
+import SeSAC.Dance_Assessment.Dto.ApiTime;
+import java.time.Instant;
 
 @Getter
 @NoArgsConstructor
@@ -13,7 +14,8 @@ public class SubmissionResponseDto {
     private Long id; // 팀원 ID
     private String NickName; // 팀원 이름 (User 테이블)
     private String videoStatus; // 영상 분석 상태 (WAITING, PROCESSING, COMPLETED, FAILED)
-    private LocalDateTime submittedAt; // 제출 시간
+    // 서버가 UTC로 기록한 값이라 시간대를 명시해 내보낸다 (ApiTime 참조)
+    private Instant submittedAt; // 제출 시간
 
     // Entity -> DTO 변환 생성자
     public SubmissionResponseDto(PracticeLog log) {
@@ -35,6 +37,6 @@ public class SubmissionResponseDto {
             }
         }
 
-        this.submittedAt = log.getCreatedAt();
+        this.submittedAt = ApiTime.utc(log.getCreatedAt());
     }
 }

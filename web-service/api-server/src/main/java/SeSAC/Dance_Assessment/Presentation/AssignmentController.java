@@ -6,6 +6,7 @@ import SeSAC.Dance_Assessment.Dto.Assignment.AssignmentResponse;
 import SeSAC.Dance_Assessment.Dto.Assignment.SubmissionResponseDto;
 import SeSAC.Dance_Assessment.Dto.PracticeLog.PracticeLogDetailResponse;
 import SeSAC.Dance_Assessment.Service.AssignmentService;
+import SeSAC.Dance_Assessment.Security.CurrentUserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class AssignmentController {
     // 숙제 생성 API
     @PostMapping("/assignments")
     public ResponseEntity<Long> createAssignment(
-            @RequestHeader("X-User-Id") Long userId,
+            @CurrentUserId Long userId,
             @RequestBody AssignmentCreateRequest request) {
         Long assignmentId = assignmentService.createAssignment(userId, request);
         return ResponseEntity.ok(assignmentId);
@@ -30,7 +31,7 @@ public class AssignmentController {
 
     // 숙제 목록 조회(전체)
     @GetMapping("/assignments")
-    public ResponseEntity<List<AssignmentResponse>> getAssignments(@RequestHeader("X-User-Id") Long userId) {
+    public ResponseEntity<List<AssignmentResponse>> getAssignments(@CurrentUserId Long userId) {
         List<AssignmentResponse> responses = assignmentService.getMyTeamAssignments(userId);
         return ResponseEntity.ok(responses);
     }
@@ -45,7 +46,7 @@ public class AssignmentController {
     @GetMapping("/assignments/{id}")
     public ResponseEntity<AssignmentDetailResponse> getAssignment(
             @PathVariable Long id,
-            @RequestHeader("X-User-Id") Long userId) {
+            @CurrentUserId Long userId) {
         AssignmentDetailResponse response = assignmentService.getAssignmentDetail(id, userId);
         return ResponseEntity.ok(response);
     }
@@ -60,7 +61,7 @@ public class AssignmentController {
     @GetMapping("/assignments/{id}/submissions")
     public ResponseEntity<List<SubmissionResponseDto>> getSubmissions(
             @PathVariable Long id,
-            @RequestHeader("X-User-Id") Long userId) throws AccessDeniedException {
+            @CurrentUserId Long userId) throws AccessDeniedException {
         List<SubmissionResponseDto> submissions = assignmentService.getSubmissions(userId, id);
         return ResponseEntity.ok(submissions);
     }
@@ -74,7 +75,7 @@ public class AssignmentController {
     @GetMapping("/assignments/{id}/my-submissions")
     public ResponseEntity<List<PracticeLogDetailResponse>> getMySubmissions(
             @PathVariable Long id,
-            @RequestHeader("X-User-Id") Long userId) {
+            @CurrentUserId Long userId) {
         List<PracticeLogDetailResponse> submissions = assignmentService.getMySubmissions(userId, id);
         return ResponseEntity.ok(submissions);
     }

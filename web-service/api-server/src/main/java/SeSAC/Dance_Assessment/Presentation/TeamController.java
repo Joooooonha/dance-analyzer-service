@@ -3,6 +3,7 @@ package SeSAC.Dance_Assessment.Presentation;
 import SeSAC.Dance_Assessment.Dto.Team.TeamCreateRequest;
 import SeSAC.Dance_Assessment.Dto.Team.TeamResponse;
 import SeSAC.Dance_Assessment.Service.TeamService;
+import SeSAC.Dance_Assessment.Security.CurrentUserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class TeamController {
     // 팀 생성 API
     @PostMapping("/teams")
     public ResponseEntity<Long> createTeam(
-            @RequestHeader("X-User-Id") Long userId,
+            @CurrentUserId Long userId,
             @RequestBody TeamCreateRequest request) {
         Long teamId = teamService.createTeam(userId, request);
         return ResponseEntity.ok(teamId);
