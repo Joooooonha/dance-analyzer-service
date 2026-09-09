@@ -1,0 +1,14 @@
+{
+  "name": "Dance Analyzer",
+  "short_name": "Dance",
+  "description": "기준 영상과 내 연습 영상을 나란히 비교하는 연습 도구",
+  "start_url": "/logs",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

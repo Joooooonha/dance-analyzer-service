@@ -30,47 +30,40 @@
     flex-shrink: 0;
 }
 
-.score-circle {
+/* 점수 대신 틀린 동작 구간 개수를 보여준다 — 환산 상수가 임의값이라
+   0~100 점수는 절대값에 의미가 없었다. */
+.issue-badge {
     width: 60px;
     height: 60px;
     border-radius: 50%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 3px solid;
+    border: 3px solid var(--accent-cyan);
     background: var(--bg-secondary);
 }
 
-.score-circle.excellent {
-    border-color: #10b981;
-}
-
-.score-circle.good {
-    border-color: var(--accent-cyan);
-}
-
-.score-circle.average {
-    border-color: #f59e0b;
-}
-
-.score-circle.poor {
-    border-color: #ef4444;
-}
-
-.score-circle.pending {
+.issue-badge.pending {
     border-color: var(--border-color);
 }
 
-.score-circle .score-value {
-    font-size: 1.4rem;
+.issue-badge-value {
+    font-size: 1.3rem;
     font-weight: 700;
     background: var(--accent-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    line-height: 1;
 }
 
-.score-circle .score-icon {
+.issue-badge-label {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+}
+
+.issue-badge .score-icon {
     font-size: 1.5rem;
 }
 

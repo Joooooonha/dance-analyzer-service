@@ -35,13 +35,6 @@ export default function Logs() {
         });
     };
 
-    const getScoreClass = (score) => {
-        if (score >= 90) return 'excellent';
-        if (score >= 70) return 'good';
-        if (score >= 50) return 'average';
-        return 'poor';
-    };
-
     const getStatusLabel = (status) => {
         switch (status) {
             case 'COMPLETED': return '완료';
@@ -93,12 +86,13 @@ export default function Logs() {
                                     className="log-card"
                                 >
                                     <div className="log-score">
-                                        {log.status === 'COMPLETED' && log.score !== null ? (
-                                            <div className={`score-circle ${getScoreClass(log.score)}`}>
-                                                <span className="score-value">{log.score}</span>
+                                        {log.status === 'COMPLETED' && log.issueCount !== null ? (
+                                            <div className="issue-badge">
+                                                <span className="issue-badge-value">{log.issueCount}</span>
+                                                <span className="issue-badge-label">구간</span>
                                             </div>
                                         ) : (
-                                            <div className="score-circle pending">
+                                            <div className="issue-badge pending">
                                                 <span className="score-icon">⏳</span>
                                             </div>
                                         )}

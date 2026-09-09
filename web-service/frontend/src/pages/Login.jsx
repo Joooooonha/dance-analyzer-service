@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login, setCurrentUser } from '../api/client';
+import { login, setCurrentUser, socialLoginUrl } from '../api/client';
 import './Auth.css';
+
+// 개발용 로그인 폼 노출 여부. 운영 빌드(`VITE_ENABLE_DEV_LOGIN`을 주지 않음)에서는
+// 숨긴다. 백엔드도 `dev` 프로파일에서만 해당 엔드포인트를 등록한다.
+const DEV_LOGIN = import.meta.env.VITE_ENABLE_DEV_LOGIN === 'true';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -44,6 +48,24 @@ export default function Login() {
                     <p>춤 동작 분석 서비스에 오신 것을 환영합니다</p>
                 </div>
 
+                {/* 소셜 로그인이 기본 경로다. 아래 아이디/비밀번호는 개발 환경
+                    전용이며, 운영에서는 서버가 해당 API를 아예 등록하지 않는다. */}
+                <div className="social-login">
+                    <a className="social-btn social-kakao" href={socialLoginUrl('kakao')}>
+                        카카오로 시작하기
+                    </a>
+                    <a className="social-btn social-naver" href={socialLoginUrl('naver')}>
+                        네이버로 시작하기
+                    </a>
+                </div>
+
+                {/* 아이디/비밀번호 로그인은 개발 환경 전용이다. 운영 빌드에서는
+                    백엔드가 해당 엔드포인트를 아예 등록하지 않아(404) 눌러도
+                    실패한다. 되지 않는 입력칸을 보여주는 것 자체가 혼란이므로
+                    빌드 시점에 제거한다. */}
+                {DEV_LOGIN && <>
+                <div className="auth-divider"><span>또는 (개발용)</span></div>
+
                 <form className="auth-form" onSubmit={handleSubmit}>
                     {error && <div className="auth-error">{error}</div>}
 
@@ -81,6 +103,7 @@ export default function Login() {
                         {loading ? '로그인 중...' : '로그인'}
                     </button>
                 </form>
+                </>}
 
                 <div className="auth-footer">
                     <p>

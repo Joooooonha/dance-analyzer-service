@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getAssignment, uploadVideo, getCurrentUser, getSubmissions, getMySubmissions } from '../api/client';
+import { getAssignment, uploadVideo, getCurrentUser, getSubmissions, getMySubmissions, getVideoUrl } from '../api/client';
 import VideoUploader from '../components/VideoUploader';
 import './AssignmentDetail.css';
 
@@ -28,7 +28,7 @@ export default function AssignmentDetail() {
                     try {
                         const submissionsData = await getSubmissions(id);
                         setSubmissions(submissionsData);
-                    } catch (e) {
+                    } catch {
                         // 팀장이 아니거나 권한이 없으면 무시
                     }
                 }
@@ -38,7 +38,7 @@ export default function AssignmentDetail() {
                     try {
                         const myData = await getMySubmissions(id);
                         setMySubmissions(myData);
-                    } catch (e) {
+                    } catch {
                         // 제출 이력이 없으면 무시
                     }
                 }
@@ -61,13 +61,7 @@ export default function AssignmentDetail() {
         setError('');
 
         try {
-            const formData = new FormData();
-            formData.append('title', `숙제 ${id} 제출`);
-            formData.append('type', 'PRACTICE');
-            formData.append('file', practiceFile);
-            formData.append('assignmentId', id);
-
-            await uploadVideo(formData);
+            await uploadVideo(practiceFile, 'PRACTICE', { assignmentId: Number(id) });
             alert('제출이 완료되었습니다!');
             navigate('/logs');
         } catch (err) {
@@ -144,7 +138,7 @@ export default function AssignmentDetail() {
                             <video
                                 controls
                                 className="video-player"
-                                src={`http://localhost:8080/videos/${assignment.targetVideoId}?userId=${user?.id || ''}`}
+                                src={getVideoUrl(assignment.targetVideoId)}
                             >
                                 브라우저가 비디오 태그를 지원하지 않습니다.
                             </video>
@@ -194,7 +188,9 @@ export default function AssignmentDetail() {
                                                 <span className={`badge badge-${sub.status === 'COMPLETED' ? 'success' :
                                                     sub.status === 'PROCESSING' ? 'warning' : 'info'
                                                     }`}>
-                                                    {sub.status === 'COMPLETED' ? `${sub.totalScore}점` : sub.status}
+                                                    {sub.status === 'COMPLETED'
+                                                        ? `구간 ${sub.issueCount ?? '-'}개`
+                                                        : sub.status}
                                                 </span>
                                             </Link>
                                         ))}

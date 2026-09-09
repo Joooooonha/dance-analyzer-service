@@ -1,13 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { getCurrentUser, logout } from '../api/client';
+import { useAuth } from '../auth/useAuth';
 import './Header.css';
 
 export default function Header() {
     const navigate = useNavigate();
-    const user = getCurrentUser();
+    const { user, logout } = useAuth();
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         navigate('/login');
     };
 

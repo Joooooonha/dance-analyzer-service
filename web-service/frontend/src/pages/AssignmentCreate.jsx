@@ -34,17 +34,12 @@ export default function AssignmentCreate() {
         setError('');
 
         try {
-            // 1. 기준 영상 먼저 업로드
-            const videoFormData = new FormData();
-            videoFormData.append('title', `${formData.title} - 기준 영상`);
-            videoFormData.append('type', 'REFERENCE');
-            videoFormData.append('file', referenceFile);
-
-            const videoId = await uploadVideo(videoFormData);
+            // 1. 기준 영상 먼저 업로드 (저장소로 직접)
+            const upload = await uploadVideo(referenceFile, 'REFERENCE');
 
             // 2. 숙제 생성
             const assignmentData = {
-                targetVideoId: videoId,
+                targetVideoId: upload.videoId,
                 title: formData.title,
                 startDate: new Date(formData.startDate).toISOString(),
                 dueDate: new Date(formData.dueDate).toISOString()

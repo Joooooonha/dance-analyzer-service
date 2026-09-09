@@ -1,0 +1,89 @@
+.video-trimmer {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+}
+
+.trimmer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.trimmer-header h4 {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.trimmer-time {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.trimmer-video {
+  width: 100%;
+  max-height: 320px;
+  background: #000;
+  border-radius: 8px;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.trimmer-timeline {
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.trimmer-seekbar {
+  width: 100%;
+  accent-color: var(--accent-cyan);
+}
+
+.trimmer-marker {
+  position: absolute;
+  top: -4px;
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  transform: translateX(-1px);
+  pointer-events: none;
+}
+
+.marker-start {
+  background: var(--accent-cyan);
+  box-shadow: 0 0 6px var(--accent-cyan);
+}
+
+.marker-end {
+  background: var(--accent-pink);
+  box-shadow: 0 0 6px var(--accent-pink);
+}
+
+.trimmer-controls {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.trimmer-marks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trimmer-mark-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.trimmer-mark-value {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}

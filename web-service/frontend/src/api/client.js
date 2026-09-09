@@ -2,10 +2,18 @@
  * API Client - 백엔드 통신 유틸리티
  */
 
-const API_BASE_URL = 'http://localhost:8080';
+// 배포에서는 프론트와 API가 같은 도메인이라 빈 문자열이면 된다
+// (`/api/...`가 그대로 같은 오리진으로 나간다).
+// 로컬 개발은 Vite(5173)와 Spring(8080)이 다른 포트라 절대 주소가 필요하다.
+// 값은 빌드 시점에 주입한다: VITE_API_BASE_URL=https://내도메인 npm run build
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
 
 /**
- * 로컬 스토리지에서 현재 사용자 정보 가져오기
+ * 현재 사용자 정보 (화면 표시용 캐시).
+ *
+ * **인증에는 쓰이지 않는다.** 인증은 서버가 구운 httpOnly 쿠키로만 이뤄지고,
+ * 자바스크립트는 그 토큰을 볼 수 없다. 여기 담긴 값은 닉네임 표시 같은 용도이며,
+ * 임의로 고쳐도 권한이 바뀌지 않는다.
  */
 export const getCurrentUser = () => {
   const userStr = localStorage.getItem('user');
@@ -15,26 +23,26 @@ export const getCurrentUser = () => {
   return null;
 };
 
-/**
- * 사용자 정보 저장
- */
 export const setCurrentUser = (user) => {
   localStorage.setItem('user', JSON.stringify(user));
 };
 
 /**
- * 로그아웃
+ * 로그아웃 — 서버에서 쿠키를 지우고 로컬 캐시도 비운다.
+ * 캐시만 지우면 쿠키가 남아 여전히 로그인 상태다.
  */
-export const logout = () => {
-  localStorage.removeItem('user');
+export const logout = async () => {
+  try {
+    await fetchAPI('/api/auth/logout', { method: 'POST' });
+  } finally {
+    localStorage.removeItem('user');
+  }
 };
 
 /**
  * 기본 fetch 래퍼
  */
 const fetchAPI = async (endpoint, options = {}) => {
-  const user = getCurrentUser();
-
   const headers = {
     ...options.headers,
   };
@@ -44,17 +52,21 @@ const fetchAPI = async (endpoint, options = {}) => {
     headers['Content-Type'] = 'application/json';
   }
 
-  // 로그인된 사용자가 있으면 X-User-Id 헤더 추가
-  if (user && user.id) {
-    headers['X-User-Id'] = user.id.toString();
-  }
-
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
+    // httpOnly 쿠키를 실어 보내려면 반드시 필요하다.
+    // 예전에는 X-User-Id 헤더로 사용자를 알렸는데, 그건 클라이언트가 값을
+    // 정하는 구조라 헤더만 바꾸면 남의 계정이 됐다.
+    credentials: 'include',
   });
 
   if (!response.ok) {
+    // 쿠키가 없거나 만료됐다. 남아 있는 캐시를 지워 화면이 로그인된 것처럼
+    // 보이지 않게 한다.
+    if (response.status === 401) {
+      localStorage.removeItem('user');
+    }
     const errorText = await response.text();
     throw new Error(errorText || `HTTP ${response.status}`);
   }
@@ -81,7 +93,10 @@ export const signup = async (data) => {
 };
 
 /**
- * 로그인
+ * 로그인 (개발 환경 전용).
+ *
+ * 운영에서는 이 엔드포인트가 등록되지 않는다(404). 소셜 로그인만 사용한다.
+ * 성공하면 서버가 JWT를 httpOnly 쿠키로 구워준다 — 응답 본문에 토큰은 없다.
  */
 export const login = async (loginId, password) => {
   return fetchAPI('/api/auth/login', {
@@ -90,11 +105,40 @@ export const login = async (loginId, password) => {
   });
 };
 
+/** 소셜 로그인 시작. 브라우저를 공급자로 보낸다. */
+export const socialLoginUrl = (provider) =>
+  `${API_BASE_URL}/oauth2/authorization/${provider}`;
+
 /**
  * 현재 사용자 정보 조회
  */
 export const fetchCurrentUser = async () => {
   return fetchAPI('/api/users/me');
+};
+
+// ============ Push API ============
+
+/**
+ * VAPID 공개키. 인증 없이 열려 있다 — 이름 그대로 공개해도 되는 값이고,
+ * 알림 UI를 그릴지 판단하려면 로그인 전에도 필요하다.
+ * 서버에 키가 설정되지 않았으면 빈 문자열이 온다.
+ */
+export const getPushPublicKey = async () => {
+  return fetchAPI('/api/push/public-key');
+};
+
+/** 브라우저가 만든 구독 정보를 서버에 맡긴다. 서버는 이걸로 푸시를 보낸다. */
+export const savePushSubscription = async (subscription) => {
+  return fetchAPI('/api/push/subscribe', {
+    method: 'POST',
+    body: JSON.stringify(subscription),
+  });
+};
+
+export const deletePushSubscription = async (endpoint) => {
+  return fetchAPI(`/api/push/subscribe?endpoint=${encodeURIComponent(endpoint)}`, {
+    method: 'DELETE',
+  });
 };
 
 // ============ Team API ============
@@ -103,14 +147,14 @@ export const fetchCurrentUser = async () => {
  * 팀 목록 조회
  */
 export const getTeams = async () => {
-  return fetchAPI('/teams');
+  return fetchAPI('/api/teams');
 };
 
 /**
  * 팀 생성
  */
 export const createTeam = async (name) => {
-  return fetchAPI('/teams', {
+  return fetchAPI('/api/teams', {
     method: 'POST',
     body: JSON.stringify({ name }),
   });
@@ -122,21 +166,21 @@ export const createTeam = async (name) => {
  * 숙제 목록 조회
  */
 export const getAssignments = async () => {
-  return fetchAPI('/assignments');
+  return fetchAPI('/api/assignments');
 };
 
 /**
  * 숙제 상세 조회
  */
 export const getAssignment = async (id) => {
-  return fetchAPI(`/assignments/${id}`);
+  return fetchAPI(`/api/assignments/${id}`);
 };
 
 /**
  * 숙제 생성
  */
 export const createAssignment = async (data) => {
-  return fetchAPI('/assignments', {
+  return fetchAPI('/api/assignments', {
     method: 'POST',
     body: JSON.stringify(data),
   });
@@ -146,46 +190,87 @@ export const createAssignment = async (data) => {
  * 숙제 제출 현황 조회 (팀장용)
  */
 export const getSubmissions = async (assignmentId) => {
-  return fetchAPI(`/assignments/${assignmentId}/submissions`);
+  return fetchAPI(`/api/assignments/${assignmentId}/submissions`);
 };
 
 /**
  * [NEW] 내 제출 이력 조회
  */
 export const getMySubmissions = async (assignmentId) => {
-  return fetchAPI(`/assignments/${assignmentId}/my-submissions`);
+  return fetchAPI(`/api/assignments/${assignmentId}/my-submissions`);
 };
 
 // ============ Video API ============
 
 /**
- * 영상 업로드
+ * 영상 업로드 — **파일이 백엔드를 거치지 않는다.**
+ *
+ * 1. 서버에서 서명된 업로드 URL을 받고
+ * 2. 브라우저가 저장소로 직접 PUT 하고
+ * 3. 완료를 서버에 알린다
+ *
+ * 예전에는 FormData로 백엔드에 통째로 보냈는데, 100MB짜리 영상이 서버
+ * 대역폭·디스크를 쓰고 Cloudflare 프록시의 요청 본문 100MB 제한에도 걸린다.
+ *
+ * 응답: { videoId, logId, analyzable }
+ * - `logId`는 연습 영상에서만 채워진다. 기준 영상은 "따라 할 대상"이지
+ *   누군가의 연습이 아니므로 연습 기록을 만들지 않는다 → null.
+ * - **videoId를 logId로 유추하지 말 것.** 두 값은 실제로 어긋난다.
+ *
+ * @param onProgress 0~1 진행률 콜백 (선택)
  */
-export const uploadVideo = async (formData) => {
-  return fetchAPI('/videos', {
+export const uploadVideo = async (file, type, link = {}, onProgress) => {
+  // 1) 업로드 URL 발급
+  const { videoId, uploadUrl } = await fetchAPI('/api/videos/upload-url', {
     method: 'POST',
-    body: formData, // FormData는 Content-Type 자동 설정
+    body: JSON.stringify({
+      filename: file.name,
+      contentType: file.type || 'video/mp4',
+      type,
+    }),
+  });
+
+  // 2) 저장소로 직접 업로드.
+  //    fetch 대신 XHR을 쓰는 이유는 업로드 진행률을 알기 위해서다
+  //    (fetch는 업로드 진행 이벤트를 주지 않는다). 수십 MB라 표시가 필요하다.
+  await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', uploadUrl);
+    // Content-Type은 **서명에 포함**되므로 발급 때와 같은 값을 보내야 한다.
+    xhr.setRequestHeader('Content-Type', file.type || 'video/mp4');
+    xhr.upload.onprogress = (e) => {
+      if (onProgress && e.lengthComputable) onProgress(e.loaded / e.total);
+    };
+    xhr.onload = () =>
+      (xhr.status >= 200 && xhr.status < 300)
+        ? resolve()
+        : reject(new Error(`업로드 실패 (HTTP ${xhr.status})`));
+    xhr.onerror = () => reject(new Error('업로드 중 네트워크 오류가 발생했습니다.'));
+    xhr.send(file);
+  });
+
+  // 3) 완료 통보 — 이때 연습 기록이 만들어진다
+  return fetchAPI(`/api/videos/${videoId}/complete`, {
+    method: 'POST',
+    body: JSON.stringify(link),
   });
 };
 
 /**
- * 영상 URL 가져오기
- * 
- * [MODIFIED] 쿼리 파라미터로 userId를 추가
- * 이유: <video src="URL"> 태그에서는 HTTP 헤더를 설정할 수 없으므로
- *       백엔드에서 쿼리 파라미터로도 인증을 받을 수 있도록 수정됨
+ * 영상 재생 URL.
+ *
+ * 예전에는 `?userId=`를 붙였다. `<video src>`가 HTTP 헤더를 못 붙인다는 제약
+ * 때문이었는데, **URL의 숫자만 바꾸면 남의 영상이 재생되는** 구멍이었다.
+ * 인증이 쿠키로 바뀌면서 브라우저가 `<video src>` 요청에도 쿠키를 자동으로
+ * 실어 보내므로 그 우회로가 필요 없어졌다.
  */
-export const getVideoUrl = (videoId) => {
-  const user = getCurrentUser();
-  const userId = user?.id || '';
-  return `${API_BASE_URL}/videos/${videoId}?userId=${userId}`;
-};
+export const getVideoUrl = (videoId) => `${API_BASE_URL}/api/videos/${videoId}`;
 
 /**
  * 영상 삭제
  */
 export const deleteVideo = async (videoId) => {
-  return fetchAPI(`/videos/${videoId}`, {
+  return fetchAPI(`/api/videos/${videoId}`, {
     method: 'DELETE',
   });
 };
@@ -196,21 +281,62 @@ export const deleteVideo = async (videoId) => {
  * 연습 기록 목록 조회
  */
 export const getPracticeLogs = async (page = 0, size = 10) => {
-  return fetchAPI(`/practice-logs?page=${page}&size=${size}`);
+  return fetchAPI(`/api/practice-logs?page=${page}&size=${size}`);
 };
 
 /**
  * 연습 기록 상세 조회
  */
 export const getPracticeLog = async (logId) => {
-  return fetchAPI(`/practice-logs/${logId}`);
+  return fetchAPI(`/api/practice-logs/${logId}`);
+};
+
+/**
+ * 분석 진행 단계 조회.
+ *
+ * 상세 조회와 **따로 부른다.** 진행 단계는 분석 서버에 물어봐야 알 수 있는데,
+ * 그걸 상세 조회에 넣으면 분석 서버가 꺼져 있을 때 결과 화면 전체가 열리지
+ * 않는다. 이건 없어도 되는 정보이므로 실패하면 그냥 무시한다.
+ *
+ * 응답: { status, stage, label, pct, nextPct, elapsedSec }
+ * — 분석 서버에 닿지 못했거나 다른 작업이 돌고 있으면 stage가 null이다.
+ */
+export const getAnalysisProgress = async (logId) => {
+  return fetchAPI(`/api/practice-logs/${logId}/progress`);
+};
+
+/**
+ * 안무 구간 지정 (트림)
+ *
+ * 네 값 모두 선택이다. null/undefined인 필드는 보내지 않는다 —
+ * 백엔드가 "미지정"과 "0초"를 다르게 처리하므로 0으로 채우면 안 된다.
+ */
+export const updateTrim = async (logId, range) => {
+  const body = {};
+  for (const key of [
+    'referenceStartSec', 'referenceEndSec',
+    'practiceStartSec', 'practiceEndSec',
+  ]) {
+    if (range[key] !== null && range[key] !== undefined) {
+      body[key] = range[key];
+    }
+  }
+  return fetchAPI(`/api/practice-logs/${logId}/trim`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  });
 };
 
 /**
  * 분석 요청
+ *
+ * 분석은 비동기다. 이 호출은 시작만 시키고 즉시 반환한다
+ * (AnalysisAcceptedResponse: status, trimApplied, pollUrl, message).
+ * 실제 완료 여부는 getPracticeLog(logId)를 폴링해서 status가
+ * COMPLETED/FAILED가 될 때까지 확인해야 한다. 실측 소요는 약 1~2분이다.
  */
 export const analyzeLog = async (logId) => {
-  return fetchAPI(`/practice-logs/${logId}/analyze`, {
+  return fetchAPI(`/api/practice-logs/${logId}/analyze`, {
     method: 'POST',
   });
 };

@@ -144,3 +144,52 @@
     font-size: 0.85rem;
     color: var(--text-muted);
 }
+/* ===== 소셜 로그인 ===== */
+/* 운영에서는 이 경로만 쓴다. 아래 아이디/비밀번호 폼은 개발 전용이다. */
+.social-login {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.2rem;
+}
+
+.social-btn {
+    display: block;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    text-decoration: none;
+    transition: filter 0.15s ease;
+}
+
+.social-btn:hover {
+    filter: brightness(0.94);
+}
+
+.social-kakao {
+    background: #FEE500;
+    color: #191600;
+}
+
+.social-naver {
+    background: #03C75A;
+    color: #fff;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.2rem 0;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+}

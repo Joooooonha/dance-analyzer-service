@@ -9,48 +9,22 @@
     color: var(--accent-pink);
 }
 
-/* Score Result Section */
+/* Result headline — 점수 대신 구간 개수 */
 .result-section {
     text-align: center;
     padding: 40px 20px;
     margin-bottom: 32px;
 }
 
-.score-display-large {
-    display: inline-flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 8px;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    border: 6px solid;
-    background: var(--bg-card);
-    margin-bottom: 24px;
+.issue-count-display {
+    display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 16px;
 }
 
-.score-display-large.excellent {
-    border-color: #10b981;
-    box-shadow: 0 0 40px rgba(16, 185, 129, 0.3);
-}
-
-.score-display-large.good {
-    border-color: var(--accent-cyan);
-    box-shadow: 0 0 40px rgba(0, 217, 255, 0.3);
-}
-
-.score-display-large.average {
-    border-color: #f59e0b;
-    box-shadow: 0 0 40px rgba(245, 158, 11, 0.3);
-}
-
-.score-display-large.poor {
-    border-color: #ef4444;
-    box-shadow: 0 0 40px rgba(239, 68, 68, 0.3);
-}
-
-.score-number {
+.issue-count-number {
     font-size: 4rem;
     font-weight: 700;
     background: var(--accent-gradient);
@@ -60,23 +34,23 @@
     line-height: 1;
 }
 
-.score-max {
-    font-size: 1.2rem;
-    color: var(--text-muted);
-}
-
-.score-message {
-    font-size: 1.5rem;
-    margin-bottom: 8px;
+.issue-count-label {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
 }
 
 .analyzed-at {
     color: var(--text-muted);
     font-size: 0.9rem;
-    margin: 0;
+    margin: 8px 0 0;
 }
 
-/* Pending Section */
+.result-section .feedback-content {
+    color: var(--text-secondary);
+    margin-top: 12px;
+}
+
+/* Pending / Failed */
 .pending-section {
     text-align: center;
     padding: 60px 20px;
@@ -98,21 +72,170 @@
     margin: 0;
 }
 
-/* Feedback Section */
-.feedback-section {
+/* 구간 지정 (WAITING 상태) */
+.trim-intro h3 {
+    margin-bottom: 8px;
+}
+
+.trim-intro .hint-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.trim-warning {
+    margin-top: 12px;
+    color: var(--accent-pink);
+    font-size: 0.85rem;
+}
+
+.trim-note {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.quality-warning {
+    color: #f59e0b;
+    border-left: 4px solid #f59e0b;
+    font-size: 0.9rem;
+}
+
+/* 상위 지적 구간 */
+.issues-section {
     margin-bottom: 32px;
 }
 
-.feedback-section h3 {
+.issues-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.issues-section .hint-text {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+}
+
+.issue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.issue-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: start;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--accent-cyan);
+}
+
+.issue-rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-card-hover);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.issue-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.issue-group {
+    font-weight: 600;
+    color: var(--accent-cyan);
+}
+
+.issue-time {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.issue-message {
+    margin: 6px 0;
+    color: var(--text-primary);
+}
+
+.issue-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.issue-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 130px;
+}
+
+/* 확인 어려움 구간 */
+.unreliable-section {
+    margin-bottom: 32px;
+}
+
+.unreliable-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.unreliable-section .hint-text {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+.unreliable-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* 품질 지표 */
+.quality-section {
+    margin-bottom: 32px;
+}
+
+.quality-section h3 {
     font-size: 1.1rem;
     margin-bottom: 16px;
 }
 
-.feedback-content {
-    color: var(--text-secondary);
-    line-height: 1.8;
-    white-space: pre-wrap;
-    margin: 0;
+.quality-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+}
+
+.quality-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.quality-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.quality-value {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 /* Videos Section */
@@ -128,7 +251,6 @@
     margin-bottom: 16px;
 }
 
-/* [MODIFIED] 실제 영상 재생을 위한 스타일 추가 */
 .video-player {
     width: 100%;
     max-height: 300px;
@@ -140,6 +262,22 @@
     color: var(--text-muted);
     text-align: center;
     padding: 20px;
+}
+
+/* Comparison Video Section */
+.comparison-video-section {
+    margin-bottom: 32px;
+}
+
+.comparison-video-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.comparison-video-section .hint-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 16px;
 }
 
 /* Detail Info */
@@ -170,114 +308,107 @@
     color: var(--text-primary);
 }
 
-/* [NEW] Comparison Video Section */
-.comparison-video-section {
-    margin-bottom: 32px;
+/* 구간 비교 이미지 — 왼쪽이 기준 영상, 오른쪽이 내 영상.
+   두 프레임은 DTW로 짝지어진 것이라 재생 시각이 서로 다르다. */
+.issue-image {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    margin-top: 0.6rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
 }
 
-.comparison-video-section h3 {
-    font-size: 1.1rem;
-    margin-bottom: 8px;
+/* ── 분석 진행률 ─────────────────────────────────────────── */
+
+.progress-bar {
+    width: min(420px, 100%);
+    height: 8px;
+    margin: 18px auto 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
 }
 
-.comparison-video-section .hint-text {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 16px;
+.progress-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    border-radius: 999px;
+    /* 폴링 간격(2초)보다 조금 짧게 — 단계가 바뀔 때 뚝 끊기지 않고 이어진다 */
+    transition: width 0.6s linear;
 }
 
-/* [NEW] Error Joints Section */
-.error-joints-section {
-    margin-bottom: 32px;
-}
-
-.error-joints-section h3 {
-    font-size: 1.1rem;
-    margin-bottom: 8px;
-}
-
-.error-list {
+.progress-meta {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    justify-content: space-between;
+    width: min(420px, 100%);
+    margin: 0 auto 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
 }
 
-.error-item {
+/* ── 지적 구간 목록 ──────────────────────────────────────── */
+
+.issues-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius);
-    border-left: 4px solid;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
-.error-item.severity-high {
-    border-color: #ef4444;
-}
-
-.error-item.severity-medium {
-    border-color: #f59e0b;
-}
-
-.error-item.severity-low {
-    border-color: #10b981;
-}
-
-.error-name {
-    font-weight: 500;
-}
-
-.error-score {
-    color: var(--text-secondary);
-}
-
-/* [NEW] Error Frames Section */
-.error-frames-section {
-    margin-bottom: 32px;
-}
-
-.error-frames-section h3 {
-    font-size: 1.1rem;
-    margin-bottom: 8px;
-}
-
-.frame-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-}
-
-.frame-item {
-    position: relative;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    background: #000;
-}
-
-.frame-image {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-.frame-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 8px 12px;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+.order-toggle {
     display: flex;
-    justify-content: space-between;
-    color: white;
-    font-size: 0.85rem;
+    gap: 4px;
 }
 
-.frame-time {
-    font-weight: 500;
+.issue-item {
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border-radius: var(--border-radius);
 }
 
-.frame-score {
-    color: var(--accent-cyan);
+.issue-item:hover {
+    background: var(--bg-card-hover);
+}
+
+/* 지금 비교 화면에서 반복 중인 구간 */
+.issue-item.active {
+    background: rgba(255, 45, 117, 0.12);
+    box-shadow: inset 3px 0 0 var(--accent-pink);
+}
+
+/* ── 원본 영상 (접힘) ────────────────────────────────────── */
+
+.raw-videos summary {
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.raw-videos summary:hover {
+    color: var(--text-primary);
+}
+
+.raw-videos .videos-section {
+    margin-top: 16px;
+}
+
+/* ── 알림 켜기 ───────────────────────────────────────────
+   기능만 확인할 수 있는 최소 형태. 디자인은 별도로 다듬는다. */
+
+.push-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+}
+
+.push-note {
+    font-size: 0.82rem;
+    color: var(--accent-pink);
 }
