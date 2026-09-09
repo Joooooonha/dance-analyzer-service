@@ -56,6 +56,15 @@ dependencies {
 	// R2는 S3 호환 API라 AWS SDK를 그대로 쓴다.
 	// presigner(S3Presigner)는 s3 아티팩트 안에 들어 있다 —
 	// 's3-presigner'라는 별도 아티팩트는 존재하지 않는다.
+	// DB 마이그레이션. 지금까지는 스키마 변경 SQL을 사람이 손으로, 새 jar보다
+	// **먼저** 돌려야 했다. 순서를 틀리면 Hibernate 검증에 걸려 앱이 아예 뜨지 않는다.
+	// 배포를 자동화하려면 그 순서를 사람이 지키는 구조로는 안 된다.
+	// Flyway가 기동 시점에 스스로 적용하고, 그 뒤 Hibernate가 검증한다.
+	implementation 'org.flywaydb:flyway-core'
+	// Flyway 10부터 DB별 지원이 별도 아티팩트다. 없으면
+	// "Unsupported Database: PostgreSQL"로 기동이 실패한다.
+	implementation 'org.flywaydb:flyway-database-postgresql'
+
 	// Web Push (VAPID). 브라우저를 닫아도 알림이 뜨게 하려면 이것뿐이다 —
 	// Notification API는 페이지가 열려 있을 때만 동작한다.
 	// iOS는 홈 화면에 추가한 PWA에서만 웹 푸시를 허용한다(그래서 manifest도 있다).
