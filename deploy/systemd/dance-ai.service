@@ -1,0 +1,43 @@
+# 분석 서버 (맥미니 — Fedora Linux Asahi Remix, aarch64)
+#
+# 맥미니지만 macOS가 아니라 Asahi Linux라 launchd가 아닌 systemd를 쓴다.
+# 사용자 단위 서비스로 등록해 sudo 없이 관리한다.
+#
+# 설치:
+#   mkdir -p ~/.config/systemd/user
+#   cp deploy/systemd/dance-ai.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now dance-ai
+#
+#   # 로그인하지 않아도 부팅 후 자동 시작되게 (필수)
+#   sudo loginctl enable-linger joonha
+#
+# 로그: journalctl --user -u dance-ai -f
+
+[Unit]
+Description=Dance Analyzer AI Server (FastAPI)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/dance-ai
+
+# **Tailscale 주소에만 바인딩한다.**
+# 이 서버에는 인증이 없고, 접근 통제를 "네트워크에서 닿을 수 없다"에 의존한다.
+# 0.0.0.0으로 열면 같은 공유기의 다른 기기도 분석을 호출할 수 있다.
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=%h/dance-ai/venv/bin/python -m uvicorn main:app \
+    --host 100.117.201.13 --port 8000
+
+# Tailscale이 아직 안 올라왔으면 바인딩에 실패한다. 될 때까지 재시도한다.
+Restart=on-failure
+RestartSec=15
+
+# 분석 한 건이 3~4분 걸린다. 종료 시 진행 중인 작업을 기다린다 —
+# 중간에 끊기면 Spring 쪽 결과가 PROCESSING에 영원히 멈춘다.
+TimeoutStopSec=300
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=default.target

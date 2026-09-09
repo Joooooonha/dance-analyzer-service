@@ -1,0 +1,59 @@
+# Spring API 서버 (EC2)
+#
+# 설치:
+#   sudo cp deploy/systemd/dance-api.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now dance-api
+#
+# 로그: journalctl -u dance-api -f
+
+[Unit]
+Description=Dance Analyzer API (Spring Boot)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/dance-api
+
+# 비밀값은 파일로 분리한다. 이 unit 파일 자체는 저장소에 커밋되므로
+# 여기에 키를 적으면 그대로 유출된다.
+#   sudo install -m 600 -o ubuntu /dev/null /etc/dance-api.env
+#   sudo vi /etc/dance-api.env   ← KEY=VALUE 한 줄씩
+EnvironmentFile=/etc/dance-api.env
+
+Environment="SPRING_PROFILES_ACTIVE=prod"
+# 시간대를 명시적으로 고정한다.
+#
+# 응답에 실리는 시각은 UTC로 기록해 UTC로 내보내고(Dto/ApiTime), 브라우저가
+# 사용자의 지역 시각으로 그린다. 호스트의 시간대 설정이 바뀌어도 저장된 값의
+# 의미가 흔들리지 않도록 여기서 못 박는다.
+Environment="TZ=UTC"
+# 127.0.0.1에만 바인딩한다. 외부 노출은 Nginx가 담당하고,
+# 8080이 직접 열려 있으면 Cloudflare를 우회해 접근할 수 있다.
+Environment="SERVER_ADDRESS=127.0.0.1"
+
+ExecStart=/usr/bin/java -jar /opt/dance-api/app.jar
+
+# 죽으면 다시 띄운다. 단, 계속 실패하면 5분에 5번까지만 시도해
+# 무한 재시작 루프를 막는다.
+Restart=on-failure
+RestartSec=10
+StartLimitBurst=5
+StartLimitIntervalSec=300
+
+# 종료 시 진행 중인 분석을 기다린다(스레드 풀도 300초까지 기다리게 설정돼 있다).
+# 중간에 끊기면 결과가 PROCESSING에 영원히 멈춘다.
+TimeoutStopSec=330
+KillSignal=SIGTERM
+
+# --- 최소 권한 ---
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/dance-api
+
+[Install]
+WantedBy=multi-user.target
