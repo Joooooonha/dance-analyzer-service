@@ -101,8 +101,8 @@
     background: var(--st-fluoro);
     text-decoration: none;
     color: inherit;
-    /* 양 끝이 살짝 잘린 테이프 조각 — 사선으로 뜯긴 단면 */
-    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
+    /* 테이프를 가위로 사선으로 잘라낸 모양 — 양 끝이 비스듬하다 */
+    clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
     transform: rotate(var(--mark-rotate, 0deg));
     transition: transform 0.15s ease, background-color 0.15s ease;
 }

@@ -33,15 +33,18 @@ export default function Dashboard() {
         return () => { cancelled = true; };
     }, []);
 
+    // 라벨은 A/B/C — 실제 순서가 없는 세 목적지라 01/02/03처럼 순번으로
+    // 보이는 표기를 쓰지 않는다(craft-floor: 순서 정보가 없는 섹션 번호 금지).
+    // 바닥에 A·B·C 구역 테이프를 붙이는 것과 같은 자리 표시 문법이다.
     const marks = [
         {
-            number: '01',
+            number: 'A',
             title: '자유 연습',
             desc: '기준 영상과 연습 영상을 업로드하여 AI 분석을 받아보세요',
             link: '/practice',
         },
         {
-            number: '02',
+            number: 'B',
             title: '숙제',
             desc: user?.teamName
                 ? '팀에서 부여한 숙제를 확인하고 제출하세요'
@@ -49,7 +52,7 @@ export default function Dashboard() {
             link: '/assignments',
         },
         {
-            number: '03',
+            number: 'C',
             title: '내 기록',
             desc: '지금까지의 연습 기록과 분석 결과를 확인하세요',
             link: '/logs',
@@ -69,7 +72,7 @@ export default function Dashboard() {
                         <span className="st-strip-status">불러오는 중…</span>
                     ) : recentLog?.status === 'COMPLETED' && recentLog.issueCount != null ? (
                         <>
-                            <span className="st-strip-number st-mirror-numeral">{recentLog.issueCount}</span>
+                            <span className="st-strip-number st-mirror-numeral" data-reflect={recentLog.issueCount}>{recentLog.issueCount}</span>
                             <span className="st-strip-label">
                                 최근 분석 · 다듬을 구간
                                 <Link to={`/logs/${recentLog.logId}`} className="st-strip-link">자세히 보기</Link>

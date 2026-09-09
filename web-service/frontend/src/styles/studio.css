@@ -43,6 +43,12 @@
 
     font-family: 'Noto Sans KR', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background-color: var(--st-wall);
+    /* 거울 타일 이음선 — 실제 연습실 거울은 한 장이 아니라 큰 패널을
+       이어 붙인 것이라 격자 이음선이 보인다. 카드의 인셋 하이라이트만으로는
+       "이게 거울이다"는 배경 자체의 신호가 없었다 — 여기서 채운다. */
+    background-image:
+        repeating-linear-gradient(to right, var(--st-line) 0, var(--st-line) 1px, transparent 1px, transparent 220px),
+        repeating-linear-gradient(to bottom, var(--st-line) 0, var(--st-line) 1px, transparent 1px, transparent 340px);
     color: var(--st-ink);
 }
 
@@ -167,7 +173,7 @@
 }
 
 .studio .form-input::placeholder {
-    color: var(--st-ink-muted);
+    color: var(--st-ink-secondary);
 }
 
 .studio input,
@@ -196,9 +202,27 @@
 }
 
 /* ========== 거울 반사 숫자 ==========
-   이 세계관의 시그니처 효과. 증거 숫자 아래로 흐려지는 반사상을 붙인다 —
-   Safari/Chrome(webkit)만 지원하고, 그 외 브라우저는 반사 없이 숫자만
-   보인다(점진적 향상 — 기능 손실 없음, 장식만 빠진다). */
+   이 세계관의 시그니처 효과 — 이 방향이 명시적으로 요구한 유일한 장치라
+   -webkit-box-reflect(Chrome/Safari 전용) 하나에만 맡기지 않는다. 실제
+   숫자를 세로로 뒤집은 복제본을 ::after에 겹치고 마스크로 페이드아웃한다 —
+   모든 브라우저에서 동일하게 보인다. */
 .studio .st-mirror-numeral {
-    -webkit-box-reflect: below 1px linear-gradient(transparent, transparent 55%, rgba(34, 40, 44, 0.18));
+    position: relative;
+    display: inline-block;
+}
+
+.studio .st-mirror-numeral::after {
+    content: attr(data-reflect);
+    position: absolute;
+    left: 0;
+    top: 100%;
+    width: 100%;
+    transform: scaleY(-1);
+    transform-origin: top;
+    color: var(--st-ink);
+    opacity: 0.22;
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent 70%);
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent 70%);
+    pointer-events: none;
+    user-select: none;
 }

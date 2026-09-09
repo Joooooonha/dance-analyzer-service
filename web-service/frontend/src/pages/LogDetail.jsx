@@ -249,7 +249,7 @@ export default function LogDetail() {
 
     if (loading) {
         return (
-            <div className="page countboard">
+            <div className="page studio">
                 <div className="loading"><div className="spinner"></div></div>
             </div>
         );
@@ -257,7 +257,7 @@ export default function LogDetail() {
 
     if (error && !log) {
         return (
-            <div className="page countboard">
+            <div className="page studio">
                 <div className="container">
                     <div className="auth-error">{error}</div>
                     <Link to="/logs" className="btn btn-secondary mt-3">← 목록으로</Link>
@@ -342,7 +342,7 @@ export default function LogDetail() {
     );
 
     return (
-        <div className="log-detail-page page countboard">
+        <div className="log-detail-page page studio">
             <div className="container">
                 <Link to="/logs" className="back-link">← 연습 기록</Link>
 
@@ -352,7 +352,7 @@ export default function LogDetail() {
                 {log?.status === 'COMPLETED' && (
                     <div className="result-section">
                         <div className="issue-count-display">
-                            <span className="issue-count-number">{log.issueCount ?? '-'}</span>
+                            <span className="issue-count-number st-mirror-numeral" data-reflect={log.issueCount ?? '-'}>{log.issueCount ?? '-'}</span>
                             <span className="issue-count-label">개 구간에서 다듬을 동작을 찾았어요</span>
                         </div>
                         <p className="analyzed-at">분석 완료: {formatDate(log.analyzedAt)}</p>
@@ -521,8 +521,20 @@ export default function LogDetail() {
                         <p className="hint-text">
                             AI가 고른 후보입니다. <b>무엇부터 고칠지는 직접 정하세요</b> —
                             항목을 누르면 위 비교 화면이 그 구간을 반복 재생합니다.
-                            왼쪽 숫자는 심각도 순위, <b>메모 색이 짙을수록 심각도가 높아요.</b>
+                            왼쪽 숫자는 심각도 순위, <b>메모 색은 심각도를 나타냅니다</b>
+                            (아래 범례 참고).
                         </p>
+                        <ul className="issue-legend">
+                            <li className="issue-legend-item">
+                                <span className="issue-legend-swatch issue-legend-swatch--severe" /> 심각
+                            </li>
+                            <li className="issue-legend-item">
+                                <span className="issue-legend-swatch issue-legend-swatch--moderate" /> 보통
+                            </li>
+                            <li className="issue-legend-item">
+                                <span className="issue-legend-swatch issue-legend-swatch--mild" /> 경미
+                            </li>
+                        </ul>
                         <div className="issue-list">
                             {topIssues.map((issue) => {
                               const idx = issue.rank - 1;   // 이미지 슬롯은 심각도 순위 기준
@@ -533,6 +545,16 @@ export default function LogDetail() {
                                     key={issue.rank}
                                     className={`issue-item issue-item--${tier}${active ? ' active' : ''}`}
                                     onClick={() => setSelectedIssue(active ? null : issue)}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-pressed={active}
+                                    onKeyDown={(e) => {
+                                        if (e.target !== e.currentTarget) return; // 안쪽 버튼/링크는 자기 키 처리에 맡긴다
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setSelectedIssue(active ? null : issue);
+                                        }
+                                    }}
                                 >
                                     <div className="issue-rank">{issue.rank}</div>
                                     <div className="issue-body">
