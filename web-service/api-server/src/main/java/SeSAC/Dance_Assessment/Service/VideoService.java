@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -54,6 +55,21 @@ public class VideoService {
      * <p>이 시점의 영상은 아직 <b>업로드 미완료</b> 상태다. 분석 대상이 되지 않는다.
      */
     @Transactional
+    /**
+     * 다시 쓸 수 있는 내 영상 목록.
+     *
+     * <p><b>기준 영상을 매번 다시 올리지 않기 위한 것이다.</b> 같은 안무를 반복해
+     * 연습하는 것이 이 서비스의 용도인데, 그때마다 같은 파일을 다시 업로드하고
+     * 분석 서버가 같은 영상에서 포즈를 다시 뽑았다(기준 영상 추출 실측 46초).
+     */
+    public List<VideoSummaryResponse> listMyVideos(Long userId, VideoType type) {
+        return videoRepository
+                .findByUploaderIdAndTypeAndUploadCompletedTrueOrderByCreatedAtDesc(userId, type)
+                .stream()
+                .map(VideoSummaryResponse::from)
+                .toList();
+    }
+
     public VideoUploadUrlResponse createUploadUrl(Long userId, VideoUploadUrlRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -72,6 +88,7 @@ public class VideoService {
                 .objectKey(key)
                 .contentType(contentType)
                 .type(type)
+                .originalName(request.filename())
                 .build());
 
         return new VideoUploadUrlResponse(

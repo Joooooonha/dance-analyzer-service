@@ -38,6 +38,16 @@ public class Video extends BaseTimeEntity {
     private String contentType;
 
     /**
+     * 사용자가 올린 파일 이름.
+     *
+     * <p>저장소 키에는 남지 않는다 — 키는 `videos/{사용자}/{임의값}.{확장자}` 형태라
+     * 사람이 알아볼 단서가 없다. <b>기준 영상을 다시 쓰려면 목록에서 골라야 하는데,
+     * "9월 9일 15:32에 올린 영상" 같은 표시로는 어느 안무인지 알 수 없다.</b>
+     * 예전 행에는 값이 없으므로 화면은 업로드 시각으로 대체 표시한다.
+     */
+    private String originalName;
+
+    /**
      * 업로드가 실제로 끝났는지. presigned 방식은 브라우저가 저장소에 직접 올리므로
      * 서버가 완료 시점을 알 수 없다 — 브라우저가 끝나고 알려줘야 비로소 true가 된다.
      * 이 값이 false인 영상은 분석 대상이 될 수 없다.
@@ -64,11 +74,13 @@ public class Video extends BaseTimeEntity {
 
 
     @Builder
-    public Video(User uploader, String objectKey, String contentType, VideoType type) {
+    public Video(User uploader, String objectKey, String contentType, VideoType type,
+                 String originalName) {
         this.uploader = uploader;
         this.objectKey = objectKey;
         this.contentType = contentType;
         this.type = type;
+        this.originalName = originalName;
         this.uploadCompleted = false;
     }
 

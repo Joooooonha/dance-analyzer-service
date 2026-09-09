@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, Cpu, Film, Target, Timer, UploadCloud, Video } from 'lucide-react';
 import VideoUploader from '../components/VideoUploader';
 import VideoTrimmer from '../components/VideoTrimmer';
-import { uploadVideo, updateTrim, analyzeLog, getVideoUrl } from '../api/client';
+import { uploadVideo, updateTrim, analyzeLog, getVideoUrl, getMyVideos } from '../api/client';
 import './Practice.css';
 
 // 'select'    영상 두 개 선택
@@ -15,6 +15,13 @@ const STEP = { SELECT: 'select', UPLOADING: 'uploading', TRIM: 'trim', STARTING:
 export default function Practice() {
     const navigate = useNavigate();
     const [referenceFile, setReferenceFile] = useState(null);
+    // 이전에 올린 기준 영상 목록과, 그중 고른 것.
+    //
+    // **같은 안무를 반복 연습하는 것이 이 서비스의 용도다.** 그런데 매번 같은
+    // 기준 영상을 다시 올려야 했고, 분석 서버도 같은 영상에서 포즈를 다시 뽑았다
+    // (기준 영상 추출 실측 46초). 한 번 올린 것을 고를 수 있게 한다.
+    const [pastReferences, setPastReferences] = useState([]);
+    const [reusedReferenceId, setReusedReferenceId] = useState(null);
     const [practiceFile, setPracticeFile] = useState(null);
     const [step, setStep] = useState(STEP.SELECT);
     const [error, setError] = useState('');
@@ -33,9 +40,20 @@ export default function Practice() {
     const [pracStart, setPracStart] = useState(null);
     const [pracEnd, setPracEnd] = useState(null);
 
+    // 이전에 올린 기준 영상 목록을 미리 받아둔다. 실패해도 새로 올리는 길은 열려 있다.
+    useEffect(() => {
+        getMyVideos('REFERENCE')
+            .then(setPastReferences)
+            .catch(() => setPastReferences([]));
+    }, []);
+
     const handleUpload = async () => {
-        if (!referenceFile || !practiceFile) {
-            setError('두 영상을 모두 선택해주세요.');
+        if (!reusedReferenceId && !referenceFile) {
+            setError('기준 영상을 올리거나 이전 영상을 골라주세요.');
+            return;
+        }
+        if (!practiceFile) {
+            setError('연습 영상을 선택해주세요.');
             return;
         }
 
@@ -46,19 +64,28 @@ export default function Practice() {
         try {
             // 파일은 저장소로 직접 올라가고 백엔드를 거치지 않는다.
             // 기준 영상 업로드에는 연습 기록이 생기지 않는다(logId가 null).
-            const refUpload = await uploadVideo(
-                referenceFile, 'REFERENCE', {},
-                (r) => setProgress(r * 0.5));
+            //
+            // 이전 기준 영상을 고른 경우 업로드를 통째로 건너뛴다. 그러면 진행률의
+            // 앞 절반도 의미가 없으므로 연습 영상 하나로 100%를 채운다.
+            let refId = reusedReferenceId;
+            if (!refId) {
+                const refUpload = await uploadVideo(
+                    referenceFile, 'REFERENCE', {},
+                    (r) => setProgress(r * 0.5));
+                refId = refUpload.videoId;
+            }
+            const base = reusedReferenceId ? 0 : 0.5;
+            const scale = reusedReferenceId ? 1 : 0.5;
 
             const practiceUpload = await uploadVideo(
-                practiceFile, 'PRACTICE', { referenceVideoId: refUpload.videoId },
-                (r) => setProgress(0.5 + r * 0.5));
+                practiceFile, 'PRACTICE', { referenceVideoId: refId },
+                (r) => setProgress(base + r * scale));
 
             if (!practiceUpload.logId) {
                 throw new Error('연습 기록이 만들어지지 않았습니다. 다시 시도해주세요.');
             }
 
-            setReferenceVideoId(refUpload.videoId);
+            setReferenceVideoId(refId);
             setPracticeVideoId(practiceUpload.videoId);
             // 서버가 내려준 logId를 그대로 쓴다. 예전에는 videoId를 logId로
             // 유추했는데, 두 값이 나란히 늘어난다는 보장이 없어 위험했다.
@@ -117,11 +144,43 @@ export default function Practice() {
                             <div className="upload-section">
                                 <h3 className="heading-icon"><Video size={20} /> 기준 영상 (Reference)</h3>
                                 <p className="upload-hint">따라 할 원본 안무 영상</p>
-                                <VideoUploader
-                                    label="기준 영상 선택"
-                                    selectedFile={referenceFile}
-                                    onSelect={setReferenceFile}
-                                />
+
+                                {pastReferences.length > 0 && (
+                                    <div className="reuse-ref">
+                                        <label htmlFor="reuse-ref-select">이전에 올린 기준 영상 쓰기</label>
+                                        <select
+                                            id="reuse-ref-select"
+                                            value={reusedReferenceId ?? ''}
+                                            onChange={(e) => {
+                                                const id = e.target.value ? Number(e.target.value) : null;
+                                                setReusedReferenceId(id);
+                                                // 둘 다 지정된 상태를 만들지 않는다 — 무엇이 쓰이는지
+                                                // 화면만 보고 알 수 없게 된다.
+                                                if (id) setReferenceFile(null);
+                                                const picked = pastReferences.find((v) => v.videoId === id);
+                                                // 그때 지정한 안무 시작 지점을 그대로 되살린다.
+                                                setRefStart(picked?.startSec ?? null);
+                                                setRefEnd(picked?.endSec ?? null);
+                                            }}
+                                        >
+                                            <option value="">새로 올리기</option>
+                                            {pastReferences.map((v) => (
+                                                <option key={v.videoId} value={v.videoId}>
+                                                    {v.name ?? `${new Date(v.uploadedAt).toLocaleDateString('ko-KR')} 업로드`}
+                                                    {v.startSec != null ? ` · 시작 ${v.startSec.toFixed(1)}s` : ''}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
+
+                                {!reusedReferenceId && (
+                                    <VideoUploader
+                                        label="기준 영상 선택"
+                                        selectedFile={referenceFile}
+                                        onSelect={setReferenceFile}
+                                    />
+                                )}
                             </div>
 
                             <div className="upload-section">
@@ -139,7 +198,7 @@ export default function Practice() {
                             <button
                                 className="btn btn-primary btn-lg"
                                 onClick={handleUpload}
-                                disabled={!referenceFile || !practiceFile}
+                                disabled={(!referenceFile && !reusedReferenceId) || !practiceFile}
                             >
                                 업로드하고 구간 지정하기 →
                             </button>

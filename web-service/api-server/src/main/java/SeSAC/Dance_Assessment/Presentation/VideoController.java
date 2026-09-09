@@ -1,5 +1,6 @@
 package SeSAC.Dance_Assessment.Presentation;
 
+import SeSAC.Dance_Assessment.Domain.VideoType;
 import SeSAC.Dance_Assessment.Dto.Video.*;
 import SeSAC.Dance_Assessment.Security.CurrentUserId;
 import SeSAC.Dance_Assessment.Service.VideoService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * 영상 API.
@@ -28,6 +30,20 @@ public class VideoController {
     private final VideoService videoService;
 
     /** 1단계: 업로드 URL 발급. */
+    /**
+     * 다시 쓸 수 있는 내 영상 목록.
+     *
+     * <p>기준 영상을 매번 다시 올리지 않게 하려는 것이다. 같은 안무를 반복
+     * 연습하는 것이 이 서비스의 용도인데, 그때마다 같은 파일을 다시 업로드하고
+     * 분석 서버가 같은 영상에서 포즈를 다시 뽑았다.
+     */
+    @GetMapping("/videos")
+    public ResponseEntity<List<VideoSummaryResponse>> listMyVideos(
+            @CurrentUserId Long userId,
+            @RequestParam(defaultValue = "REFERENCE") VideoType type) {
+        return ResponseEntity.ok(videoService.listMyVideos(userId, type));
+    }
+
     @PostMapping("/videos/upload-url")
     public ResponseEntity<VideoUploadUrlResponse> createUploadUrl(
             @CurrentUserId Long userId,

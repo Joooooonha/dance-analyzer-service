@@ -257,6 +257,20 @@ export const uploadVideo = async (file, type, link = {}, onProgress) => {
 };
 
 /**
+ * 다시 쓸 수 있는 내 영상 목록.
+ *
+ * 기준 영상을 매번 다시 올리지 않기 위한 것이다. 같은 안무를 반복 연습하는 것이
+ * 이 서비스의 용도인데, 그때마다 같은 파일을 다시 업로드하고 분석 서버가 같은
+ * 영상에서 포즈를 다시 뽑았다.
+ *
+ * 응답: [{ videoId, name, uploadedAt, startSec, endSec }]
+ * — `name`은 이 컬럼이 생기기 전에 올린 영상에는 없어 null일 수 있다.
+ */
+export const getMyVideos = async (type = 'REFERENCE') => {
+  return fetchAPI(`/api/videos?type=${type}`);
+};
+
+/**
  * 영상 재생 URL.
  *
  * 예전에는 `?userId=`를 붙였다. `<video src>`가 HTTP 헤더를 못 붙인다는 제약
