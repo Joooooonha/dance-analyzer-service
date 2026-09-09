@@ -101,11 +101,17 @@ jobs:
       # 보안 그룹을 열어 쓰는 쪽을 택했다면 그대로 동작한다.
       - name: Tailscale 연결
         if: ${{ secrets.TS_OAUTH_CLIENT_ID != '' }}
-        uses: tailscale/github-action@v3
+        uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
+          version: latest
+          # 관리 콘솔에서 이 노드가 무엇인지 알아볼 수 있게. 작업이 끝나면 사라진다.
+          hostname: github-actions-deploy
+          # 연결됐는지 여기서 확인한다. 안 그러면 rsync 단계에서야 실패해서
+          # "SSH 문제인지 tailnet 문제인지" 구분이 안 된다.
+          ping: ${{ secrets.DEPLOY_HOST }}
 
       - name: SSH 준비
         env:
