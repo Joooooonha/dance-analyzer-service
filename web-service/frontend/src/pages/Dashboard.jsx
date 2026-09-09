@@ -55,7 +55,7 @@ export default function Dashboard() {
     ];
 
     return (
-        <div className="dashboard page dashboard-countboard">
+        <div className="dashboard page countboard">
             <div className="container">
                 <header className="cb-header">
                     <h1>안녕하세요, {user?.nickname || '댄서'}님</h1>

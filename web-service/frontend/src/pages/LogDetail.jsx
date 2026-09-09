@@ -40,6 +40,18 @@ function computeProgressPct(progress, stageStartedAtMs) {
     return lo + (hi - lo) * (1 - Math.exp(-sec / STAGE_EASE_SEC));
 }
 
+// 지적 구간 포스트잇 색 — 심각도 랭크를 상/중/하 3단으로 나눈다.
+// 절대 severity 값의 범위를 모르므로(백엔드가 임의 배율을 준다), 이미 계산된
+// rank(1이 가장 심각)를 항목 수 기준 3등분해 상대적으로 나눈다.
+function severityTier(rank, total) {
+    if (total <= 1) return 'severe';
+    const t1 = Math.ceil(total / 3);
+    const t2 = Math.ceil((2 * total) / 3);
+    if (rank <= t1) return 'severe';
+    if (rank <= t2) return 'moderate';
+    return 'mild';
+}
+
 function safeParse(json, fallback) {
     if (!json) return fallback;
     try {
@@ -237,7 +249,7 @@ export default function LogDetail() {
 
     if (loading) {
         return (
-            <div className="page">
+            <div className="page countboard">
                 <div className="loading"><div className="spinner"></div></div>
             </div>
         );
@@ -245,7 +257,7 @@ export default function LogDetail() {
 
     if (error && !log) {
         return (
-            <div className="page">
+            <div className="page countboard">
                 <div className="container">
                     <div className="auth-error">{error}</div>
                     <Link to="/logs" className="btn btn-secondary mt-3">← 목록으로</Link>
@@ -330,7 +342,7 @@ export default function LogDetail() {
     );
 
     return (
-        <div className="log-detail-page page">
+        <div className="log-detail-page page countboard">
             <div className="container">
                 <Link to="/logs" className="back-link">← 연습 기록</Link>
 
@@ -509,16 +521,17 @@ export default function LogDetail() {
                         <p className="hint-text">
                             AI가 고른 후보입니다. <b>무엇부터 고칠지는 직접 정하세요</b> —
                             항목을 누르면 위 비교 화면이 그 구간을 반복 재생합니다.
-                            왼쪽 숫자는 심각도 순위예요.
+                            왼쪽 숫자는 심각도 순위, <b>메모 색이 짙을수록 심각도가 높아요.</b>
                         </p>
                         <div className="issue-list">
                             {topIssues.map((issue) => {
                               const idx = issue.rank - 1;   // 이미지 슬롯은 심각도 순위 기준
                               const active = selectedIssue?.rank === issue.rank;
+                              const tier = severityTier(issue.rank, topIssues.length);
                               return (
                                 <div
                                     key={issue.rank}
-                                    className={`issue-item${active ? ' active' : ''}`}
+                                    className={`issue-item issue-item--${tier}${active ? ' active' : ''}`}
                                     onClick={() => setSelectedIssue(active ? null : issue)}
                                 >
                                     <div className="issue-rank">{issue.rank}</div>

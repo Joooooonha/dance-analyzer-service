@@ -26,6 +26,8 @@ import '@fontsource/noto-sans-kr/korean-600.css'
 import '@fontsource/noto-sans-kr/korean-700.css'
 import '@fontsource/nanum-pen-script/korean-400.css'
 import './index.css'
+// 카운트보드 세계관 공유 토큰 — .countboard 클래스가 붙은 화면에서만 적용된다.
+import './styles/countboard.css'
 import App from './App.jsx'
 import { registerServiceWorker } from './push'
 

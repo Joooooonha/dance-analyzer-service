@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Film, Pause, Play } from 'lucide-react';
 import './SyncedComparison.css';
 
 /**
@@ -343,7 +344,7 @@ export default function SyncedComparison({
     return (
         <div className="synced card">
             <div className="synced-head">
-                <h3>🎬 나란히 비교</h3>
+                <h3 className="heading-icon"><Film size={20} /> 나란히 비교</h3>
                 <p className="hint-text">
                     <b>기준 영상은 원래 속도 그대로</b> 흐르고, 내 영상이 늘어나거나
                     줄어들며 따라갑니다. 내 영상이 빨리 감기면 그 대목에서 내가
@@ -444,7 +445,7 @@ export default function SyncedComparison({
 
             <div className="synced-controls">
                 <button className="btn btn-primary" onClick={toggle} disabled={!ready}>
-                    {playing ? '⏸ 정지' : '▶ 재생'}
+                    {playing ? <><Pause size={16} /> 정지</> : <><Play size={16} /> 재생</>}
                 </button>
 
                 <div className="synced-speed">
@@ -474,9 +475,9 @@ export default function SyncedComparison({
                     onChange={(e) => setAudio(e.target.value)}
                     aria-label="소리"
                 >
-                    <option value="reference">🔊 기준 영상 소리</option>
-                    <option value="practice">🔊 내 영상 소리</option>
-                    <option value="none">🔇 음소거</option>
+                    <option value="reference">기준 영상 소리</option>
+                    <option value="practice">내 영상 소리</option>
+                    <option value="none">음소거</option>
                 </select>
             </div>
 

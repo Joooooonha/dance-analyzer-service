@@ -1,11 +1,13 @@
-/* 나란히 비교 플레이어. 이 화면의 주인공이라 폭을 최대한 쓴다. */
+/* 나란히 비교 플레이어. 이 화면의 주인공이라 폭을 최대한 쓴다.
+   카운트보드 세계관 — 시안=기준, 핑크=나의 시도 규칙이 이 화면에서 처음
+   실제로 쓰인다(대시보드에는 비교 배지가 없었다). */
 
 .synced-head h3 {
     margin-bottom: 6px;
 }
 
 .synced-empty {
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
     text-align: center;
     padding: 24px 0;
 }
@@ -20,7 +22,7 @@
 .synced-pane {
     position: relative;
     background: #000;
-    border-radius: var(--border-radius);
+    border-radius: 4px;
     overflow: hidden;
     /* 세로 영상이 들어와도 두 칸 높이가 같아야 동작을 비교할 수 있다 */
     aspect-ratio: 3 / 4;
@@ -49,13 +51,18 @@
 }
 
 .synced-tag.ref {
-    background: rgba(0, 217, 255, 0.85);
-    color: #04121a;
+    background: rgba(2, 106, 125, 0.9);
+    color: #f5f1e8;
 }
 
 .synced-tag.me {
-    background: rgba(255, 45, 117, 0.85);
+    background: rgba(184, 20, 80, 0.9);
     color: #fff;
+}
+
+.synced-rate {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
 }
 
 .synced-time {
@@ -65,8 +72,8 @@
     z-index: 2;
     font-variant-numeric: tabular-nums;
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(0, 0, 0, 0.55);
+    color: #f5f1e8;
+    background: rgba(44, 42, 38, 0.7);
     padding: 2px 8px;
     border-radius: 6px;
 }
@@ -80,8 +87,9 @@
 .synced-track {
     position: relative;
     height: 34px;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 8px;
+    background: var(--cb-paper-card);
+    border: 1px solid var(--cb-rule);
+    border-radius: 6px;
     overflow: hidden;
 }
 
@@ -92,18 +100,17 @@
     bottom: 0;
     border: none;
     padding: 0;
-    background: rgba(255, 45, 117, 0.35);
+    background: rgba(184, 20, 80, 0.3);
     cursor: pointer;
-    transition: background var(--transition-fast);
+    transition: background 0.15s ease;
 }
 
 .synced-marker:hover {
-    background: rgba(255, 45, 117, 0.6);
+    background: rgba(184, 20, 80, 0.5);
 }
 
 .synced-marker.active {
-    background: rgba(255, 45, 117, 0.85);
-    box-shadow: 0 0 12px rgba(255, 45, 117, 0.7);
+    background: rgba(184, 20, 80, 0.75);
 }
 
 .synced-playhead {
@@ -111,8 +118,7 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background: var(--accent-cyan);
-    box-shadow: 0 0 8px var(--accent-cyan);
+    background: var(--cb-cyan);
     pointer-events: none;
     z-index: 3;
 }
@@ -134,7 +140,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 0.78rem;
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
     font-variant-numeric: tabular-nums;
     margin-top: 4px;
 }
@@ -158,14 +164,14 @@
     align-items: center;
     gap: 6px;
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: var(--cb-ink-secondary);
     cursor: pointer;
 }
 
 .synced-audio {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--cb-paper-card);
+    color: var(--cb-ink-secondary);
+    border: 1px solid var(--cb-rule);
     border-radius: 8px;
     padding: 6px 10px;
     font-size: 0.85rem;
@@ -179,14 +185,15 @@
     flex-wrap: wrap;
     margin-top: 14px;
     padding: 10px 14px;
-    border-radius: var(--border-radius);
-    background: rgba(255, 45, 117, 0.12);
-    border: 1px solid var(--border-accent);
+    border-radius: 4px;
+    background: rgba(184, 20, 80, 0.1);
+    border: 1px solid rgba(184, 20, 80, 0.3);
     font-size: 0.9rem;
+    color: var(--cb-ink);
 }
 
 .synced-selected-time {
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
     font-variant-numeric: tabular-nums;
 }
 
@@ -221,7 +228,7 @@
 }
 
 .dev-zero {
-    stroke: var(--border-color);
+    stroke: var(--cb-rule);
     stroke-width: 1;
     stroke-dasharray: 4 4;
     vector-effect: non-scaling-stroke;
@@ -229,14 +236,14 @@
 
 .dev-line {
     fill: none;
-    stroke: var(--accent-cyan);
+    stroke: var(--cb-cyan);
     stroke-width: 2;
     /* viewBox를 가로로 늘려 쓰기 때문에 이게 없으면 선이 납작하게 눌린다 */
     vector-effect: non-scaling-stroke;
 }
 
 .dev-head {
-    stroke: var(--accent-pink);
+    stroke: var(--cb-pink);
     stroke-width: 1.5;
     vector-effect: non-scaling-stroke;
 }
@@ -246,7 +253,7 @@
     justify-content: space-between;
     align-items: center;
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
 }
 
 .dev-now {
@@ -256,20 +263,15 @@
 /* 지금 이 대목의 판정. 색으로만 구분하지 않고 글자로도 적는다. */
 .dev-now.ok,
 .synced-rate.ok {
-    color: var(--text-secondary);
+    color: var(--cb-ink-secondary);
 }
 
 .dev-now.slow,
 .synced-rate.slow {
-    color: var(--accent-pink);
+    color: var(--cb-pink);
 }
 
 .dev-now.fast,
 .synced-rate.fast {
-    color: var(--accent-cyan);
-}
-
-.synced-rate {
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
+    color: var(--cb-cyan);
 }

@@ -294,9 +294,16 @@ EC2는 이미 tailnet에 있다(`odo-ec2` / `100.114.82.112`). 러너를 **임�
 
    태그를 미리 선언하지 않으면 그 태그로 노드를 붙일 수 없다.
 
-2. **Settings → OAuth clients → Generate OAuth client**
+2. **Settings → Trust credentials** → **Credential** 버튼 → **OAuth**
+   (`https://login.tailscale.com/admin/settings/trust-credentials`)
    - Scopes: `auth_keys` **write**
-   - Tags: `tag:ci`
+   - Tags: `tag:ci` — `auth_keys` 스코프는 태그 지정이 **필수**다
+   - **Generate credential**
+
+   예전에는 `Settings → OAuth clients`였는데 옮겨졌다. 사이드바에 그 이름이
+   없으면 **Trust credentials**를 보면 된다.
+
+   ⚠️ **secret은 창을 닫으면 다시 볼 수 없다.** 나오자마자 아래 3단계로 등록할 것.
 
 3. 발급된 두 값을 GitHub 시크릿으로 등록한다:
 

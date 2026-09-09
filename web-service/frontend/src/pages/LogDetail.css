@@ -1,12 +1,15 @@
+/*
+ * LogDetail — 카운트보드 세계관으로 전체 이전.
+ * 공유 토큰(--cb-*, 폰트, 노트 격자)은 styles/countboard.css의 .countboard가
+ * 담당한다. .card/.btn/.badge 같은 전역 유틸리티 재질감도 거기서 재정의된다.
+ * 여기는 이 페이지 고유의 선택자만 옛 --accent-*/--text-* 값을 --cb-* 값으로
+ * 바꿔 다시 쓴다.
+ */
+
 .log-detail-page .back-link {
     display: inline-block;
-    color: var(--text-secondary);
     margin-bottom: 32px;
-    transition: var(--transition-fast);
-}
-
-.log-detail-page .back-link:hover {
-    color: var(--accent-pink);
+    transition: color 0.15s ease;
 }
 
 /* Result headline — 점수 대신 구간 개수 */
@@ -25,28 +28,29 @@
 }
 
 .issue-count-number {
+    /* Proof Numeral — 대시보드의 카운트 스트립 숫자와 같은 문법.
+       그라디언트 클리핑 없이 잉크 색 + Inter 고정폭 숫자. */
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 4rem;
     font-weight: 700;
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-variant-numeric: tabular-nums;
+    color: var(--cb-ink);
     line-height: 1;
 }
 
 .issue-count-label {
     font-size: 1.1rem;
-    color: var(--text-secondary);
+    color: var(--cb-ink-secondary);
 }
 
 .analyzed-at {
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
     font-size: 0.9rem;
     margin: 8px 0 0;
 }
 
 .result-section .feedback-content {
-    color: var(--text-secondary);
+    color: var(--cb-ink-secondary);
     margin-top: 12px;
 }
 
@@ -60,12 +64,12 @@
 .pending-icon {
     display: flex;
     justify-content: center;
-    color: var(--text-muted);
+    color: var(--cb-ink-secondary);
     margin-bottom: 16px;
 }
 
 .pending-icon.warn {
-    color: var(--error);
+    color: var(--cb-error);
 }
 
 .pending-section h2 {
@@ -73,7 +77,7 @@
 }
 
 .pending-text {
-    color: var(--text-secondary);
+    color: var(--cb-ink-secondary);
     margin: 0;
 }
 
@@ -83,24 +87,23 @@
 }
 
 .trim-intro .hint-text {
-    color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
 .trim-warning {
     margin-top: 12px;
-    color: var(--accent-pink);
+    color: var(--cb-warning);
     font-size: 0.85rem;
 }
 
 .trim-note {
-    color: var(--text-secondary);
+    color: var(--cb-ink-secondary);
     font-size: 0.9rem;
 }
 
 .quality-warning {
-    color: #f59e0b;
-    border-left: 4px solid #f59e0b;
+    color: var(--cb-warning);
+    border-left: 3px solid var(--cb-warning);
     font-size: 0.9rem;
 }
 
@@ -115,7 +118,7 @@
 }
 
 .issues-section .hint-text {
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
     font-size: 0.85rem;
     margin-bottom: 16px;
 }
@@ -123,31 +126,55 @@
 .issue-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
+/* 지적 구간 = 포스트잇. 색은 심각도 랭크 3단(상위/중간/하위)을 나타낸다 —
+   장식이 아니라 정보다. 노랑~주황 한 색 계열의 명도 단계로만 구분해
+   "형광펜은 하나"라는 세계관 규칙 안에서 심각도를 표현한다.
+   포스트잇 위 텍스트는 항상 완전 불투명 잉크를 쓴다 — secondary(68%) 옅은
+   톤은 노랑/주황 배경에서 4.5:1을 못 채우는 조합이 있어(재계산 결과) 색 배경
+   위에서는 옅은 톤을 아예 쓰지 않기로 정했다. */
 .issue-item {
+    position: relative;
     display: grid;
     grid-template-columns: auto 1fr auto;
     gap: 16px;
     align-items: start;
-    padding: 14px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius);
-    border-left: 4px solid var(--accent-cyan);
+    padding: 16px 18px;
+    color: var(--cb-ink);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+}
+
+.issue-item--mild { background: var(--cb-note-mild); }
+.issue-item--moderate { background: var(--cb-note-moderate); }
+.issue-item--severe { background: var(--cb-note-severe); }
+
+.issue-item:hover {
+    transform: translateX(2px);
+}
+
+/* 지금 비교 화면에서 반복 중인 구간 — 그림자 대신 잉크 테두리로 표시 */
+.issue-item.active {
+    outline: 2px solid var(--cb-ink);
+    outline-offset: -2px;
 }
 
 .issue-rank {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    background: var(--bg-card-hover);
+    background: var(--cb-paper);
+    border: 1px solid var(--cb-ink);
     font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--cb-ink);
 }
 
 .issue-top {
@@ -159,26 +186,28 @@
 }
 
 .issue-group {
-    font-weight: 600;
-    color: var(--accent-cyan);
+    font-weight: 700;
+    color: var(--cb-ink);
 }
 
 .issue-time {
+    /* opacity로 옅게 낮추면 severe(가장 진한) 포스트잇 위에서 4:1대로
+       떨어져 AA(4.5:1)를 못 채운다 — 재계산 후 전부 완전 불투명 잉크로 통일 */
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: var(--cb-ink);
     font-variant-numeric: tabular-nums;
 }
 
 .issue-message {
     margin: 6px 0;
-    color: var(--text-primary);
+    color: var(--cb-ink);
 }
 
 .issue-meta {
     display: flex;
     gap: 12px;
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: var(--cb-ink);
 }
 
 .issue-actions {
@@ -199,7 +228,7 @@
 }
 
 .unreliable-section .hint-text {
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
     font-size: 0.85rem;
     margin-bottom: 12px;
 }
@@ -234,13 +263,15 @@
 
 .quality-label {
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
 }
 
 .quality-value {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 1.3rem;
     font-weight: 600;
-    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    color: var(--cb-ink);
 }
 
 /* Videos Section */
@@ -259,30 +290,14 @@
 .video-player {
     width: 100%;
     max-height: 300px;
-    border-radius: var(--border-radius);
+    border-radius: 4px;
     background: #000;
 }
 
 .no-video {
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
     text-align: center;
     padding: 20px;
-}
-
-/* Comparison Video Section */
-.comparison-video-section {
-    margin-bottom: 32px;
-}
-
-.comparison-video-section h3 {
-    font-size: 1.1rem;
-    margin-bottom: 8px;
-}
-
-.comparison-video-section .hint-text {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 16px;
 }
 
 /* Detail Info */
@@ -305,12 +320,12 @@
 
 .info-label {
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
 }
 
 .info-value {
     font-weight: 500;
-    color: var(--text-primary);
+    color: var(--cb-ink);
 }
 
 /* 구간 비교 이미지 — 왼쪽이 기준 영상, 오른쪽이 내 영상.
@@ -320,9 +335,9 @@
     width: 100%;
     max-width: 560px;
     margin-top: 0.6rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: var(--bg-secondary);
+    border-radius: 4px;
+    border: 1px solid var(--cb-rule);
+    background: var(--cb-paper);
 }
 
 /* ── 분석 진행률 ─────────────────────────────────────────── */
@@ -331,14 +346,14 @@
     width: min(420px, 100%);
     height: 8px;
     margin: 18px auto 8px;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--cb-rule);
     border-radius: 999px;
     overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
-    background: var(--accent-gradient);
+    background: var(--cb-ink);
     border-radius: 999px;
     /* 폴링 간격(2초)보다 조금 짧게 — 단계가 바뀔 때 뚝 끊기지 않고 이어진다 */
     transition: width 0.6s linear;
@@ -350,7 +365,7 @@
     width: min(420px, 100%);
     margin: 0 auto 8px;
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: var(--cb-ink-muted);
     font-variant-numeric: tabular-nums;
 }
 
@@ -369,33 +384,17 @@
     gap: 4px;
 }
 
-.issue-item {
-    cursor: pointer;
-    transition: var(--transition-fast);
-    border-radius: var(--border-radius);
-}
-
-.issue-item:hover {
-    background: var(--bg-card-hover);
-}
-
-/* 지금 비교 화면에서 반복 중인 구간 */
-.issue-item.active {
-    background: rgba(255, 45, 117, 0.12);
-    box-shadow: inset 3px 0 0 var(--accent-pink);
-}
-
 /* ── 원본 영상 (접힘) ────────────────────────────────────── */
 
 .raw-videos summary {
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--cb-ink-secondary);
     font-size: 0.9rem;
     user-select: none;
 }
 
 .raw-videos summary:hover {
-    color: var(--text-primary);
+    color: var(--cb-ink);
 }
 
 .raw-videos .videos-section {
@@ -415,7 +414,7 @@
 
 .push-note {
     font-size: 0.82rem;
-    color: var(--accent-pink);
+    color: var(--cb-warning);
 }
 
 /* ── 재분석 (접힘) ───────────────────────────────────────
@@ -424,11 +423,11 @@
 
 .reanalyze summary {
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--cb-ink-secondary);
     font-size: 0.95rem;
     user-select: none;
 }
 
 .reanalyze summary:hover {
-    color: var(--text-primary);
+    color: var(--cb-ink);
 }
