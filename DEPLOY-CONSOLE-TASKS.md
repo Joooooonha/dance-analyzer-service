@@ -269,6 +269,64 @@ GitHub 저장소 → **Settings** → **Secrets and variables** → **Actions** 
 원본 서버에 직접 붙을 수 있다. 도메인은 Cloudflare IP로만 해석되므로 굳이
 드러낼 이유가 없다.
 
+### 러너가 EC2에 닿게 하기 — 둘 중 하나
+
+**첫 배포가 `Connection timed out`으로 실패한다면 여기 때문이다.** EC2 보안 그룹이
+22번 포트를 특정 IP(인스턴스 만들 때 고른 "내 IP")에만 열어두는데, GitHub 러너는
+매번 다른 IP에서 뜬다.
+
+GitHub이 쓰는 IP 대역을 전부 허용하는 방법은 쓸 수 없다 — 4000개가 넘어 보안 그룹
+규칙 한도를 한참 넘는다.
+
+#### 방법 A — Tailscale로 붙기 (권장, 22번을 안 열어도 됨)
+
+EC2는 이미 tailnet에 있다(`odo-ec2` / `100.114.82.112`). 러너를 **임시 노드**로
+참여시키면 공개 IP에서 SSH를 열 필요가 없다. 작업이 끝나면 노드는 스스로 사라진다.
+
+1. Tailscale 관리 콘솔 → **Access controls**에서 `tag:ci`를 선언한다.
+   ACL의 `tagOwners`에 다음을 추가:
+
+   ```json
+   "tagOwners": {
+     "tag:ci": ["autogroup:admin"]
+   }
+   ```
+
+   태그를 미리 선언하지 않으면 그 태그로 노드를 붙일 수 없다.
+
+2. **Settings → OAuth clients → Generate OAuth client**
+   - Scopes: `auth_keys` **write**
+   - Tags: `tag:ci`
+
+3. 발급된 두 값을 GitHub 시크릿으로 등록한다:
+
+   ```bash
+   gh secret set TS_OAUTH_CLIENT_ID --body "발급받은-client-id"
+   gh secret set TS_OAUTH_SECRET --body "발급받은-secret"
+   ```
+
+4. `DEPLOY_HOST`와 `DEPLOY_KNOWN_HOSTS`를 **Tailscale 주소**로 바꾼다:
+
+   ```bash
+   gh secret set DEPLOY_HOST --body "100.114.82.112"
+   gh secret set DEPLOY_KNOWN_HOSTS --body "$(ssh-keyscan -t ed25519,rsa 100.114.82.112 2>/dev/null)"
+   ```
+
+   (auth key 대신 OAuth를 쓰는 이유: auth key는 최대 90일이라 어느 날 조용히
+   만료돼 배포가 깨진다. OAuth 클라이언트는 만료가 없다.)
+
+#### 방법 B — 보안 그룹에서 22번을 전체 공개
+
+AWS 콘솔 → EC2 → 인스턴스 → 보안 → 보안 그룹 → 인바운드 규칙 편집 →
+SSH(22) 소스를 `0.0.0.0/0`으로.
+
+1분이면 되고 시크릿도 그대로 쓴다. 다만 **SSH가 인터넷 전체에 열린다.**
+비밀번호 인증이 꺼져 있고 키만 받으므로 뚫릴 가능성은 낮지만, 자동화된
+접속 시도가 계속 들어와 로그가 지저분해진다.
+
+워크플로는 두 방법 모두에서 동작한다 — Tailscale 시크릿이 없으면 그 단계를
+건너뛰고 공개 IP로 직접 붙는다.
+
 ### 확인
 
 등록한 뒤 **Actions** 탭 → **배포 (EC2)** → **Run workflow**로 한 번 돌려본다.
