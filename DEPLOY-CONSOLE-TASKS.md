@@ -207,6 +207,39 @@ finder-server가 같이 위험해진다.
 
 ---
 
+## 7. Cloudflare — 서비스 워커 캐시 해제 (알림 관련)
+
+**증상**: `sw.js`(서비스 워커)를 고쳐 배포해도 최대 4시간 동안 예전 것이 쓰인다.
+
+오리진(nginx)은 `Cache-Control: no-cache, no-store, must-revalidate`를 제대로
+보내는데, Cloudflare가 그걸 무시하고 `max-age=14400`으로 덮어쓴다:
+
+```bash
+curl -sI https://odostudio.site/sw.js | grep -iE "cache-control|cf-cache"
+```
+
+```
+cache-control: max-age=14400      ← Cloudflare가 덮어쓴 값
+cf-cache-status: HIT
+```
+
+서비스 워커는 알림 동작을 담당하므로, 고쳐도 반영이 늦으면 원인을 찾기 어렵다.
+(브라우저가 워커 스크립트는 대체로 강제 재검증하긴 하지만, 의존할 일은 아니다.)
+
+**할 일** — Cloudflare 대시보드에서 둘 중 하나:
+
+- **권장**: Caching → Configuration → **Browser Cache TTL**을
+  `Respect Existing Headers`로. 오리진이 보내는 헤더를 그대로 존중한다.
+  `/assets/`의 `immutable`도 함께 존중되므로 캐시 효율은 오히려 좋아진다.
+- 또는 Caching → Cache Rules에서 `URI Path equals /sw.js` → **Bypass cache**
+
+바꾼 뒤 Caching → Configuration → **Purge Everything**을 한 번 눌러 이미 캐시된
+`sw.js`를 비운다.
+
+**확인**: 위 curl을 다시 실행해 `max-age=14400`이 사라지면 된다.
+
+---
+
 ## 값 전달 — 이건 파일에 적지 말 것
 
 아래 값들은 **비밀키**라 git에 올라가면 안 된다.
