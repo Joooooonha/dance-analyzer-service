@@ -40,18 +40,6 @@ function computeProgressPct(progress, stageStartedAtMs) {
     return lo + (hi - lo) * (1 - Math.exp(-sec / STAGE_EASE_SEC));
 }
 
-// 지적 구간 포스트잇 색 — 심각도 랭크를 상/중/하 3단으로 나눈다.
-// 절대 severity 값의 범위를 모르므로(백엔드가 임의 배율을 준다), 이미 계산된
-// rank(1이 가장 심각)를 항목 수 기준 3등분해 상대적으로 나눈다.
-function severityTier(rank, total) {
-    if (total <= 1) return 'severe';
-    const t1 = Math.ceil(total / 3);
-    const t2 = Math.ceil((2 * total) / 3);
-    if (rank <= t1) return 'severe';
-    if (rank <= t2) return 'moderate';
-    return 'mild';
-}
-
 function safeParse(json, fallback) {
     if (!json) return fallback;
     try {
@@ -249,7 +237,7 @@ export default function LogDetail() {
 
     if (loading) {
         return (
-            <div className="page studio">
+            <div className="page">
                 <div className="loading"><div className="spinner"></div></div>
             </div>
         );
@@ -257,7 +245,7 @@ export default function LogDetail() {
 
     if (error && !log) {
         return (
-            <div className="page studio">
+            <div className="page">
                 <div className="container">
                     <div className="auth-error">{error}</div>
                     <Link to="/logs" className="btn btn-secondary mt-3">← 목록으로</Link>
@@ -342,7 +330,7 @@ export default function LogDetail() {
     );
 
     return (
-        <div className="log-detail-page page studio">
+        <div className="log-detail-page page">
             <div className="container">
                 <Link to="/logs" className="back-link">← 연습 기록</Link>
 
@@ -352,7 +340,7 @@ export default function LogDetail() {
                 {log?.status === 'COMPLETED' && (
                     <div className="result-section">
                         <div className="issue-count-display">
-                            <span className="issue-count-number st-mirror-numeral" data-reflect={log.issueCount ?? '-'}>{log.issueCount ?? '-'}</span>
+                            <span className="issue-count-number">{log.issueCount ?? '-'}</span>
                             <span className="issue-count-label">개 구간에서 다듬을 동작을 찾았어요</span>
                         </div>
                         <p className="analyzed-at">분석 완료: {formatDate(log.analyzedAt)}</p>
@@ -521,40 +509,17 @@ export default function LogDetail() {
                         <p className="hint-text">
                             AI가 고른 후보입니다. <b>무엇부터 고칠지는 직접 정하세요</b> —
                             항목을 누르면 위 비교 화면이 그 구간을 반복 재생합니다.
-                            왼쪽 숫자는 심각도 순위, <b>메모 색은 심각도를 나타냅니다</b>
-                            (아래 범례 참고).
+                            왼쪽 숫자는 심각도 순위예요.
                         </p>
-                        <ul className="issue-legend">
-                            <li className="issue-legend-item">
-                                <span className="issue-legend-swatch issue-legend-swatch--severe" /> 심각
-                            </li>
-                            <li className="issue-legend-item">
-                                <span className="issue-legend-swatch issue-legend-swatch--moderate" /> 보통
-                            </li>
-                            <li className="issue-legend-item">
-                                <span className="issue-legend-swatch issue-legend-swatch--mild" /> 경미
-                            </li>
-                        </ul>
                         <div className="issue-list">
                             {topIssues.map((issue) => {
                               const idx = issue.rank - 1;   // 이미지 슬롯은 심각도 순위 기준
                               const active = selectedIssue?.rank === issue.rank;
-                              const tier = severityTier(issue.rank, topIssues.length);
                               return (
                                 <div
                                     key={issue.rank}
-                                    className={`issue-item issue-item--${tier}${active ? ' active' : ''}`}
+                                    className={`issue-item${active ? ' active' : ''}`}
                                     onClick={() => setSelectedIssue(active ? null : issue)}
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-pressed={active}
-                                    onKeyDown={(e) => {
-                                        if (e.target !== e.currentTarget) return; // 안쪽 버튼/링크는 자기 키 처리에 맡긴다
-                                        if (e.key === 'Enter' || e.key === ' ') {
-                                            e.preventDefault();
-                                            setSelectedIssue(active ? null : issue);
-                                        }
-                                    }}
                                 >
                                     <div className="issue-rank">{issue.rank}</div>
                                     <div className="issue-body">

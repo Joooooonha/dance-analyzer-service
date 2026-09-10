@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Crown, Sparkles, Users } from 'lucide-react';
-import { signup, setCurrentUser, getTeams } from '../api/client';
+import { signup, getTeams } from '../api/client';
+import { useAuth } from '../auth/useAuth';
 import './Auth.css';
 
 export default function Signup() {
     const navigate = useNavigate();
+    const { refresh } = useAuth();
     const [formData, setFormData] = useState({
         loginId: '',
         password: '',
@@ -60,8 +62,9 @@ export default function Signup() {
                 createTeamName: teamMode === 'create' ? newTeamName : null
             };
 
-            const user = await signup(requestData);
-            setCurrentUser(user);
+            await signup(requestData);
+            // Login.jsx와 같은 이유 — AuthProvider의 user는 refresh()로만 갱신된다.
+            await refresh();
             navigate('/');
         } catch (err) {
             setError(err.message || '회원가입에 실패했습니다.');

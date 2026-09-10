@@ -16,18 +16,14 @@ import '@fontsource/inter/latin-ext-400.css'
 import '@fontsource/inter/latin-ext-500.css'
 import '@fontsource/inter/latin-ext-600.css'
 import '@fontsource/inter/latin-ext-700.css'
-// 대시보드(카운트보드 세계관)는 한글이 대부분이라 Inter로는 폴백만 탄다.
-// 실제 한글을 그리는 워크호스 서체와, 형광펜 라벨 한 곳에만 쓰는 손글씨체.
-// korean 서브셋만 불러온다 — 기본 400.css는 라틴·베트남어·구자라트 등
+// 화면 대부분이 한글이라 Inter로는 폴백만 탄다. 실제 한글을 그리는 워크호스
+// 서체. korean 서브셋만 불러온다 — 기본 400.css는 라틴·베트남어·구자라트 등
 // 이 앱이 쓰지 않는 서브셋까지 전부 선언해 CSS만 400KB 넘게 불어난다.
 import '@fontsource/noto-sans-kr/korean-400.css'
 import '@fontsource/noto-sans-kr/korean-500.css'
 import '@fontsource/noto-sans-kr/korean-600.css'
 import '@fontsource/noto-sans-kr/korean-700.css'
-import '@fontsource/nanum-pen-script/korean-400.css'
 import './index.css'
-// 연습실 거울·테이프 세계관 공유 토큰 — .studio 클래스가 붙은 화면에서만 적용된다.
-import './styles/studio.css'
 import App from './App.jsx'
 import { registerServiceWorker } from './push'
 
