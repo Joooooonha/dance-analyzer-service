@@ -8,8 +8,8 @@
 | | |
 |---|---|
 | **대상 범위** | `model-research/` — 분석 방법론 연구·검증 코드 |
-| **작성 시점 기준** | Phase 0~4 완료, 사용자 라벨링 대기 |
-| **반영 상태** | ⚠️ 본 문서의 개선 사항은 **서비스(`ai-server`)에 미반영** |
+| **작성 시점 기준** | Phase 0~5 주요 구현 완료, L1·겹침·피드백 타당성 검증 대기 |
+| **반영 상태** | 핵심 분석 로직을 서비스의 `ai-server/engine`에 반영 |
 
 ---
 
@@ -1067,12 +1067,22 @@ natural1은 오디오·포즈 두 방법 모두 실제값과 0.01초 이내로 �
 
 ### 8.4 서비스 반영 상태
 
-**본 문서의 개선 사항은 `ai-server`에 반영되지 않았습니다.** 서비스는 MediaPipe
-(`pose_landmarker_full`) + fastdtw 조합으로 동작합니다.
+핵심 연구 결과는 서비스의 `ai-server/engine`에 이식했습니다.
 
-참고로 `ai-server`의 fastdtw는 거리 함수를 넘겨 다차원으로 호출하므로,
-[5.1](#51-시간축-정렬--dtw-구현-교체)에서 다룬 프레임 경계 버그는 해당되지 않습니다.
-연구 코드 쪽에서만 발생했던 문제입니다.
+| 연구 결과 | 서비스 반영 |
+|---|---|
+| 포즈 백엔드 | MediaPipe에서 **YOLO-pose**로 교체 |
+| 자세 표현 | 좌표 유사도에서 **관절 각도 + 결측 마스크**로 교체 |
+| 시간 정렬 | fastdtw에서 **`dtw_ndim` + 밴드 + 각속도 보조**로 교체 |
+| 구간 처리 | 사용자가 지정한 시작·끝 시각을 분석에 반영 |
+| 처리 시간 | 기본 `stride=2`로 포즈 추정 프레임을 줄임 |
+
+`feedback.py`와 `sequence.py`는 연구·서비스 코드가 같고, `dtw_compare.py`와
+`features.py`는 import 경로만 다릅니다. 포즈 추출은 배포 환경(aarch64, CPU 전용)에
+맞춰 `ai-server/engine/pose_yolo.py`에서 별도로 구현했습니다. 서비스 이식 과정과
+운영 환경에서 발견한 문제는 [엔지니어링 노트](engineering-notes.md)에 기록했습니다.
+
+[8.3](#83-미구현)의 항목은 현재도 서비스에 반영되지 않은 후속 과제입니다.
 
 ---
 
@@ -1176,4 +1186,3 @@ python -m src.main --pose-backend yolo --feature angle
 
 - [README](../README.md) — 프로젝트 개요, 실행 방법
 - [`model-research/TASKS.md`](../model-research/TASKS.md) — 진행 상태, 설계 결정 원본, 상세 실측 로그
-- [`model-research/CLAUDE.md`](../model-research/CLAUDE.md) — 환경 제약과 작업 규칙
