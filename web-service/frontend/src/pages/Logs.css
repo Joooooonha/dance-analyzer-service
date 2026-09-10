@@ -48,6 +48,16 @@
     border-color: var(--border-color);
 }
 
+/* WAITING/PROCESSING과 같은 회색이면 실패도 "아직 처리 중"처럼 보인다
+   (critique P3) — 에러 색으로 분리한다. */
+.issue-badge.failed {
+    border-color: #ef4444;
+}
+
+.issue-badge.failed .score-icon {
+    color: #ef4444;
+}
+
 .issue-badge-value {
     font-size: 1.3rem;
     font-weight: 700;

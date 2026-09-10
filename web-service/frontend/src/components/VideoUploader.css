@@ -13,6 +13,11 @@
     background: rgba(0, 217, 255, 0.05);
 }
 
+.video-uploader:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+}
+
 .video-uploader.dragging {
     border-color: var(--accent-pink);
     background: rgba(255, 45, 117, 0.1);

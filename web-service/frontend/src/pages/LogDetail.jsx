@@ -10,6 +10,7 @@ import {
 import VideoTrimmer from '../components/VideoTrimmer';
 import { enablePush, disablePush, currentSubscription, pushSupported, isIOS, isStandalone } from '../push';
 import SyncedComparison from '../components/SyncedComparison';
+import { getStatusLabel } from '../utils/logStatus';
 import './LogDetail.css';
 
 // 진행 상황 폴링 주기.
@@ -186,7 +187,7 @@ export default function LogDetail() {
         const done = cur === 'COMPLETED';
         const title = done ? '분석이 끝났어요' : '분석에 실패했어요';
         const body = done
-            ? `다듬을 구간 ${log?.issueCount ?? 0}개를 찾았습니다.`
+            ? `다듬을 지적 구간 ${log?.issueCount ?? 0}개를 찾았습니다.`
             : '결과 화면에서 다시 시도할 수 있습니다.';
 
         // 탭 제목에는 아이콘을 못 쓴다 — 텍스트로만 상태를 알린다.
@@ -341,7 +342,7 @@ export default function LogDetail() {
                     <div className="result-section">
                         <div className="issue-count-display">
                             <span className="issue-count-number">{log.issueCount ?? '-'}</span>
-                            <span className="issue-count-label">개 구간에서 다듬을 동작을 찾았어요</span>
+                            <span className="issue-count-label">개 지적 구간에서 다듬을 동작을 찾았어요</span>
                         </div>
                         <p className="analyzed-at">분석 완료: {formatDate(log.analyzedAt)}</p>
                         {log.feedback && <p className="feedback-content">{log.feedback}</p>}
@@ -356,7 +357,7 @@ export default function LogDetail() {
                         <div className="progress-bar">
                             <div
                                 className="progress-fill"
-                                style={{ width: `${progressPct}%` }}
+                                style={{ transform: `scaleX(${progressPct / 100})` }}
                             />
                         </div>
                         <div className="progress-meta">
@@ -508,7 +509,7 @@ export default function LogDetail() {
                         </div>
                         <p className="hint-text">
                             AI가 고른 후보입니다. <b>무엇부터 고칠지는 직접 정하세요</b> —
-                            항목을 누르면 위 비교 화면이 그 구간을 반복 재생합니다.
+                            항목을 누르면 위 비교 화면이 그 장면을 반복 재생합니다.
                             왼쪽 숫자는 심각도 순위예요.
                         </p>
                         <div className="issue-list">
@@ -551,7 +552,7 @@ export default function LogDetail() {
                                                 setSelectedIssue(active ? null : issue);
                                             }}
                                         >
-                                            {active ? '반복 중' : '이 구간 보기'}
+                                            {active ? '반복 중' : '이 장면 보기'}
                                         </button>
                                         {/* 이미지 URL은 구간 JSON이 아니라 응답의
                                             issueImageUrls에서 온다. 저장된 것은 키뿐이고
@@ -656,7 +657,7 @@ export default function LogDetail() {
                         </div>
                         <div className="info-item">
                             <span className="info-label">분석 상태</span>
-                            <span className="info-value">{log?.status}</span>
+                            <span className="info-value">{log?.status ? getStatusLabel(log.status) : '-'}</span>
                         </div>
                     </div>
                 </div>

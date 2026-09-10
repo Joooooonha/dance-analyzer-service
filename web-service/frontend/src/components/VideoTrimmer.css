@@ -87,39 +87,3 @@
   font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
 }
-
-/* ========== 카운트보드 세계관 재정의 ==========
-   VideoTrimmer는 Practice(옛 세계관)와 LogDetail(새 세계관)이 함께 쓴다.
-   .countboard 조상이 있을 때만 이 아래 규칙이 적용되고, Practice 쪽은
-   그대로 옛 다크 네온으로 남는다. */
-.countboard .video-trimmer {
-  background: var(--cb-paper-card);
-  border: 1px solid var(--cb-rule);
-  border-radius: 4px;
-}
-
-.countboard .trimmer-header h4 {
-  color: var(--cb-ink);
-}
-
-.countboard .trimmer-time {
-  color: var(--cb-ink-muted);
-}
-
-.countboard .trimmer-seekbar {
-  accent-color: var(--cb-cyan);
-}
-
-.countboard .marker-start {
-  background: var(--cb-cyan);
-  box-shadow: none;
-}
-
-.countboard .marker-end {
-  background: var(--cb-pink);
-  box-shadow: none;
-}
-
-.countboard .trimmer-mark-value {
-  color: var(--cb-ink-secondary);
-}

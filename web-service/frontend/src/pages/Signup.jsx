@@ -138,38 +138,46 @@ export default function Signup() {
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label">팀 설정</label>
-                        <div className="team-options">
-                            <div
+                        <label className="form-label" id="team-mode-label">팀 설정</label>
+                        <div className="team-options" role="group" aria-labelledby="team-mode-label">
+                            <button
+                                type="button"
                                 className={`team-option ${teamMode === 'none' ? 'active' : ''}`}
+                                aria-pressed={teamMode === 'none'}
                                 onClick={() => setTeamMode('none')}
                             >
-                                <span className="team-option-label">무소속</span>
+                                <span className="team-option-label">개인</span>
                                 <span className="team-option-desc">개인 연습</span>
-                            </div>
-                            <div
+                            </button>
+                            <button
+                                type="button"
                                 className={`team-option ${teamMode === 'join' ? 'active' : ''}`}
+                                aria-pressed={teamMode === 'join'}
                                 onClick={() => setTeamMode('join')}
                             >
                                 <span className="team-option-label">팀 가입</span>
                                 <span className="team-option-desc">기존 팀</span>
-                            </div>
-                            <div
+                            </button>
+                            <button
+                                type="button"
                                 className={`team-option ${teamMode === 'create' ? 'active' : ''}`}
+                                aria-pressed={teamMode === 'create'}
                                 onClick={() => setTeamMode('create')}
                             >
                                 <span className="team-option-label">팀 생성</span>
                                 <span className="team-option-desc">팀장 되기</span>
-                            </div>
+                            </button>
                         </div>
 
                         {teamMode === 'join' && (
                             <div className="team-list">
                                 {teams.length > 0 ? (
                                     teams.map(team => (
-                                        <div
+                                        <button
+                                            type="button"
                                             key={team.id}
                                             className={`team-item ${selectedTeamId === team.id ? 'selected' : ''}`}
+                                            aria-pressed={selectedTeamId === team.id}
                                             onClick={() => setSelectedTeamId(team.id)}
                                         >
                                             <span className="team-item-name">{team.name}</span>
@@ -178,7 +186,7 @@ export default function Signup() {
                                                 {' · '}
                                                 <span className="icon-inline"><Users size={13} /> {team.memberCount}명</span>
                                             </span>
-                                        </div>
+                                        </button>
                                     ))
                                 ) : (
                                     <p className="text-center" style={{ color: 'var(--text-muted)' }}>
