@@ -83,7 +83,6 @@ web
   변형에서 61%→100% 대응, 중앙 오차 2.000초→0.000초), pycocotools 평가 결과.
   README 3장에 상세.
 - **배포 진행 중** — `odostudio.site`, `deploy/`에 Nginx·systemd·launchd 설정.
-- **기획 문서 PDF 2종** (`새싹_박준하_AI 댄스 분석 플랫폼.pdf` 등)이 루트에 존재.
 - **아직 없는 것 (지어내지 말 것):** 데모 GIF·결과 스크린샷(README에 TODO로 비어 있음),
   실제 사용자 후기·지표, 정확한 프로젝트 기간.
 
