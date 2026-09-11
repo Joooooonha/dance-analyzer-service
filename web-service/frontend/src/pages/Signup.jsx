@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Crown, Sparkles, Users } from 'lucide-react';
-import { signup, getTeams } from '../api/client';
-import { useAuth } from '../auth/useAuth';
+import { signup, setCurrentUser, getTeams } from '../api/client';
 import './Auth.css';
 
 export default function Signup() {
     const navigate = useNavigate();
-    const { refresh } = useAuth();
     const [formData, setFormData] = useState({
         loginId: '',
         password: '',
@@ -62,9 +60,8 @@ export default function Signup() {
                 createTeamName: teamMode === 'create' ? newTeamName : null
             };
 
-            await signup(requestData);
-            // Login.jsx와 같은 이유 — AuthProvider의 user는 refresh()로만 갱신된다.
-            await refresh();
+            const user = await signup(requestData);
+            setCurrentUser(user);
             navigate('/');
         } catch (err) {
             setError(err.message || '회원가입에 실패했습니다.');
@@ -138,46 +135,38 @@ export default function Signup() {
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label" id="team-mode-label">팀 설정</label>
-                        <div className="team-options" role="group" aria-labelledby="team-mode-label">
-                            <button
-                                type="button"
+                        <label className="form-label">팀 설정</label>
+                        <div className="team-options">
+                            <div
                                 className={`team-option ${teamMode === 'none' ? 'active' : ''}`}
-                                aria-pressed={teamMode === 'none'}
                                 onClick={() => setTeamMode('none')}
                             >
-                                <span className="team-option-label">개인</span>
+                                <span className="team-option-label">무소속</span>
                                 <span className="team-option-desc">개인 연습</span>
-                            </button>
-                            <button
-                                type="button"
+                            </div>
+                            <div
                                 className={`team-option ${teamMode === 'join' ? 'active' : ''}`}
-                                aria-pressed={teamMode === 'join'}
                                 onClick={() => setTeamMode('join')}
                             >
                                 <span className="team-option-label">팀 가입</span>
                                 <span className="team-option-desc">기존 팀</span>
-                            </button>
-                            <button
-                                type="button"
+                            </div>
+                            <div
                                 className={`team-option ${teamMode === 'create' ? 'active' : ''}`}
-                                aria-pressed={teamMode === 'create'}
                                 onClick={() => setTeamMode('create')}
                             >
                                 <span className="team-option-label">팀 생성</span>
                                 <span className="team-option-desc">팀장 되기</span>
-                            </button>
+                            </div>
                         </div>
 
                         {teamMode === 'join' && (
                             <div className="team-list">
                                 {teams.length > 0 ? (
                                     teams.map(team => (
-                                        <button
-                                            type="button"
+                                        <div
                                             key={team.id}
                                             className={`team-item ${selectedTeamId === team.id ? 'selected' : ''}`}
-                                            aria-pressed={selectedTeamId === team.id}
                                             onClick={() => setSelectedTeamId(team.id)}
                                         >
                                             <span className="team-item-name">{team.name}</span>
@@ -186,7 +175,7 @@ export default function Signup() {
                                                 {' · '}
                                                 <span className="icon-inline"><Users size={13} /> {team.memberCount}명</span>
                                             </span>
-                                        </button>
+                                        </div>
                                     ))
                                 ) : (
                                     <p className="text-center" style={{ color: 'var(--text-muted)' }}>

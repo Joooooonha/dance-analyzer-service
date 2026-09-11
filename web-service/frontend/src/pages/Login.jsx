@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login, socialLoginUrl } from '../api/client';
-import { useAuth } from '../auth/useAuth';
+import { login, setCurrentUser, socialLoginUrl } from '../api/client';
 import './Auth.css';
 
 // 개발용 로그인 폼 노출 여부. 운영 빌드(`VITE_ENABLE_DEV_LOGIN`을 주지 않음)에서는
@@ -10,7 +9,6 @@ const DEV_LOGIN = import.meta.env.VITE_ENABLE_DEV_LOGIN === 'true';
 
 export default function Login() {
     const navigate = useNavigate();
-    const { refresh } = useAuth();
     const [formData, setFormData] = useState({
         loginId: '',
         password: ''
@@ -31,11 +29,8 @@ export default function Login() {
         setLoading(true);
 
         try {
-            await login(formData.loginId, formData.password);
-            // AuthProvider가 들고 있는 user는 로그인 API 응답이 아니라 이 refresh()로만
-            // 갱신된다 — 안 부르면 ProtectedRoute는 여전히 로그아웃 상태로 보고
-            // navigate('/') 하자마자 다시 /login으로 튕겨낸다.
-            await refresh();
+            const user = await login(formData.loginId, formData.password);
+            setCurrentUser(user);
             navigate('/');
         } catch (err) {
             setError(err.message || '로그인에 실패했습니다.');

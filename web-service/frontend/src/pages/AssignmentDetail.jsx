@@ -63,9 +63,8 @@ export default function AssignmentDetail() {
 
         try {
             await uploadVideo(practiceFile, 'PRACTICE', { assignmentId: Number(id) });
-            // 네이티브 alert()는 앱 다른 곳과 톤이 안 맞고 모바일에서 특히 튀어서
-            // (audit 지적) 대신 이동한 화면에 배너로 띄운다.
-            navigate('/logs', { state: { toast: '제출이 완료되었습니다!' } });
+            alert('제출이 완료되었습니다!');
+            navigate('/logs');
         } catch (err) {
             setError(err.message || '제출에 실패했습니다.');
         } finally {

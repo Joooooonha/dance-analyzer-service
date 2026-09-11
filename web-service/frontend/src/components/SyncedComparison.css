@@ -1,11 +1,12 @@
-/* 나란히 비교 플레이어. 이 화면의 주인공이라 폭을 최대한 쓴다. */
+/* 나란히 비교 플레이어. 이 화면의 주인공이라 폭을 최대한 쓴다.
+   연습실 거울 세계관 — 시안=기준, 핑크=나의 시도 규칙이 여기서 실제로 쓰인다. */
 
 .synced-head h3 {
     margin-bottom: 6px;
 }
 
 .synced-empty {
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
     text-align: center;
     padding: 24px 0;
 }
@@ -20,7 +21,7 @@
 .synced-pane {
     position: relative;
     background: #000;
-    border-radius: var(--border-radius);
+    border-radius: 2px;
     overflow: hidden;
     /* 세로 영상이 들어와도 두 칸 높이가 같아야 동작을 비교할 수 있다 */
     aspect-ratio: 3 / 4;
@@ -49,13 +50,18 @@
 }
 
 .synced-tag.ref {
-    background: rgba(0, 217, 255, 0.85);
-    color: #04121a;
+    background: rgba(2, 106, 125, 0.9);
+    color: #f4f7f8;
 }
 
 .synced-tag.me {
-    background: rgba(255, 45, 117, 0.85);
+    background: rgba(184, 20, 80, 0.9);
     color: #fff;
+}
+
+.synced-rate {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
 }
 
 .synced-time {
@@ -65,39 +71,24 @@
     z-index: 2;
     font-variant-numeric: tabular-nums;
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(0, 0, 0, 0.55);
+    color: #f4f7f8;
+    background: rgba(34, 40, 44, 0.7);
     padding: 2px 8px;
     border-radius: 6px;
 }
 
-/* ── 편차 그래프 + 타임라인 공유 스코프 ───────────────────────
-   같은 시간축·같은 재생 순간을 가리키는 두 구역이라 .synced-guide 세로선
-   하나로 묶는다(critique P2) — 개별 dev-head/playhead를 대체한다. */
-
-.synced-scope {
-    position: relative;
-    margin: 4px 0 8px;
-}
-
-.synced-guide {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--accent-cyan);
-    box-shadow: 0 0 8px var(--accent-cyan);
-    pointer-events: none;
-    z-index: 3;
-}
-
 /* ── 타임라인 ─────────────────────────────────────────────── */
+
+.synced-timeline {
+    margin: 4px 0 14px;
+}
 
 .synced-track {
     position: relative;
     height: 34px;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 8px;
+    background: var(--st-glass);
+    border: 1px solid var(--st-line);
+    border-radius: 6px;
     overflow: hidden;
 }
 
@@ -108,18 +99,27 @@
     bottom: 0;
     border: none;
     padding: 0;
-    background: rgba(255, 45, 117, 0.35);
+    background: rgba(184, 20, 80, 0.3);
     cursor: pointer;
-    transition: background var(--transition-fast);
+    transition: background 0.15s ease;
 }
 
 .synced-marker:hover {
-    background: rgba(255, 45, 117, 0.6);
+    background: rgba(184, 20, 80, 0.5);
 }
 
 .synced-marker.active {
-    background: rgba(255, 45, 117, 0.85);
-    box-shadow: 0 0 12px rgba(255, 45, 117, 0.7);
+    background: rgba(184, 20, 80, 0.75);
+}
+
+.synced-playhead {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--st-cyan);
+    pointer-events: none;
+    z-index: 3;
 }
 
 /* 스크러버는 투명하게 트랙 위에 겹친다 — 구간 표시를 가리지 않으면서
@@ -139,33 +139,18 @@
     display: flex;
     justify-content: space-between;
     font-size: 0.78rem;
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
     font-variant-numeric: tabular-nums;
     margin-top: 4px;
 }
 
 /* ── 컨트롤 ───────────────────────────────────────────────── */
-/* 재생(전송)과 소리 출처(입력)는 상호작용 종류가 다르다 — 두 묶음을 양쪽
-   끝으로 갈라 시각적으로 구분한다(critique P1). */
 
 .synced-controls {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
-}
-
-.synced-controls-transport {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.synced-controls-audio {
-    display: flex;
-    align-items: center;
 }
 
 .synced-speed {
@@ -178,14 +163,14 @@
     align-items: center;
     gap: 6px;
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: var(--st-ink-secondary);
     cursor: pointer;
 }
 
 .synced-audio {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--st-glass);
+    color: var(--st-ink-secondary);
+    border: 1px solid var(--st-line);
     border-radius: 8px;
     padding: 6px 10px;
     font-size: 0.85rem;
@@ -199,14 +184,15 @@
     flex-wrap: wrap;
     margin-top: 14px;
     padding: 10px 14px;
-    border-radius: var(--border-radius);
-    background: rgba(255, 45, 117, 0.12);
-    border: 1px solid var(--border-accent);
+    border-radius: 2px;
+    background: rgba(184, 20, 80, 0.1);
+    border: 1px solid rgba(184, 20, 80, 0.3);
     font-size: 0.9rem;
+    color: var(--st-ink);
 }
 
 .synced-selected-time {
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
     font-variant-numeric: tabular-nums;
 }
 
@@ -226,33 +212,12 @@
     }
 }
 
-/* 360~390px대 폰에선 컨트롤 6개가 flex-wrap만으로 묶음 중간에서 줄바꿈될 수
-   있다(critique P3) — 전송/오디오 두 묶음을 아예 세로로 쌓고 구분선을 둔다. */
-@media (max-width: 480px) {
-    .synced-controls {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-
-    .synced-controls-audio {
-        padding-top: 10px;
-        border-top: 1px solid var(--border-color);
-    }
-
-    .synced-audio {
-        width: 100%;
-    }
-}
-
 /* ── 박자 어긋남 ─────────────────────────────────────────
    기준 대비 내가 얼마나 앞섰는지/뒤처졌는지의 누적 차이.
    위로 솟으면 내가 빨랐고, 아래로 처지면 느렸다. */
 
 .synced-deviation {
-    /* .synced-scope 안에서 .synced-track과 붙어 있어야 가이드선이 두 구역을
-       하나로 잇는 것처럼 읽힌다 — 큰 간격을 두지 않는다. */
-    margin-bottom: 4px;
+    margin: 4px 0 10px;
 }
 
 .synced-deviation svg {
@@ -262,7 +227,7 @@
 }
 
 .dev-zero {
-    stroke: var(--border-color);
+    stroke: var(--st-line);
     stroke-width: 1;
     stroke-dasharray: 4 4;
     vector-effect: non-scaling-stroke;
@@ -270,9 +235,15 @@
 
 .dev-line {
     fill: none;
-    stroke: var(--accent-cyan);
+    stroke: var(--st-cyan);
     stroke-width: 2;
     /* viewBox를 가로로 늘려 쓰기 때문에 이게 없으면 선이 납작하게 눌린다 */
+    vector-effect: non-scaling-stroke;
+}
+
+.dev-head {
+    stroke: var(--st-pink);
+    stroke-width: 1.5;
     vector-effect: non-scaling-stroke;
 }
 
@@ -281,8 +252,7 @@
     justify-content: space-between;
     align-items: center;
     font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-bottom: 10px;
+    color: var(--st-ink-secondary);
 }
 
 .dev-now {
@@ -292,20 +262,15 @@
 /* 지금 이 대목의 판정. 색으로만 구분하지 않고 글자로도 적는다. */
 .dev-now.ok,
 .synced-rate.ok {
-    color: var(--text-secondary);
+    color: var(--st-ink-secondary);
 }
 
 .dev-now.slow,
 .synced-rate.slow {
-    color: var(--accent-pink);
+    color: var(--st-pink);
 }
 
 .dev-now.fast,
 .synced-rate.fast {
-    color: var(--accent-cyan);
-}
-
-.synced-rate {
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
+    color: var(--st-cyan);
 }

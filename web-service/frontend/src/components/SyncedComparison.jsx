@@ -121,7 +121,6 @@ export default function SyncedComparison({
 }) {
     const refVideo = useRef(null);     // 주인. 손대지 않은 속도로 흐른다
     const pracVideo = useRef(null);    // 따라가는 쪽. 늘어나고 줄어든다
-    const containerRef = useRef(null); // 화면 밖에서 구간을 고르면 여기로 스크롤한다
     const rafId = useRef(0);
 
     const [playing, setPlaying] = useState(false);
@@ -290,23 +289,9 @@ export default function SyncedComparison({
     }, [playing, range, syncOnce]);
 
     // 구간을 고르면 그 시작으로 이동한다.
-    //
-    // 아래 지적 구간 목록에서 고르면(critique에서 지적된 P0) 이 카드가
-    // 화면 밖일 수 있다 — 영상이 조용히 바뀌어도 눈치챌 방법이 없었다.
-    // 카드가 화면에 충분히 보이지 않을 때만 스크롤한다. 안에서 타임라인
-    // 마커를 직접 눌렀을 때는 이미 보고 있으니 점프시키지 않는다.
     useEffect(() => {
         if (!selectedIssue || !mappers) return;
         seekTo(mappers.pracToRef.at(selectedIssue.start_sec), true);
-
-        const el = containerRef.current;
-        if (el) {
-            const rect = el.getBoundingClientRect();
-            const visible = rect.top >= 0 && rect.top < window.innerHeight - 200;
-            if (!visible) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
         // seekTo는 재생 상태에 따라 새로 만들어지는데, 그때마다 되감기면
         // 재생 중에 위치가 계속 앞으로 튄다. 선택이 바뀔 때만 움직인다.
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -357,7 +342,7 @@ export default function SyncedComparison({
     const tempoText = { slow: '느림', fast: '빠름', ok: '맞음' }[tempo];
 
     return (
-        <div className="synced card" ref={containerRef}>
+        <div className="synced card">
             <div className="synced-head">
                 <h3 className="heading-icon"><Film size={20} /> 나란히 비교</h3>
                 <p className="hint-text">
@@ -396,30 +381,34 @@ export default function SyncedComparison({
                 </div>
             </div>
 
-            {/* 편차 그래프와 타임라인은 같은 시간축·같은 순간(재생헤드)을 가리키는데
-                각자 따로 그려지면 둘이 같은 걸 나타낸다는 게 보이지 않는다
-                (critique에서 지적된 P2). .synced-scope로 묶고, 두 구역을 관통하는
-                가이드선 하나로 "지금 이 순간"을 한 번만 표시한다. 범례 텍스트는
-                가이드선이 글자를 가로지르지 않도록 scope 바깥, 아래 줄로 뺐다. */}
-            <div className="synced-scope">
-                {/* 박자 어긋남 — 기준 대비 내가 얼마나 앞섰는지/뒤처졌는지의 누적 차이 */}
-                {deviation && (
-                    <div className="synced-deviation">
-                        <svg viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true">
-                            <line className="dev-zero" x1="0" y1="30" x2="1000" y2="30" />
-                            <polyline
-                                className="dev-line"
-                                points={deviation.pts.map(([r, d]) => {
-                                    const x = ((r - range.start) / span) * 1000;
-                                    const y = 30 - (d / deviation.peak) * 26;
-                                    return `${x.toFixed(1)},${y.toFixed(1)}`;
-                                }).join(' ')}
-                            />
-                        </svg>
+            {/* 박자 어긋남 — 기준 대비 내가 얼마나 앞섰는지/뒤처졌는지의 누적 차이 */}
+            {deviation && (
+                <div className="synced-deviation">
+                    <svg viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true">
+                        <line className="dev-zero" x1="0" y1="30" x2="1000" y2="30" />
+                        <polyline
+                            className="dev-line"
+                            points={deviation.pts.map(([r, d]) => {
+                                const x = ((r - range.start) / span) * 1000;
+                                const y = 30 - (d / deviation.peak) * 26;
+                                return `${x.toFixed(1)},${y.toFixed(1)}`;
+                            }).join(' ')}
+                        />
+                        <line className="dev-head" x1={pos * 10} y1="0" x2={pos * 10} y2="60" />
+                    </svg>
+                    <div className="synced-dev-legend">
+                        <span>↑ 내가 빨랐음</span>
+                        <span className={`dev-now ${tempo}`}>
+                            지금 {devNow >= 0 ? '+' : ''}{devNow.toFixed(2)}초
+                            {devNow > 0.05 ? ' 뒤처짐' : devNow < -0.05 ? ' 앞섬' : ''}
+                        </span>
+                        <span>↓ 내가 느렸음</span>
                     </div>
-                )}
+                </div>
+            )}
 
-                {/* 타임라인 — 기준 영상 시각. 지적 구간이 어디에 몰려 있는지 한눈에 보인다. */}
+            {/* 타임라인 — 기준 영상 시각. 지적 구간이 어디에 몰려 있는지 한눈에 보인다. */}
+            <div className="synced-timeline">
                 <div className="synced-track">
                     {issueSpans.map(({ issue, start, end }, i) => {
                         const left = ((start - range.start) / span) * 100;
@@ -436,6 +425,7 @@ export default function SyncedComparison({
                             />
                         );
                     })}
+                    <div className="synced-playhead" style={{ left: `${pos}%` }} />
                     <input
                         className="synced-scrub"
                         type="range"
@@ -447,71 +437,48 @@ export default function SyncedComparison({
                         aria-label="재생 위치 (기준 영상 기준)"
                     />
                 </div>
-
-                {/* 그래프의 dev-head와 타임라인의 playhead가 따로 그려지던 걸 하나로 —
-                    두 구역을 관통하는 세로선 하나가 "지금"이다. */}
-                <div className="synced-guide" style={{ left: `${pos}%` }} />
-            </div>
-
-            {deviation && (
-                <div className="synced-dev-legend">
-                    <span>↑ 내가 빨랐음</span>
-                    <span className={`dev-now ${tempo}`}>
-                        지금 {devNow >= 0 ? '+' : ''}{devNow.toFixed(2)}초
-                        {devNow > 0.05 ? ' 뒤처짐' : devNow < -0.05 ? ' 앞섬' : ''}
-                    </span>
-                    <span>↓ 내가 느렸음</span>
+                <div className="synced-times">
+                    <span>{fmt(now - range.start)}</span>
+                    <span>{fmt(span)}</span>
                 </div>
-            )}
-
-            <div className="synced-times">
-                <span>{fmt(now - range.start)}</span>
-                <span>{fmt(span)}</span>
             </div>
 
-            {/* 재생 관련(전송)과 소리 출처(입력)는 상호작용 종류가 다르다 — 한 줄에
-                구분 없이 섞여 있으면 "재생"을 찾는 데도 6개를 다 훑어야 한다
-                (critique에서 지적된 P1). 두 묶음으로 시각적으로 나눈다. */}
             <div className="synced-controls">
-                <div className="synced-controls-transport">
-                    <button className="btn btn-primary" onClick={toggle} disabled={!ready}>
-                        {playing ? <><Pause size={16} /> 정지</> : <><Play size={16} /> 재생</>}
-                    </button>
+                <button className="btn btn-primary" onClick={toggle} disabled={!ready}>
+                    {playing ? <><Pause size={16} /> 정지</> : <><Play size={16} /> 재생</>}
+                </button>
 
-                    <div className="synced-speed">
-                        {SPEEDS.map((s) => (
-                            <button
-                                key={s}
-                                className={`btn btn-sm ${speed === s ? 'btn-secondary' : 'btn-outline'}`}
-                                onClick={() => setSpeed(s)}
-                            >
-                                {s}x
-                            </button>
-                        ))}
-                    </div>
-
-                    <label className="synced-check">
-                        <input
-                            type="checkbox"
-                            checked={loop}
-                            onChange={(e) => setLoop(e.target.checked)}
-                        />
-                        고른 구간 반복
-                    </label>
+                <div className="synced-speed">
+                    {SPEEDS.map((s) => (
+                        <button
+                            key={s}
+                            className={`btn btn-sm ${speed === s ? 'btn-secondary' : 'btn-outline'}`}
+                            onClick={() => setSpeed(s)}
+                        >
+                            {s}x
+                        </button>
+                    ))}
                 </div>
 
-                <div className="synced-controls-audio">
-                    <select
-                        className="synced-audio"
-                        value={audio}
-                        onChange={(e) => setAudio(e.target.value)}
-                        aria-label="소리"
-                    >
-                        <option value="reference">기준 영상 소리</option>
-                        <option value="practice">내 영상 소리</option>
-                        <option value="none">음소거</option>
-                    </select>
-                </div>
+                <label className="synced-check">
+                    <input
+                        type="checkbox"
+                        checked={loop}
+                        onChange={(e) => setLoop(e.target.checked)}
+                    />
+                    고른 구간 반복
+                </label>
+
+                <select
+                    className="synced-audio"
+                    value={audio}
+                    onChange={(e) => setAudio(e.target.value)}
+                    aria-label="소리"
+                >
+                    <option value="reference">기준 영상 소리</option>
+                    <option value="practice">내 영상 소리</option>
+                    <option value="none">음소거</option>
+                </select>
             </div>
 
             {selectedIssue && (

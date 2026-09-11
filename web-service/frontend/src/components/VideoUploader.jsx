@@ -33,16 +33,6 @@ export default function VideoUploader({
         inputRef.current?.click();
     };
 
-    // 마우스로만 열리던 파일 선택창을 키보드로도 열 수 있게 한다 — 이 드롭존이
-    // 자유 연습/숙제 제출의 첫 단계라 여기서 막히면 키보드 사용자는 아예
-    // 시작을 못 한다.
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleClick();
-        }
-    };
-
     const handleChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -53,14 +43,10 @@ export default function VideoUploader({
     return (
         <div
             className={`video-uploader ${isDragging ? 'dragging' : ''} ${selectedFile ? 'has-file' : ''}`}
-            role="button"
-            tabIndex={0}
-            aria-label={selectedFile ? `${label}: ${selectedFile.name} 선택됨, 다시 선택하려면 활성화하세요` : `${label} 파일 선택`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onClick={handleClick}
-            onKeyDown={handleKeyDown}
         >
             <input
                 ref={inputRef}

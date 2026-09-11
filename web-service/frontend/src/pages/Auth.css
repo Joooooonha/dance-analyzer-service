@@ -86,19 +86,6 @@
     cursor: pointer;
     text-align: center;
     transition: var(--transition-fast);
-    /* 클릭용 div였던 걸 실제 <button>으로 바꾸면서, 브라우저 기본 버튼
-       서체·폭·마진을 여기서 지워야 위 규칙들이 그대로 먹는다. */
-    font: inherit;
-    width: 100%;
-    color: inherit;
-    margin: 0;
-    appearance: none;
-}
-
-.team-option:focus-visible,
-.team-item:focus-visible {
-    outline: 2px solid var(--accent-cyan);
-    outline-offset: 2px;
 }
 
 .team-option:hover {
@@ -139,12 +126,6 @@
     margin-bottom: 8px;
     cursor: pointer;
     transition: var(--transition-fast);
-    /* team-option과 같은 이유 — <button>의 기본 서체·폭을 지운다. */
-    font: inherit;
-    width: 100%;
-    color: inherit;
-    appearance: none;
-    text-align: left;
 }
 
 .team-item:hover {
@@ -212,29 +193,4 @@
     flex: 1;
     height: 1px;
     background: var(--border-color);
-}
-
-/* 좁은 폰(360px대 안드로이드, 375px 이하 아이폰 포함)에선 .auth-container의
-   40px 패딩 + team-options 3열이 칸당 ~60px까지 좁아져 "팀 생성"/"팀장 되기"
-   같은 라벨이 짓눌린다 — audit에서 확인된 반응형 공백. */
-@media (max-width: 420px) {
-    .auth-container {
-        padding: 28px 20px;
-    }
-
-    .team-options {
-        flex-direction: column;
-    }
-
-    .team-option {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 8px;
-        text-align: left;
-    }
-
-    .team-option-label {
-        margin-bottom: 0;
-    }
 }

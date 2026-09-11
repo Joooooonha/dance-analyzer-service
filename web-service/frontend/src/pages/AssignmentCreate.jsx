@@ -48,8 +48,8 @@ export default function AssignmentCreate() {
 
             await createAssignment(assignmentData);
 
-            // AssignmentDetail.jsx와 같은 이유 — alert() 대신 이동한 화면 배너로.
-            navigate('/assignments', { state: { toast: '숙제가 생성되었습니다!' } });
+            alert('숙제가 생성되었습니다!');
+            navigate('/assignments');
         } catch (err) {
             setError(err.message || '숙제 생성에 실패했습니다.');
         } finally {

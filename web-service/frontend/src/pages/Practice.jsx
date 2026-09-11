@@ -215,7 +215,7 @@ export default function Practice() {
                             <div className="upload-progress">
                                 <div
                                     className="upload-progress-bar"
-                                    style={{ transform: `scaleX(${progress})` }}
+                                    style={{ width: `${Math.round(progress * 100)}%` }}
                                 />
                             </div>
                         </div>

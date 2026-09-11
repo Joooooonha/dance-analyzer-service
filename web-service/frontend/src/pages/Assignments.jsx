@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Calendar, ClipboardList, Crown, Inbox, Plus, Users } from 'lucide-react';
 import { getAssignments, getCurrentUser } from '../api/client';
 import './Assignments.css';
@@ -9,17 +9,6 @@ export default function Assignments() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const user = getCurrentUser();
-
-    // AssignmentCreate.jsx의 생성 완료 안내 — Logs.jsx와 같은 패턴(alert() 대신
-    // 이동해온 화면에 배너로).
-    const location = useLocation();
-    const navigate = useNavigate();
-    const [toast, setToast] = useState(location.state?.toast ?? null);
-    useEffect(() => {
-        if (location.state?.toast) {
-            navigate(location.pathname, { replace: true, state: {} });
-        }
-    }, [location.state, location.pathname, navigate]);
 
     useEffect(() => {
         const loadAssignments = async () => {
@@ -79,13 +68,6 @@ export default function Assignments() {
                         </Link>
                     )}
                 </div>
-
-                {toast && (
-                    <div className="page-toast">
-                        <span>{toast}</span>
-                        <button type="button" onClick={() => setToast(null)} aria-label="닫기">×</button>
-                    </div>
-                )}
 
                 {error && <div className="auth-error">{error}</div>}
 

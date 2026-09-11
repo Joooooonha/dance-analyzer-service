@@ -1,12 +1,14 @@
+/*
+ * LogDetail — 연습실 거울 · 테이프 마킹 세계관.
+ * 공유 토큰(--st-*, 폰트)은 styles/studio.css의 .studio가 담당한다.
+ * .card/.btn/.badge 같은 전역 유틸리티 재질감도 거기서 재정의된다.
+ * 여기는 이 페이지 고유의 선택자만 --st-*/--tape-* 값으로 다시 쓴다.
+ */
+
 .log-detail-page .back-link {
     display: inline-block;
-    color: var(--text-secondary);
     margin-bottom: 32px;
-    transition: var(--transition-fast);
-}
-
-.log-detail-page .back-link:hover {
-    color: var(--accent-pink);
+    transition: color 0.15s ease;
 }
 
 /* Result headline — 점수 대신 구간 개수 */
@@ -25,28 +27,29 @@
 }
 
 .issue-count-number {
+    /* Proof Numeral — 거울에 비친 대형 숫자(st-mirror-numeral이 반사 효과를
+       더한다). 그라디언트 클리핑 없이 잉크 색 + Inter 고정폭 숫자. */
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 4rem;
     font-weight: 700;
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-variant-numeric: tabular-nums;
+    color: var(--st-ink);
     line-height: 1;
 }
 
 .issue-count-label {
     font-size: 1.1rem;
-    color: var(--text-secondary);
+    color: var(--st-ink-secondary);
 }
 
 .analyzed-at {
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
     font-size: 0.9rem;
     margin: 8px 0 0;
 }
 
 .result-section .feedback-content {
-    color: var(--text-secondary);
+    color: var(--st-ink-secondary);
     margin-top: 12px;
 }
 
@@ -60,12 +63,12 @@
 .pending-icon {
     display: flex;
     justify-content: center;
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
     margin-bottom: 16px;
 }
 
 .pending-icon.warn {
-    color: var(--error);
+    color: var(--st-error);
 }
 
 .pending-section h2 {
@@ -73,7 +76,7 @@
 }
 
 .pending-text {
-    color: var(--text-secondary);
+    color: var(--st-ink-secondary);
     margin: 0;
 }
 
@@ -83,26 +86,25 @@
 }
 
 .trim-intro .hint-text {
-    color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
 .trim-warning {
     margin-top: 12px;
-    color: var(--accent-pink);
+    color: var(--st-warning);
     font-size: 0.85rem;
 }
 
 .trim-note {
-    color: var(--text-secondary);
+    color: var(--st-ink-secondary);
     font-size: 0.9rem;
 }
 
-/* 이미 .card 클래스로 전체 테두리를 받는다(JSX 확인) — 왼쪽에 굵은 액센트를
-   더 얹는 건 audit에서 지적된 대로 중복이자 AI-생성 UI의 상투적 표식이라
-   걷어낸다. 경고는 텍스트·아이콘 색만으로 전달한다. */
+/* JSX에서 이미 className="quality-warning card"로 거울 패널 배경/테두리를
+   받는다. 사이드 보더 액센트는 craft-floor가 금지하는 패턴이라 쓰지 않고,
+   경고 의미는 텍스트·아이콘 색만으로 전달한다. */
 .quality-warning {
-    color: #f59e0b;
+    color: var(--st-warning);
     font-size: 0.9rem;
 }
 
@@ -117,42 +119,110 @@
 }
 
 .issues-section .hint-text {
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
     font-size: 0.85rem;
     margin-bottom: 16px;
 }
 
+/* 색-심각도 범례 — 대시보드가 "연습실 범례판"처럼 읽히지 않는다는 지적을
+   받고, 실제 범례를 이 화면에 둔다. 텍스트 라벨이 색과 함께 있어
+   스크린 리더에도 그대로 읽힌다(스와치 자체만 장식). */
+.issue-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px;
+    font-size: 0.8rem;
+    color: var(--st-ink-secondary);
+}
+
+.issue-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.issue-legend-swatch {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+}
+
+.issue-legend-swatch--mild { background: var(--tape-mild); }
+.issue-legend-swatch--moderate { background: var(--tape-moderate); }
+.issue-legend-swatch--severe { background: var(--tape-severe); }
+
 .issue-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
+/* 지적 구간 = 바닥 테이프 마킹. 색은 심각도 랭크 3단(상위/중간/하위)을
+   나타낸다 — 실제 연습실에서 위치·구간을 색 다른 테이프로 표시하는
+   관행 그대로다. 파랑(경미)·노랑(보통)·빨강(심각)은 신호등/경고 테이프의
+   익숙한 문법을 그대로 쓴다. 세 색의 밝기가 서로 달라 텍스트 색을
+   색마다 따로 지정한다(파랑·빨강=흰 글자, 노랑=잉크 글자) — 하나로
+   통일하면 밝은 색쪽이 대비 기준(4.5:1)을 못 채운다. */
 .issue-item {
+    position: relative;
     display: grid;
     grid-template-columns: auto 1fr auto;
     gap: 16px;
     align-items: start;
-    padding: 14px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius);
-    /* 왼쪽 굵은 액센트 보더 대신 은은한 전체 테두리 — audit에서 지적된
-       side-tab 패턴 제거. 순위 배지가 이미 순서를 전달하므로 색 액센트가
-       없어도 구간 구분은 그대로 된다. */
-    border: 1px solid var(--border-color);
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    /* 테이프를 가위로 사선으로 잘라낸 양 끝 */
+    clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+}
+
+.issue-item--mild {
+    background: var(--tape-mild);
+    color: var(--tape-mild-text);
+}
+
+.issue-item--moderate {
+    background: var(--tape-moderate);
+    color: var(--tape-moderate-text);
+}
+
+.issue-item--severe {
+    background: var(--tape-severe);
+    color: var(--tape-severe-text);
+}
+
+.issue-item:hover {
+    transform: translateX(2px);
+}
+
+/* 지금 비교 화면에서 반복 중인 구간 — 그림자 대신 흰 테두리로 표시 */
+.issue-item.active {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+}
+
+.issue-item:focus-visible {
+    outline: 2px solid var(--st-ink);
+    outline-offset: 2px;
 }
 
 .issue-rank {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    background: var(--bg-card-hover);
+    background: var(--st-wall);
+    border: 1px solid var(--st-ink);
     font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--st-ink);
 }
 
 .issue-top {
@@ -164,26 +234,22 @@
 }
 
 .issue-group {
-    font-weight: 600;
-    color: var(--accent-cyan);
+    font-weight: 700;
 }
 
 .issue-time {
     font-size: 0.8rem;
-    color: var(--text-muted);
     font-variant-numeric: tabular-nums;
 }
 
 .issue-message {
     margin: 6px 0;
-    color: var(--text-primary);
 }
 
 .issue-meta {
     display: flex;
     gap: 12px;
     font-size: 0.8rem;
-    color: var(--text-muted);
 }
 
 .issue-actions {
@@ -204,7 +270,7 @@
 }
 
 .unreliable-section .hint-text {
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
     font-size: 0.85rem;
     margin-bottom: 12px;
 }
@@ -239,13 +305,15 @@
 
 .quality-label {
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
 }
 
 .quality-value {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 1.3rem;
     font-weight: 600;
-    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    color: var(--st-ink);
 }
 
 /* Videos Section */
@@ -264,30 +332,14 @@
 .video-player {
     width: 100%;
     max-height: 300px;
-    border-radius: var(--border-radius);
+    border-radius: 2px;
     background: #000;
 }
 
 .no-video {
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
     text-align: center;
     padding: 20px;
-}
-
-/* Comparison Video Section */
-.comparison-video-section {
-    margin-bottom: 32px;
-}
-
-.comparison-video-section h3 {
-    font-size: 1.1rem;
-    margin-bottom: 8px;
-}
-
-.comparison-video-section .hint-text {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 16px;
 }
 
 /* Detail Info */
@@ -310,12 +362,12 @@
 
 .info-label {
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
 }
 
 .info-value {
     font-weight: 500;
-    color: var(--text-primary);
+    color: var(--st-ink);
 }
 
 /* 구간 비교 이미지 — 왼쪽이 기준 영상, 오른쪽이 내 영상.
@@ -325,35 +377,28 @@
     width: 100%;
     max-width: 560px;
     margin-top: 0.6rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: var(--bg-secondary);
+    border-radius: 2px;
+    border: 1px solid var(--st-line);
+    background: var(--st-wall);
 }
 
 /* ── 분석 진행률 ─────────────────────────────────────────── */
 
 .progress-bar {
-    position: relative;
     width: min(420px, 100%);
     height: 8px;
     margin: 18px auto 8px;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--st-line);
     border-radius: 999px;
     overflow: hidden;
 }
 
-/* width 대신 transform: scaleX — 레이아웃 재계산 없이 컴포지터 단계에서만
-   움직인다(audit에서 layout-transition으로 지적). 기준선은 왼쪽 고정. */
 .progress-fill {
-    position: absolute;
-    inset: 0;
-    width: 100%;
     height: 100%;
-    background: var(--accent-gradient);
+    background: var(--st-ink);
     border-radius: 999px;
-    transform-origin: left;
     /* 폴링 간격(2초)보다 조금 짧게 — 단계가 바뀔 때 뚝 끊기지 않고 이어진다 */
-    transition: transform 0.6s linear;
+    transition: width 0.6s linear;
 }
 
 .progress-meta {
@@ -362,7 +407,7 @@
     width: min(420px, 100%);
     margin: 0 auto 8px;
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: var(--st-ink-secondary);
     font-variant-numeric: tabular-nums;
 }
 
@@ -381,33 +426,17 @@
     gap: 4px;
 }
 
-.issue-item {
-    cursor: pointer;
-    transition: var(--transition-fast);
-    border-radius: var(--border-radius);
-}
-
-.issue-item:hover {
-    background: var(--bg-card-hover);
-}
-
-/* 지금 비교 화면에서 반복 중인 구간 */
-.issue-item.active {
-    background: rgba(255, 45, 117, 0.12);
-    box-shadow: inset 3px 0 0 var(--accent-pink);
-}
-
 /* ── 원본 영상 (접힘) ────────────────────────────────────── */
 
 .raw-videos summary {
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--st-ink-secondary);
     font-size: 0.9rem;
     user-select: none;
 }
 
 .raw-videos summary:hover {
-    color: var(--text-primary);
+    color: var(--st-ink);
 }
 
 .raw-videos .videos-section {
@@ -427,7 +456,7 @@
 
 .push-note {
     font-size: 0.82rem;
-    color: var(--accent-pink);
+    color: var(--st-warning);
 }
 
 /* ── 재분석 (접힘) ───────────────────────────────────────
@@ -436,27 +465,11 @@
 
 .reanalyze summary {
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--st-ink-secondary);
     font-size: 0.95rem;
     user-select: none;
 }
 
 .reanalyze summary:hover {
-    color: var(--text-primary);
-}
-
-/* 좁은 폰에선 .issue-item의 auto 1fr auto 3열 중 rank(28px)+actions(min-width
-   130px)가 158px를 고정으로 먹어, 정작 중요한 메시지 칸이 비좁아진다
-   (audit에서 확인). actions를 아래 줄로 내려 본문에 폭을 돌려준다. */
-@media (max-width: 480px) {
-    .issue-item {
-        grid-template-columns: auto 1fr;
-    }
-
-    .issue-actions {
-        grid-column: 1 / -1;
-        flex-direction: row;
-        min-width: 0;
-        margin-top: 4px;
-    }
+    color: var(--st-ink);
 }

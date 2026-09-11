@@ -87,3 +87,39 @@
   font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
 }
+
+/* ========== 연습실 거울 세계관 재정의 ==========
+   VideoTrimmer는 Practice(옛 세계관)와 LogDetail(새 세계관)이 함께 쓴다.
+   .studio 조상이 있을 때만 이 아래 규칙이 적용되고, Practice 쪽은
+   그대로 옛 다크 네온으로 남는다. */
+.studio .video-trimmer {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 45%), var(--st-glass);
+  border: 1px solid var(--st-line);
+  border-radius: 2px;
+}
+
+.studio .trimmer-header h4 {
+  color: var(--st-ink);
+}
+
+.studio .trimmer-time {
+  color: var(--st-ink-secondary);
+}
+
+.studio .trimmer-seekbar {
+  accent-color: var(--st-cyan);
+}
+
+.studio .marker-start {
+  background: var(--st-cyan);
+  box-shadow: none;
+}
+
+.studio .marker-end {
+  background: var(--st-pink);
+  box-shadow: none;
+}
+
+.studio .trimmer-mark-value {
+  color: var(--st-ink-secondary);
+}

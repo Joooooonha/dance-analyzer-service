@@ -1,170 +1,208 @@
+/*
+ * 연습실 거울 · 테이프 마킹 — Dashboard 전용 스타일.
+ * 공유 토큰(--st-*, 폰트, ::selection)은 styles/studio.css의 .studio가
+ * 담당한다. 여기는 이 화면만의 컴포넌트만 남는다.
+ */
+
 .dashboard {
     padding-top: 40px;
+    padding-bottom: 60px;
 }
 
-.dashboard-welcome {
-    text-align: center;
-    margin-bottom: 48px;
+/* ========== 헤더 ========== */
+.st-header {
+    margin-bottom: 28px;
 }
 
-.dashboard-welcome h1 {
-    font-size: 2rem;
-    margin-bottom: 8px;
+.st-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
 }
 
-.dashboard-welcome p {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    margin: 0;
-}
-
-.dashboard-section {
-    margin-bottom: 48px;
-}
-
-.dashboard-section h2 {
-    font-size: 1.3rem;
-    margin-bottom: 20px;
-    color: var(--text-primary);
-}
-
-.feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.feature-card {
-    position: relative;
-    display: block;
-    padding: 28px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-lg);
-    text-decoration: none;
-    transition: var(--transition-normal);
-    overflow: hidden;
-}
-
-.feature-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--accent-gradient);
-    opacity: 0;
-    transition: var(--transition-normal);
-}
-
-.feature-card:hover {
-    transform: translateY(-4px);
-    border-color: transparent;
-    box-shadow: var(--shadow-glow);
-}
-
-.feature-card:hover::before {
-    opacity: 1;
-}
-
-.feature-pink:hover {
-    box-shadow: 0 0 30px rgba(255, 45, 117, 0.3);
-}
-
-.feature-cyan:hover {
-    box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
-}
-
-.feature-purple:hover {
-    box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
-}
-
-.feature-icon {
-    display: block;
-    width: fit-content;
-    margin-bottom: 16px;
-    color: var(--text-secondary);
-}
-
-.feature-pink .feature-icon {
-    color: var(--accent-pink);
-}
-
-.feature-cyan .feature-icon {
-    color: var(--accent-cyan);
-}
-
-.feature-purple .feature-icon {
-    color: var(--accent-purple);
-}
-
-.feature-title {
-    font-size: 1.2rem;
-    color: var(--text-primary);
-    margin-bottom: 8px;
-}
-
-.feature-desc {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin: 0;
-    line-height: 1.5;
-}
-
-.feature-arrow {
-    position: absolute;
-    bottom: 24px;
-    right: 24px;
-    font-size: 1.5rem;
-    color: var(--text-muted);
-    transition: var(--transition-fast);
-}
-
-.feature-card:hover .feature-arrow {
-    color: var(--accent-pink);
-    transform: translateX(4px);
-}
-
-/* Quick Start */
-.quick-start {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.quick-start-step {
+/* ========== 증거 스트립 — 거울 패널 ========== */
+.st-strip {
     display: flex;
-    align-items: flex-start;
+    align-items: baseline;
     gap: 16px;
-    padding: 24px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-lg);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 45%), var(--st-glass);
+    border: 1px solid var(--st-line);
+    border-radius: 2px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    min-height: 76px;
 }
 
-.step-number {
+.st-strip-number {
+    /* Noto Sans KR의 korean-* 서브셋에는 unicode-range가 없어 숫자까지
+       그 서체로 끌고 간다 — 이 화면에서 가장 중요한 숫자만큼은 의도한
+       Inter 고정폭 숫자로 명시해 고정한다. */
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--st-ink);
+}
+
+.st-strip-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--st-ink-secondary);
+    font-size: 0.95rem;
+}
+
+.st-strip-status {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: var(--accent-gradient);
-    border-radius: 50%;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: white;
-    flex-shrink: 0;
-}
-
-.step-content h4 {
-    color: var(--text-primary);
-    margin: 0 0 4px 0;
+    gap: 12px;
+    color: var(--st-ink-secondary);
     font-size: 1rem;
 }
 
-.step-content p {
-    color: var(--text-secondary);
-    margin: 0;
+.st-strip-link {
+    color: var(--st-ink);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--st-cyan);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+}
+
+.st-strip-link:hover {
+    color: var(--st-cyan);
+}
+
+/* ========== 다음 할 일 — 바닥 테이프 마크 ==========
+   실제 연습실에서 자리·구간을 색 테이프로 표시하는 방식 그대로다.
+   대시보드에서는 정보를 담은 색 구분이 아니라(그건 LogDetail의 지적
+   구간 몫) 하나의 형광등-반사 톤만 쓴다 — 카드마다 다른 색을 주지 않는다. */
+.st-marks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px 18px;
+    margin-bottom: 28px;
+}
+
+.st-marks-leader {
+    grid-template-columns: 1fr;
+    max-width: 340px;
+}
+
+.st-mark {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px 22px 22px;
+    background: var(--st-fluoro);
+    text-decoration: none;
+    color: inherit;
+    /* 테이프를 가위로 사선으로 잘라낸 모양 — 양 끝이 비스듬하다 */
+    clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+    transform: rotate(var(--mark-rotate, 0deg));
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.st-marks .st-mark:nth-child(1) { --mark-rotate: -1deg; }
+.st-marks .st-mark:nth-child(2) { --mark-rotate: 0.8deg; }
+.st-marks .st-mark:nth-child(3) { --mark-rotate: -0.4deg; }
+
+.st-mark:hover,
+.st-mark:focus-visible {
+    /* 그림자 대신 각도가 펴지고 테이프가 살짝 더 선명해진다 */
+    transform: rotate(0deg);
+    background: var(--st-fluoro-wash);
+}
+
+.st-mark:focus-visible {
+    outline: 2px solid var(--st-cyan);
+    outline-offset: 2px;
+}
+
+.st-mark-number {
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    color: var(--st-ink-secondary);
+}
+
+.st-mark-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--st-ink);
+}
+
+.st-mark-desc {
+    color: var(--st-ink-secondary);
     font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* ========== 첫 방문자 가이드 — 거울에 붙은 손글씨 메모 ========== */
+.st-guide {
+    margin-top: 28px;
+    padding: 24px;
+    background: var(--st-glass);
+    border: 1px dashed var(--st-line);
+    border-radius: 2px;
+}
+
+.st-guide h2 {
+    /* 코치가 거울 모서리에 붙여둔 메모 — 이 세계관에서 유일하게 쓰는
+       손글씨풍 서체(나눔손글씨 펜), 딱 한 곳에만 절제해서 쓴다. */
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--st-ink);
+    margin-bottom: 10px;
+    transform: rotate(-1deg);
+    display: inline-block;
+}
+
+.st-guide-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 20px;
+    margin-bottom: 18px;
+    color: var(--st-ink-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.st-guide-list b {
+    color: var(--st-ink);
+}
+
+.st-guide-cta {
+    display: inline-block;
+    padding: 10px 20px;
+    background: var(--st-ink);
+    color: var(--st-wall);
+    border-radius: 2px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+}
+
+.st-guide-cta:hover {
+    opacity: 0.82;
+}
+
+@media (max-width: 480px) {
+    .st-strip {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .st-strip-number {
+        font-size: 2.25rem;
+    }
 }
